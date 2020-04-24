@@ -2,4 +2,4 @@ name: SIGCPP
 title: Special Interest Group on C++
 permalink: /:year/:month/:day/:title
 
-theme: jekyll-theme-slate
+theme: jekyll-theme-dinky
