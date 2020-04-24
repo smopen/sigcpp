@@ -11,8 +11,14 @@ footer {
   float:none;
 }
 
+ul.posts { 
+  padding: 0px;
+}
+
 ul.posts li {
   list-style: none;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 div.date {
