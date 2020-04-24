@@ -1,6 +1,6 @@
 name: SIGCPP
-title: Special Interest Group on C++
+title: SIGCPP
+description: Special Interest Group on C++
 permalink: /:year/:month/:day/:title
 
 theme: jekyll-theme-dinky
-show_downloads: false
