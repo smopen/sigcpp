@@ -2,3 +2,16 @@
 ---
 
 @import "{{ site.theme }}";
+
+header {
+  float:none;
+}
+
+footer {
+  float:none;
+}
+
+div.date {
+  color: gray;
+  margin-bottom: 5px;
+}
