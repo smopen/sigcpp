@@ -21,7 +21,12 @@ ul.posts li {
   padding-bottom: 10px;
 }
 
-div.date {
+ul.posts li .date {
   color: gray;
   margin-bottom: 5px;
+}
+
+ul.posts li h2 {
+  margin-top: 5px;
+  margin-bottom: 10px;
 }
