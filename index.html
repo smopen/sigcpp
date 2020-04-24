@@ -4,7 +4,7 @@ layout: default
 	<ul class="posts">
 
 	  {% for post in site.posts %}
-		<li>
+		<li style="list-style: none;">
 			<div class = "date">{{ post.date | date_to_string }}</div>
 			<h2>
 				<a href="{{ post.url }}" title="{{ post.title }} ">{{ post.title }}</a>
