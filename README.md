@@ -1,1 +1,1 @@
-# sigcpp.github.io
+# smopen.github.io
