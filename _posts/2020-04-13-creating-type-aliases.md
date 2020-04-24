@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: default
 title: "Creating type aliases"
 date: 2020-04-13
 excerpt_separator: <!--excerpt-->
