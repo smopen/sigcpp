@@ -5,8 +5,8 @@ layout: default
 
 	  {% for post in site.posts %}
 		<li>
-			<div class = "date">{{ post.date | date_to_string }}</div>
-			<h2>
+			<div class = "page-date">{{ post.date | date_to_string }}</div>
+			<h2 class="page-title">
 				<a href="{{ post.url }}" title="{{ post.title }} ">{{ post.title }}</a>
 			</h2>
 			{{ post.excerpt }}
