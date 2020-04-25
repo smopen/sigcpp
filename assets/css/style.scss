@@ -21,22 +21,12 @@ ul.posts li {
   padding-bottom: 10px;
 }
 
-ul.posts li .date {
+ul.posts li .page-date, section div.page-date {
   color: gray;
   margin-bottom: 5px;
 }
 
-ul.posts li h2 {
-  margin-top: 5px;
-  margin-bottom: 10px;
-}
-
-section div:first-child {
-  color: gray;
-  margin-bottom: 5px;
-}
-
-section div:first-child h2 {
+ul.posts li h2.page-title, section h2.page-title {
   margin-top: 5px;
   margin-bottom: 10px;
 }
