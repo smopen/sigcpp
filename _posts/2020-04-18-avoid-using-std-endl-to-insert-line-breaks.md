@@ -18,7 +18,7 @@ streams.
 Even when flushing is required, endeavor to use the [`flush`](https://en.cppreference.com/w/cpp/io/basic_ostream/flush) member function
 to make flushing apparent and to potentially improve performance as shown in the code example below. Obviously, the call to `flush` in 
 function `useStream` is pointless if the output stream is `std::cout` or a string stream, but that call is made only once and thus may 
-be acceptable. (In fact, flushing is unnecessary for any kind of stream because the stream is flushed when it is closed.)
+be acceptable. (In fact, flushing is unnecessary for any kind of stream because the stream is automatically flushed when it is closed.)
 
 ```cpp
 #include <iostream>
