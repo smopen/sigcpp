@@ -54,7 +54,7 @@ void useStream(std::ostream& out)
 }
 ```
 ---
-:warning: It might seem that the `if-else` statements in the example could be condensed as follows, but that
+:warning: It might seem that the `if-else` part of the example could be condensed as follows, but that
 is not possible because the class`std::basic_ostream` does not support a necessary constructor.
 
 ```cpp
