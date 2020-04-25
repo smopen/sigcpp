@@ -29,7 +29,7 @@ void useStream(std::ostream& out);
 int main()
 {
    char c;
-   std::cout << "Pick destination: f for file; anything else for console: ";
+   std::cout << "Choose destination: f for file; anything else for console: ";
    std::cin >> c;
 
    if (c == 'f')
@@ -48,7 +48,7 @@ int main()
 void useStream(std::ostream& out)
 {
    for (int i = 0; i < 6; ++i)
-      out << i << '\n'; //insert line break without flushing
+      out << i << '\n';
 
    out.flush();
 }
