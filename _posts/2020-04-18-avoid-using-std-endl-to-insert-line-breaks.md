@@ -5,7 +5,7 @@ date: 2020-04-18
 excerpt_separator: <!--excerpt-->
 ---
 
-To insert a line break into an output stream, just insert the newline character (``\n``) instead of inserting `std::endl`. For example, instead of writing `std::cout << "hello world" << std::endl;`, write `std::cout << "hello world" << '\n';`.
+To insert a line break into an output stream, just insert the newline character (`'\n'`) instead of inserting `std::endl`. For example, write `std::cout << "hello world" << '\n';` instead of writing `std::cout << "hello world" << std::endl;`.
 
 <!--excerpt-->
 
@@ -16,20 +16,9 @@ Even when flushing is required, endeavor to use the [`flush`](https://en.cpprefe
 ```cpp
 #include <iostream>
 #include <fstream>
-#include <string>
 
-//write five numbers to some output stream with a linebreak after each number
-//use '\n' instead of std::endl to avoid flushing after writing each number
-//flush output stream once at end
-void useStream(std::ostream& out)
-{
-   for (int i = 0; i < 6; ++i)
-      out << i << '\n';
+void useStream(std::ostream& out);
 
-   out.flush();
-}
-
-//a simple driver to use function useStream
 int main()
 {
    char c;
@@ -44,9 +33,19 @@ int main()
    else
       useStream(std::cout);
 }
+
+
+//write some numbers to an output stream, inserting a linebreak after each number
+void useStream(std::ostream& out)
+{
+   for (int i = 0; i < 6; ++i)
+      out << i << '\n'; //insert line break without flushing
+
+   out.flush(); //flush once at end (this too may be unnecessary, even for files)
+}
 ```
 ---
-:warning: It might seem that Lines 23-29 in the code example could be condensed as follows, but that
+:warning: It might seem that `if-else` statements in the example could be condensed as follows, but that
 is not possible because a necessary constructor is unavailable in class`std::basic_ostream`.
 
 ```cpp
