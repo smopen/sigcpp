@@ -54,8 +54,8 @@ void useStream(std::ostream& out)
 }
 ```
 ---
-:warning: It might seem like the code under the `if` and `else` statements in `main` could be condensed as follows, but that
-is not possible because the class`std::basic_ostream` does not support a necessary constructor.
+⚠️ It might seem like the code in the `if` and `else` statements in `main` could be condensed as follows, 
+but that is not possible because the class`std::basic_ostream` does not support a necessary constructor.
 
 ```cpp
 useStream(c == 'f' ? std::ofstream("sample.txt") : std::cout);
