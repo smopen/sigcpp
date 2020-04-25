@@ -27,8 +27,8 @@
       </header>
 
       <section>
-        <div class="date">{{ page.date | date_to_string }}</div>
-        <h2>{{ page.title }}</h2>
+        <div class="page-date">{{ page.date | date_to_string }}</div>
+        <h2 class="page-title">{{ page.title }}</h2>
         {{ content }}
       </section>
 
