@@ -9,9 +9,16 @@ To insert a line break into an output stream, just insert the newline character 
 
 <!--excerpt-->
 
-Inserting [`std::endl`](https://en.cppreference.com/w/cpp/io/manip/endl) inserts a line break and also "flushes" the output stream (ensures that data is actually written to the final destination\), which blocks the program until flushing completes. However, flushing is meaningful only with files and other kinds of streams where the final destination is some place other than main memory (a simplification, but works for our purpose\). Thus, flushing is unnecessary for destinations such as console (`std::cout`) and string streams.   
+Inserting [`std::endl`](https://en.cppreference.com/w/cpp/io/manip/endl) inserts a line break and also "flushes" the output stream
+(ensures that data is actually written to the final destination\), which blocks the program until flushing completes. However, flushing
+is meaningful only with files and other kinds of streams where the final destination is some place other than main memory (a 
+simplification, but works for our purpose\). Thus, flushing is unnecessary for destinations such as console (`std::cout`) and string 
+streams. 
 
-Even when flushing is required, endeavor to use the [`flush`](https://en.cppreference.com/w/cpp/io/basic_ostream/flush) function to make flushing apparent and to potentially improve performance as shown in the code example below. The comments and code are self explanatory. Obviously, the call to `flush` in function `useStream` is pointless if the output stream is `std::cout` or a string stream, but that call is made only once and thus may be acceptable.
+Even when flushing is required, endeavor to use the [`flush`](https://en.cppreference.com/w/cpp/io/basic_ostream/flush) member function
+to make flushing apparent and to potentially improve performance as shown in the code example below. Obviously, the call to `flush` in 
+function `useStream` is pointless if the output stream is `std::cout` or a string stream, but that call is made only once and thus may 
+be acceptable. (In fact, flushing is unnecessary for any kind of stream because the stream is flushed when it is closed.)
 
 ```cpp
 #include <iostream>
@@ -22,7 +29,7 @@ void useStream(std::ostream& out);
 int main()
 {
    char c;
-   std::cout << "Choose destination: f for file; anything else for console: ";
+   std::cout << "Pick destination: f for file; anything else for console: ";
    std::cin >> c;
 
    if (c == 'f')
@@ -35,18 +42,20 @@ int main()
 }
 
 
-//write some numbers to an output stream, inserting a linebreak after each number
+//write some numbers to an output stream
+//insert a line break after each number, but don't flush
+//flush once at end
 void useStream(std::ostream& out)
 {
    for (int i = 0; i < 6; ++i)
       out << i << '\n'; //insert line break without flushing
 
-   out.flush(); //flush once at end (this too may be unnecessary, even for files)
+   out.flush();
 }
 ```
 ---
-:warning: It might seem that `if-else` statements in the example could be condensed as follows, but that
-is not possible because a necessary constructor is unavailable in class`std::basic_ostream`.
+:warning: It might seem that the `if-else` statements in the example could be condensed as follows, but that
+is not possible because the class`std::basic_ostream` does not support a necessary constructor.
 
 ```cpp
 useStream(c == 'f' ? std::ofstream("sample.txt") : std::cout);
