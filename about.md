@@ -7,7 +7,7 @@ SIGCPP is the Special Interest Group on C++. The primary goal of the SIG is to l
 
 Although activities focus on C++, much of the material should translate to comparable languages such as Java and C\#.
 
-SIGCPP is founded by and moderated by [Sean Murthy](https://github.com/smurthys).
+SIGCPP was formed by [Sean Murthy](https://github.com/smurthys) in May 2018.
 
 ### **Activities**
 
