@@ -29,7 +29,9 @@
 
       <section>
         <div class="page-date">{{ page.date | date_to_string }}</div>
-        <h2 class="page-title">{{ page.title }}</h2>
+        {% if page.title %}
+          <h2 class="page-title">{{ page.title }}</h2>
+        {% endif %}
         {{ content }}
       </section>
 
