@@ -1,8 +1,8 @@
 - name: Home
   link: /
-- name: About
-  link: /about
 - name: Resources
   link: /resources
+- name: About
+  link: /about
 - name: Credits
   link: /credits  
