@@ -2,15 +2,14 @@
 layout: page
 ---
 <ul class="posts">
-	{% for post in site.posts %}
+	
+	{% comment %} use loop variable name "page" instead of "post" to reuse include files {% endcomment %} 
+	{% for page in site.posts %}	
 	<li>
-		<div class = "page-date">{{ post.date | date_to_string }}</div>
-		<h2 class="page-title">
-			<a href="{{ post.url }}" title="{{ post.title }} ">{{ post.title }}</a>
-		</h2>
-		{{ post.excerpt }}
-		
-		<p><a href="{{ post.url }}" title="Go to the full post">More &gt;&gt;</a>
+		{% include page-date.html %}
+		{% include page-title.html %}
+		{{ page.excerpt }}
+		<p><a href="{{ page.url }}" title="Go to the full post">More &gt;&gt;</a>
 	</li>
 	{% endfor %}
 </ul>
