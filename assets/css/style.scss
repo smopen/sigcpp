@@ -3,6 +3,16 @@
 
 @import "{{ site.theme }}";
 
+/*! 
+* style.scss
+* Sean Murthy, Caleb Garrick
+* 
+* Customize style (override theme's style)
+*
+* This prologue comment should stay here: do NOT move to top of file
+* - file should begin with Jekyll frontmatter
+*/
+
 header {
   width:auto;
   float:none;
