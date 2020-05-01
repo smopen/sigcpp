@@ -9,7 +9,7 @@ layout: page
 		{% include page-date.html %}
 		{% include page-title-with-anchor.html %}
 		{{ page.excerpt }}
+		<p><a href="{{ page.url }}" title="Go to the full post">More &gt;&gt;</a></p>
 	</li>
-	<a href="{{ page.url }}" title="Go to the full post">More &gt;&gt;</a>
 	{% endfor %}
 </ul>
