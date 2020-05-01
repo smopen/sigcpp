@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 title: "Avoid using std::endl to insert line breaks"
 date: 2020-04-18
 excerpt_separator: <!--excerpt-->
