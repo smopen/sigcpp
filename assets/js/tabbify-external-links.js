@@ -1,5 +1,5 @@
 /*
-* tabbify-external-links.js
+* set-external-link-target.js
 * Sean Murthy
 *
 * Change the target attribute of all external links to "_blank"
@@ -7,7 +7,7 @@
 *
 * Include this script after html body so that all links are examined (at once) 
 *
-* Solution source: https://stackoverflow.com/a/4425214
+* Core solution from: https://stackoverflow.com/a/4425214
 */
 
 var links = document.links;
