@@ -2,5 +2,24 @@ name: sigcpp
 title: sigcpp
 description: Special Interest Group on C++
 permalink: /:year/:month/:day/:title
-
 theme: jekyll-theme-dinky
+
+defaults:
+  - 
+    scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "page"
+  - 
+    scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+      excerpt_separator: <!--more-->
+  - 
+    scope:
+      path: ""
+    values:
+      layout: "default"
