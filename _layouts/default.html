@@ -1,26 +1,26 @@
 <!DOCTYPE html>
 <html lang="{{ site.lang | default: "en-US" }}">
 
-  {% include html-head.html %}
+    {% include html-head.html %}
 
-  <body>
-    <div class="wrapper">
-      {% include page-header.html %}
+    <body>
+      <div class="wrapper">
+        {% include page-header.html %}
 
-      <section>
-        {{ content }}
-      </section>
+        <section>
+          {{ content }}
+        </section>
 
-      {% include page-footer.html %}
-    </div>
+        {% include page-footer.html %}
+      </div>
 
-    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+      <!--[if !IE]><script>fixScale(document);</script><![endif]-->
 
-    {% include site-analytics.html %}
+      {% include site-analytics.html %}
 
-  </body>
+    </body>
 
-  <!--make external links open in a new tab/window-->
-  <script src="/assets/js/set-external-link-target.js"></script>
+    <!--make external links open in a new tab/window-->
+    <script src="/assets/js/set-external-link-target.js"></script>
 
   </html>
