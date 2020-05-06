@@ -1,6 +1,8 @@
 ---
 title: "Exploring C-strings"
 date: 2020-03-30
+authors:
+- smurthys
 ---
 
 This post discusses the use of C-strings in C++. It defines the terms C-string and NTBS 
