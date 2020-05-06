@@ -1,6 +1,6 @@
 ---
 title: "Exploring C-strings"
-date: 2020-03-30
+date: 2020-04-21
 ---
 
 This post discusses the use of C-strings in C++ and highlights a subtle difference between C-strings 
