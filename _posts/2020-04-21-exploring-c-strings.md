@@ -15,7 +15,7 @@ light-weight wrapper `std::string_view`.
 ### Terms
 
 In C++, the informal term *C-string* is used to mean the "string" data structure defined in the C 
-programming language as follows [[§ 7.1.1](https://web.archive.org/web/20181230041359if_/http://www.open-std.org/jtc1/sc22/wg14/www/abq/c17_updated_proposed_fdis.pdf)]: 
+programming language as follows [[7.1.1](https://web.archive.org/web/20181230041359if_/http://www.open-std.org/jtc1/sc22/wg14/www/abq/c17_updated_proposed_fdis.pdf)]: 
 
 > A *string* is a contiguous sequence of characters terminated by and including the first null 
 > character.
