@@ -68,13 +68,13 @@ C-strings. The end-of-line comments provide additional information for each arra
 is a C-string.
 
 ```cpp
-char s1[]{'h','e','\0'}; // C-string; bound 3; length 2; explicit null char at position 3
+char s1[]{'h','e','\0'}; // C-string; bound 3; length 2; explicit null at position 3
 char s2[]{'h','e','r'};  // not C-string; bound 3; no null char
 
 char s3[7];              // not C-string; bound 7; no null char
 
-char s4[]{"he"};         // C-string; bound 3; length 2; automatic null char at position 3
-char s5[8]{"he"};        // C-string; bound 8; length 2; automatic null char at position 3
+char s4[]{"he"};         // C-string; bound 3; length 2; auto null at position 3
+char s5[8]{"he"};        // C-string; bound 8; length 2; auto null at position 3
 ```
 
 ### Being a C-string is a property of a `char` array
@@ -156,13 +156,13 @@ C-string.
 
 int main() 
 {
-    char s7[]{'h','e','\0','r','\0'};     // multiple explicit null chars
-    char s8[]{"hello\0World"};            // multiple null chars: one explicit, one implicit
+    char s7[]{'h','e','\0','r','\0'};     // two explicit null chars
+    char s8[]{"hello\0World"};            // explicit and implicit null chars
     char s9[]{'h','e','r','\0','s'};      // misplaced null char
     
-    std::cout << s7 << '\n';              // prints "he": ignores chars after position 2
-    std::cout << std::strlen(s8) << '\n'; // prints 5: ignores chars after position 5
-    std::cout << std::strlen(s9) << '\n'; // prints 3: ignores chars after position 4
+    std::cout << s7 << '\n';              // "he": ignores chars after position 2
+    std::cout << std::strlen(s8) << '\n'; // 5: ignores chars after position 5
+    std::cout << std::strlen(s9) << '\n'; // 3: ignores chars after position 4
 }
 ```
 
