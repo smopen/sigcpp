@@ -3,9 +3,9 @@ title: "Exploring C-strings"
 date: 2020-03-30
 ---
 
-This post discusses the use of C-strings in C++. It defines C-string, NTBS, (*null-terminated byte 
-string*) and other related terms; discusses C-string literals and variables; outlines common 
-patterns of C-string usage; and highlights a subtle difference between C-strings and NTBSs.  
+This post discusses the use of C-strings in C++. It defines the terms C-string and NTBS; discusses 
+C-string literals and variables; outlines common patterns of C-string usage; and highlights a 
+subtle technical difference between C-strings and NTBSs.
 
 But first, some advice: Avoid using C-strings in C++, and instead use `std::string` where possible.
 However, there are situations where C-strings can provide better performance over `std::string`, 
@@ -16,7 +16,7 @@ light-weight wrapper `std::string_view`.
 ### Terms
 
 In C++, the informal term *C-string* is used to mean the "string" data structure defined in the C 
-programming language. C defines a string as follows [[7.1.1](https://web.archive.org/web/20181230041359if_/http://www.open-std.org/jtc1/sc22/wg14/www/abq/c17_updated_proposed_fdis.pdf)]: 
+programming language [[7.1.1](https://web.archive.org/web/20181230041359if_/http://www.open-std.org/jtc1/sc22/wg14/www/abq/c17_updated_proposed_fdis.pdf)]: 
 
 > A *string* is a contiguous sequence of characters terminated by and including the first null 
 > character.
@@ -25,8 +25,8 @@ Here, the term *null character* refers to the character whose integer code is 0.
 is the null character. It is different from the literal `'0'` whose integer code is 48.
 
 In contrast to C, a *string* in C++ is an abstract sequence of characters without regard for how the
-characters are represented or terminated. However, C++ defines the related term *null-terminated byte 
-string* as follows [[byte.strings](https://timsong-cpp.github.io/cppwp/n4659/byte.strings)]:
+sequence is represented or terminated. However, C++ defines the related term *null-terminated byte 
+string* [[byte.strings](https://timsong-cpp.github.io/cppwp/n4659/byte.strings)]:
 
 > A *null-terminated byte string*, or NTBS, is a character sequence whose highest-addressed element 
 > with defined content has the value zero (the *terminating null* character); no other element in 
@@ -51,8 +51,8 @@ compiler automatically places the null character after the last character inside
 
 There is no data type called C-string. Instead, the type of a C-string is `char` array of the 
 appropriate bound, where *bound* is the declared number of array elements (aka "array size" or 
-"array capacity"). The array type is `const` qualified for C-string literals. For example, the type 
-of the literal `"hello"` is `const char[6]` because storing that literal requires six characters 
+"array capacity"). The array type is `const` qualified for literals. For example, the type of the 
+literal `"hello"` is `const char[6]` because storing that literal requires six characters 
 including the null character.
 
 The length of the literal `"hello"` is five, which is the number of characters preceding the null 
@@ -79,10 +79,10 @@ char s5[8]{"he"};        // C-string; bound 8; length 2; automatic null char at 
 
 ### Being a C-string is a property of a `char` array
 
-Being a C-string is just a property of a character array based on whether it meets the requirements 
-of containing the null character, and this property can change over time for an array within the 
-program. That is, a character array could be a C-string at one point in the program, and not be a 
-C-string at another point in the same program. The following code segment illustrates this 
+Being a C-string is just a property of a character array based on whether the array meets the 
+requirement of containing the null character, and this property can change over time for an array 
+within the program. That is, a character array could be a C-string at one point in the program, and 
+not be a C-string at another point in the same program. The following code segment illustrates this 
 possibility.
 
 ```cpp
@@ -105,24 +105,24 @@ expectation that the caller passes a pointer to the first character of the C-str
 necessary to also receive the C-string's length because the function can use the null character to 
 detect end of data.
 
-Here are the declarations of some common C-string functions:
+Here are the declarations for some common C-string functions:
 
 ```cpp
-std::size_t strlen(const char* s);            // find C-string length 
-char* strcpy(char* dest, const char* src);    // copy a C-string to another
-int strcmp(const char *lhs, const char *rhs); // compare two C-strings
+std::size_t strlen(const char* s);          // find C-string length 
+char* strcpy(char* dest, const char* src);  // copy a C-string to another
+int strcmp(const char *s1, const char *s2); // compare two C-strings
 ```
 
-**Note:** For safety and other reasons, prefer `std::string` when working with character data. If 
-you must use a C-string, consider using it with the light-weight wrapper `std::string_view`.
+**Reminder:** For safety and other reasons, prefer `std::string` when working with character data. 
+If you must use a C-string, consider using it with the light-weight wrapper `std::string_view`.
 
 ### C-string Vs NTBS
 
 For all practical purposes, a C-string is the same as an NTBS, but a careful examination of their 
-respective definitions exposes a subtle difference.
+respective definitions reveals a subtle difference.
 
 From C's definition of a string, it is clear that a C-string may include multiple null characters, 
-but a C-string is deemed to have ended as soon as the first null character is seen. Thus, we could 
+but the string is deemed to have ended as soon as the first null character is seen. Thus, we could 
 say a C-string is a character array with at least once occurrence of the null character.
 
 > A *string* is a contiguous sequence of characters terminated by and including the first null 
@@ -166,7 +166,9 @@ int main()
 }
 ```
 
-**Quiz:** Strictly adhering to the definitions of C-string and NTBS:
+### Quiz
+
+Strictly adhering to the definitions of C-string and NTBS:
 1. Which of the following declarations create C-strings? 
 2. Which declarations create NTBSs? 
 3. What is the bound of each array declared?
