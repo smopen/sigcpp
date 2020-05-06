@@ -24,11 +24,9 @@ Part of the solution based on: https://stackoverflow.com/a/15208484
         </a>
     {% endif %}
 
-    {% if authorCount > 1 %}
-        {% unless forloop.last %}
-            {{ ,&nbsp; }}
-        {% endunless %}
-    {% endif %}
+    {% unless forloop.last %}
+        {{ ,&nbsp; }}
+    {% endunless %}
 
 {% endfor %}
 </p>
