@@ -3,9 +3,9 @@ title: "Exploring C-strings"
 date: 2020-03-30
 ---
 
-This post discusses the use of C-strings in C++. It defines the terms C-string and NTBS; discusses 
-C-string literals and variables; outlines common patterns of C-string usage; and highlights a 
-subtle technical difference between C-strings and NTBSs.
+This post discusses the use of C-strings in C++. It defines the terms C-string and NTBS 
+(*null-terminated byte string*); discusses C-string literals and variables; outlines common patterns
+of C-string usage; and highlights a subtle technical difference between C-strings and NTBSs.
 
 But first, some advice: Avoid using C-strings in C++, and instead use `std::string` where possible.
 However, there are situations where C-strings can provide better performance over `std::string`, 
