@@ -168,7 +168,7 @@ int main()
 
 ### Quiz
 
-Strictly adhering to the definitions of C-string and NTBS:
+Strictly following to the definitions of C-string and NTBS:
 1. Which of the following declarations create C-strings? 
 2. Which declarations create NTBSs? 
 3. What is the bound of each array declared?
