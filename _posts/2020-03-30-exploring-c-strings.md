@@ -168,16 +168,19 @@ int main()
 
 ### Quiz
 
-Strictly following to the definitions of C-string and NTBS:
+Strictly following the definitions of C-string and NTBS:
 1. Which of the following declarations create C-strings? 
 2. Which declarations create NTBSs? 
-3. What is the bound of each array declared?
-4. What is the length of each C-string created?
+3. Which declarations create both a C-string and an NTBS?
+4. What is the bound of each array declared?
+5. What is the length of each C-string or NTBS created?
+6. Independent of the declarations shown: Is every NTBS also a C-string? Is every C-string also 
+   an NTBS?
 
 (The empty initializer `{}` in an array declaration writes the number zero to all array elements.)
 
 ```cpp
-char s10[]{'h', 'e'};
+char s10[]{'h','e'};
 char s11[]{"he\0"};
 char s12[4]{};
 char s13[1]{};
