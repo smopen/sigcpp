@@ -1,5 +1,5 @@
 ---
-title: "Exploring C-strings"
+title: "Working with C-strings"
 date: 2020-03-30
 ---
 
