@@ -1,10 +1,10 @@
 <p>
-    {% assign authorCount = page.authors | size %}
-    {% for author in page.authors %}
-        {% assign member = site.data.members[author] %}
-        {% if member.web %}<a href="{{ member.web}} ">{% endif %}
+    {%- assign authorCount = page.authors | size -%}
+    {%- for author in page.authors -%}
+        {%- assign member = site.data.members[author] -%}
+        {%- if member.web -%}<a href="{{ member.web}} ">{%- endif -%}
             {{ member.name }}
-        {% if member.web %}</a>{% endif %}
-        {% unless forloop.last %},&nbsp;{% endunless %}
-    {% endfor %}
+        {%- if member.web -%}</a>{%- endif -%}
+        {%- unless forloop.last -%},&nbsp;{%- endunless -%}
+    {%- endfor -%}
 </p>
