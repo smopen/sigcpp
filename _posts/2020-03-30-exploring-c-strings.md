@@ -156,8 +156,7 @@ C-string.
 #include <iostream>
 #include <cstring>
 
-int main() 
-{
+int main() {
     char s7[]{'h','e','\0','r','\0'};     // two explicit null chars
     char s8[]{"hello\0World"};            // explicit and implicit null chars
     char s9[]{'h','e','r','\0','s'};      // misplaced null char
@@ -186,4 +185,5 @@ char s10[]{'h','e'};
 char s11[]{"he\0"};
 char s12[4]{};
 char s13[1]{};
+char* s14;
 ```
