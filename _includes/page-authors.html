@@ -1,12 +1,5 @@
-{% comment %}
-    merge page.authors and page.author so that either tag could be used in the frontmatter
-    - natural to use "author" tag if just one author; "authors" tag if multiple authors
-    - Example use of the tags follow:
-    - author: walle
-    - authors: [walle, jillk]
-{% endcomment %}
 <p>
-    {%- for author in page.authors | page.author | uniq -%}
+    {%- for author in page.authors -%}
         {%- assign member = site.data.members[author] -%}
         
         {%- if member.web -%}
