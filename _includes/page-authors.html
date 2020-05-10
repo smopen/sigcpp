@@ -2,15 +2,7 @@
     {%- for author in page.authors -%}
         {%- assign member = site.data.members[author] -%}
         
-        {%- if member.web -%}
-            <a href="{{ member.web}} ">
-        {%- endif -%}
-        
-        {{ member.name }}
-        
-        {%- if member.web -%}
-            </a>
-        {%- endif -%}
+        {% include page-member-name-anchored.html %}
         
         {%- unless forloop.last -%}
             ,&nbsp;
