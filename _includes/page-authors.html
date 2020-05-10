@@ -1,5 +1,5 @@
 <p>
-    {%- for author in page.authors | split: ", " -%}
+    {%- for author in page.authors -%}
         {%- assign member = site.data.members[author] -%}
         
         {%- if member.web -%}
