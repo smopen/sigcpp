@@ -19,8 +19,8 @@ to make flushing apparent and to potentially improve performance as shown in fun
 in function `useStream` would be pointless if the output stream is `std::cout` or a string stream, but that call is made only once and
 thus may be acceptable. 
 
-By the way, flushing is unnecessary for any kind of stream because the stream is automatically flushed when it is closed or when the
-associated memory buffer becomes full. Thus, call the `flush` function only if you really need to ensure data reaches its final 
+By the way, explicit flushing is unnecessary for any kind of stream because the stream is automatically flushed when it is closed or
+when the associated memory buffer becomes full. Thus, call the `flush` function only if you really need to ensure data reaches its final 
 destination at that particular point in the program.
 
 ```cpp
@@ -29,18 +29,15 @@ destination at that particular point in the program.
 
 void useStream(std::ostream& out);
 
-int main()
-{
+int main() {
    char c;
    std::cout << "Choose destination: f for file; anything else for console: ";
    std::cin >> c;
 
-   if (c == 'f')
-   {
+   if (c == 'f') {
       std::ofstream f("sample.txt");
       useStream(f);
-   }
-   else
+   } else
       useStream(std::cout);
 }
 
@@ -48,12 +45,11 @@ int main()
 //write some numbers to an output stream
 //insert a line break after each number, but don't flush
 //flush once at end
-void useStream(std::ostream& out)
-{
+void useStream(std::ostream& out) {
    for (int i = 0; i < 6; ++i)
       out << i << '\n';
 
-   out.flush();
+   out.flush(); //even this flush is unnecessary in most cases
 }
 ```
 ---
