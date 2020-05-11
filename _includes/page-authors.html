@@ -1,3 +1,9 @@
+{% comment %}
+    "authors" tag in the front matter can have a single value or an array value. No quotes needed. 
+    Examples follow:
+    authors: walle
+    authors: [walle, jillk]
+{% endcomment %}
 <p>
     {%- for author in page.authors -%}
         {%- assign member = site.data.members[author] -%}
