@@ -2,8 +2,10 @@
 <html lang="{{ site.lang | default: "en-US" }}">
 
     {% include html-head.html %}
+    
+    <script src="/assets/js/set-external-link-target.js"></script>
 
-    <body>
+    <body onload="setExternalLinkTarget()">
       <div class="wrapper">
         {% include page-header.html %}
 
@@ -19,8 +21,5 @@
       {% include site-analytics.html %}
 
     </body>
-
-    <!--make external links open in a new tab/window-->
-    <script src="/assets/js/set-external-link-target.js"></script>
 
   </html>
