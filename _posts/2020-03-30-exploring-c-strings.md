@@ -186,5 +186,7 @@ char s10[]{'h','e'};
 char s11[]{"he\0"};
 char s12[4]{};
 char s13[1]{};
-char* s14;
+char* p1 = s12;
+char* p2 = s13;
+char* p3;
 ```
