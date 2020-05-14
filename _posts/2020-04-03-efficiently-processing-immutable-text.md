@@ -12,8 +12,8 @@ to perform read-only operations on character arrays, including
 read-only operations on text data can improve execution speed as well as reduce both
 main-memory usage and executable size.
 
-This is Part 1 of a 2-part series on `std::string_view`. This part focuses on efficiency
-of `std::string_view` over `std::string`. Part 2 focuses on safety and provides some
+This is Part 1 of a 2-part series on `std::string_view`: Part 1 focuses on efficiency of
+`std::string_view` over `std::string`. Part 2 focuses on safety and provides some
 guidelines on when to use `std::string_view`.
 <!--more-->
 
