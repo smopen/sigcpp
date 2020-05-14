@@ -4,9 +4,10 @@ date: 2020-04-03
 authors: smurthys
 ---
 
-Introduced in C++17, the STL class `std::string_view` provides more efficient ways than
-`std::string` to process immutable (read only) text data. `std::string_view` also
-provides a safer means to perform read-only operations on character arrays, including
+Introduced in C++17, the STL class [`std::string_view`](https://en.cppreference.com/w/cpp/string/basic_string_view)
+provides more efficient ways than [`std::string`](https://en.cppreference.com/w/cpp/string/basic_string)
+to process immutable (read only) text data. `std::string_view` also provides a safer means
+to perform read-only operations on character arrays, including
 [C-strings](/2020/03/30/exploring-c-strings). Overall, using `std::string_view` for
 read-only operations on text data can improve execution speed as well as reduce both
 main-memory usage and executable size.
@@ -30,13 +31,14 @@ A string_view object can be created using one of its [five constructors](https:/
 5. Custom constructor which accepts a range of characters as iterators
 
 A string_view object can also be constructed from or be assigned from a `std::string`
-object because `std::string` defines an operator to return a string_view version of a
-string object. For example, the following creation operations are permitted:
+object because `std::string` defines an [operator](https://en.cppreference.com/w/cpp/string/basic_string/operator_basic_string_view)
+to return a string_view version of a string object. For example, the following creation
+operations are permitted:
 
 ```cpp
 std::string s;
-std::string_view sv1(s);
-std::string_view sv2 = s;
+std::string_view sv1(s);  // initialize string_view from string using copy ctor
+std::string_view sv2 = s; // initialize string_view by assigning a string
 ```
 
 ### Creation efficiency
@@ -71,7 +73,7 @@ calls to elaborate functions which can reduce execution speed. For example, List
 shows a program to measure the elapsed wall time to create 500,000 empty objects using
 both the string and string_view approaches. The exact elapsed time can vary across runs,
 but the results from this program consistently show that the string approach is an order
-of magnitude slower than the string_view approach (for example, 5 msecs Vs 0.7 msecs).
+of magnitude slower than the string_view approach (for example, 5 msecs versus 0.7 msecs).
 
 ---
 
@@ -137,18 +139,18 @@ In short, `std::string_view` is designed to be a drop-in replacement for `std::s
 far as read-only operations are concerned. However, some of the string_view operations
 are more efficient than their string counterparts. For example, the function `substr` to
 return a substring is more efficient because its return value is a new string_view
-object which we have already established is faster to create than creating a new string
-object.
+object which we have already established is more efficient to create than creating a new
+string object.
 
 Listing B shows a program to extract space-delimited words from some text. It is written
 using `std::string_view`, but the program works if the type name `std::string_view` is
-replaced with `std::string_view` throughout the program, and the `<string>` header is
+replaced with `std::string` throughout the program, and the `<string>` header is
 included instead of the `<string_view>` header.
 
 If the word-extraction in Listing B is performed a large number of times
 ([a simple version](https://godbolt.org/z/A6zDw_), [a templatized version](https://godbolt.org/z/jbYe2B))
 using both string and string_view approaches, it becomes apparent that the string
-approach is slower (1.25-3 times) than the string_view approach.
+approach is slower (25%-150%) than the string_view approach.
 
 (The linked code causes two compiler warnings that are not addressed for simplicity. I
 highly recommend reading Jonathan Boccara's post on
@@ -194,13 +196,14 @@ the part of the array on which the string_view can operate. Function `remove_pre
 advances the data pointer by the specified number of positions and also reduces size by
 the same amount. In contrast, `remove_suffix` leaves the data pointer unchanged but
 reduces size by the specified number. This simple approach to modification provides
-string_view considerable efficiency over the function `erase` defined for string objects.
+string_view considerable efficiency over the function [`erase`](https://en.cppreference.com/w/cpp/string/basic_string/erase)
+defined for string objects.
 
 **Note:** It is **not** possible to restore the range of the array once it is reduced
 using either `remove_prefix` or `remove_suffix`.  
 
 Listing C shows a program to extract space-delimited words from a string_view using
-function `remove_prefix`. A comparison with Listing B shows that Listing C is a bit more
+function `remove_prefix`. A comparison with Listing B shows that Listing C is a bit
 easier to read and maintain. However, a [comparison of the approaches in Listings B and C](https://godbolt.org/z/GzkhvA)
 shows that Listing B's approach is *marginally* faster (1%-2%). This behavior is
 expected because `remove_prefix` in Listing C does more work than Listing B does in
@@ -233,13 +236,13 @@ int main() {
 ---
 
 With strings, word extraction by modification is similar to what is shown in Listing C
-except the call to `remove_prefix` needs to be replaced with a call to function [`erase`](https://en.cppreference.com/w/cpp/string/basic_string/erase).
+except the call to `remove_prefix` needs to be replaced with a call to function `erase`.
 
 A [comparison](https://godbolt.org/z/gjqer2) of word-extraction through modification in
-the string and string_view approaches shows the string approach is slightly slower
-(1.2-2.5 times).
+the string and string_view approaches shows that the string approach is slightly slower
+(20%-160%).
 
-### Summary
+### Part-1 Summary
 
 Overall, `std::string_view` provides more efficient ways to process immutable data than
 `std::string` does. This efficiency is seen in object creation, general processing, and
