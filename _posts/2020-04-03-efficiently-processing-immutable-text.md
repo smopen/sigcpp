@@ -37,8 +37,8 @@ operations are permitted:
 
 ```cpp
 std::string s;
-std::string_view sv1(s);  // initialize string_view from string using copy ctor
-std::string_view sv2 = s; // initialize string_view by assigning a string
+std::string_view sv1(s);  // initialize from string using copy ctor
+std::string_view sv2 = s; // initialize by assigning a string
 ```
 
 ### Creation efficiency
