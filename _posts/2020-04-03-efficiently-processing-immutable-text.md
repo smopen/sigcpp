@@ -148,13 +148,14 @@ replaced with `std::string` throughout the program, and the `<string>` header is
 included instead of the `<string_view>` header.
 
 If the word-extraction in Listing B is performed a large number of times
-([a simple version](https://godbolt.org/z/A6zDw_), [a templatized version](https://godbolt.org/z/jbYe2B))
+([a simple version](https://godbolt.org/z/fGaPj5), [a templatized version](https://godbolt.org/z/6FnfcS))
 using both string and string_view approaches, it becomes apparent that the string
 approach is slower (25%-150%) than the string_view approach.
 
-(The linked code causes two compiler warnings that are not addressed for simplicity. I
-highly recommend reading Jonathan Boccara's post on
-[disabling compiler warnings](https://www.fluentcpp.com/2019/08/30/how-to-disable-a-warning-in-cpp/).)
+(For simplicity, the linked code uses command-line compiler options to suppresses compiler
+warnings about unused variables. I highly recommend reading Jonathan Boccara's post on
+selectively [disabling compiler warnings](https://www.fluentcpp.com/2019/08/30/how-to-disable-a-warning-in-cpp/)
+within the code.)
 
 ---
 
@@ -204,7 +205,7 @@ using either `remove_prefix` or `remove_suffix`.
 
 Listing C shows a program to extract space-delimited words from a string_view using
 function `remove_prefix`. A comparison with Listing B shows that Listing C is a bit
-easier to read and maintain. However, a [comparison of the approaches in Listings B and C](https://godbolt.org/z/GzkhvA)
+easier to read and maintain. However, a [comparison of the approaches in Listings B and C](https://godbolt.org/z/XsvGf4)
 shows that Listing B's approach is *marginally* faster (1%-2%). This behavior is
 expected because `remove_prefix` in Listing C does more work than Listing B does in
 changing the value of variable `lastPos`. Yet, with the increase in execution speed
@@ -238,7 +239,7 @@ int main() {
 With strings, word extraction by modification is similar to what is shown in Listing C
 except the call to `remove_prefix` needs to be replaced with a call to function `erase`.
 
-A [comparison](https://godbolt.org/z/gjqer2) of word-extraction through modification in
+A [comparison](https://godbolt.org/z/53RF7r) of word-extraction through modification in
 the string and string_view approaches shows that the string approach is slightly slower
 (20%-160%).
 
