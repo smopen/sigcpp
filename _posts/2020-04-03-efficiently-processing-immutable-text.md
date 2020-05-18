@@ -7,7 +7,7 @@ authors: smurthys
 Introduced in C++17, the STL class `std::string_view` provides more efficient ways than
 `std::string` to process immutable (read only) text data. `std::string_view` also
 provides a safer means to perform read-only operations on character arrays, including
-[C-strings]({% post_url 2020-03-30-exploring-strings %}). Overall, using `std::string_view` for
+[C-strings]( {% post_url 2020-03-30-exploring-strings %} ). Overall, using `std::string_view` for
 read-only operations on text data can improve execution speed as well as reduce both
 main-memory usage and executable size.
 
