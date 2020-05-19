@@ -152,10 +152,10 @@ If the word-extraction in Listing B is performed a large number of times
 using both string and string_view approaches, it becomes apparent that the string
 approach is slower (25%-150%) than the string_view approach.
 
-(For simplicity, the linked code uses command-line compiler options to suppresses compiler
-warnings about unused variables. I highly recommend reading Jonathan Boccara's post on
-selectively [disabling compiler warnings](https://www.fluentcpp.com/2019/08/30/how-to-disable-a-warning-in-cpp/)
-within the code.)
+(For simplicity, the links included in the preceding paragraph use command-line compiler
+options to suppress warnings about unused variables. I highly recommend reading Jonathan
+Boccara's post on [selectively disabling compiler warnings](https://www.fluentcpp.com/2019/08/30/how-to-disable-a-warning-in-cpp/)
+within code.)
 
 ---
 
