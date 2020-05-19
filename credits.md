@@ -2,22 +2,24 @@
 title: "Credits"
 ---
 
-We are grateful for the people (whose work) and docs we frequently consult and the tools we routinely use. If you find SIGCPP useful, please consider supporting these people and tools:
+We are grateful for the people (whose work) and docs we frequently consult, and the tools we routinely use:
 
 ### C++
+
 - [Compiler Explorer](https://godbolt.org/z/CS8SRJ)
 - [C++ Insights](https://cppinsights.io/s/e030183f)
+- [Quick C++ Benchmark](http://quick-bench.com/)
 - [Tim Song's compilation of C++ drafts](https://github.com/timsong-cpp/cppwp)
 - [C++ Reference](https://en.cppreference.com)
 
-
 ### Web site
+
 - Hosted on [GitHub Pages](https://pages.github.com)
 - Built using a modified version of Jekyll theme [Dinky](https://github.com/pages-themes/dinky)
 - [Jekyll](https://jekyllrb.com/docs/) 
 - [Jonathan McGlone](http://jmcglone.com/guides/github-pages/)
 
-
 ### Meetings and Communication
+
 - [Microsoft Teams](https://teams.microsoft.com)
 - [Twitter](https://twitter.com/sigcpp)
