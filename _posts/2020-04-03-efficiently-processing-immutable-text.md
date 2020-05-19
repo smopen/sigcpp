@@ -154,8 +154,8 @@ approach is slower (25%-150%) than the string_view approach.
 
 (For simplicity, the links included in the preceding paragraph use command-line compiler
 options to globally suppress warnings about some unused variables. However, it is better
-to consciously suppress warnings locally within code. See [Jonathan Boccara's post](https://www.fluentcpp.com/2019/08/30/how-to-disable-a-warning-in-cpp/)
-on selectively disabling compiler warnings within code.
+to selectively suppress warnings locally from within code. See [Jonathan Boccara's post](https://www.fluentcpp.com/2019/08/30/how-to-disable-a-warning-in-cpp/)
+on this topic.)
 
 ---
 
