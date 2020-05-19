@@ -8,9 +8,9 @@ Introduced in C++17, the STL class [`std::string_view`](https://en.cppreference.
 provides more efficient ways than [`std::string`](https://en.cppreference.com/w/cpp/string/basic_string)
 to process immutable (read only) text data. `std::string_view` also provides a safer means
 to perform read-only operations on character arrays, including
-[C-strings]( {{ '/2020/03/30/exploring-c-strings' | relative_url }} ). Overall, using `std::string_view` for
-read-only operations on text data can improve execution speed as well as reduce both
-main-memory usage and executable size.
+[C-strings]( {{ '/2020/03/30/exploring-c-strings' | relative_url }} ). Overall, using
+`std::string_view` for read-only operations on text data can improve execution speed as
+well as reduce both main-memory usage and executable size.
 
 This is Part 1 of a 2-part series on `std::string_view`: Part 1 focuses on efficiency of
 `std::string_view` over `std::string`. Part 2 focuses on safety and provides some
@@ -148,14 +148,14 @@ replaced with `std::string` throughout the program, and the `<string>` header is
 included instead of the `<string_view>` header.
 
 If the word-extraction in Listing B is performed a large number of times
-([a simple version](https://godbolt.org/z/fGaPj5), [a templatized version](https://godbolt.org/z/6FnfcS))
+([a simple version](https://godbolt.org/z/sARC8Q), [a templatized version](https://godbolt.org/z/6FnfcS))
 using both string and string_view approaches, it becomes apparent that the string
 approach is slower (25%-150%) than the string_view approach.
 
 (For simplicity, the links included in the preceding paragraph use command-line compiler
-options to suppress warnings about unused variables. I highly recommend reading Jonathan
-Boccara's post on [selectively disabling compiler warnings](https://www.fluentcpp.com/2019/08/30/how-to-disable-a-warning-in-cpp/)
-within code.)
+options to globally suppress warnings about some unused variables. However, it is better
+to selectively suppress warnings locally from within code. See [Jonathan Boccara's post](https://www.fluentcpp.com/2019/08/30/how-to-disable-a-warning-in-cpp/)
+on this topic.)
 
 ---
 
