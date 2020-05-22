@@ -241,15 +241,27 @@ std::size_t vowel_count(std::string_view& sv) {
 ### Exercises
 
 1. Answer the questions embedded in the bulleted list in the summary section.
-2. Write a C-string version of [Listing B of Part 1]( {{ '/2020/04/03/efficiently-processing-immutable-text#listing-b-extract-space-delimited-words-run-this-code' | relative_url }} )
+2. Rewrite the string_view version of function `vowel_count` using the string-view
+   member function [`find_first_of`](https://en.cppreference.com/w/cpp/string/basic_string_view/find_first_of).
+   Which version is "better": the one in Listing D, or the rewritten one? Why?
+3. Write a C-string version of [Listing B of Part 1]( {{ '/2020/04/03/efficiently-processing-immutable-text#listing-b-extract-space-delimited-words-run-this-code' | relative_url }} )
    of this series.
-3. Write a program to extract words, where words may be separated by space, comma,
-   semi-colon, or period. Write both a C-string version and a string_view version.
-   - Do **not** use regular-expression or other facility that simplifies the task, but
-     feel free to use any other standard-library facility.
+4. Write a program to extract words from text, where words may be separated by space,
+   comma, semi-colon, or period. Write both a C-string version and a string_view version.
+   - Do **not** use regular-expression, stream extraction, or other approach that
+     simplifies the task, but feel free to use any other standard-library facility.
    - Break down the code into appropriate functions.
    - `const` qualify all variables/parameters that represent immutable text.
-   - Hard-code the following immutable text in the program and use it in testing (no
-     user input required):
+   - Hard-code the following immutable text in the program and use it in testing. Do
+     **not** read the text to process as user input at run time:
 
      `The quality mantra: improve the process; the process improves you.`
+
+   - Depending on the approach taken in the C-string version, hard-coding the text to
+     process as a `const` qualified variable/parameter could pose a challenge. Yet,
+     use a `const` qualified variable/parameter to represent the text to process exactly
+     as required in the preceding bullet.
+
+Contact [SIGCPP on Twitter](https://twitter.com/sigcpp) if you need clarifications on
+the exercises. Submit solutions by DM on Twitter (and only by DM). Place textual
+answers in GitHub repos or gists, and share Compiler-Explorer links to code.
