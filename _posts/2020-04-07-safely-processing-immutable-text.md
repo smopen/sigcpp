@@ -2,6 +2,7 @@
 title: "Safely processing immutable text"
 date: 2020-04-07
 authors: smurthys
+tweet_url: "https://sigcpp.github.io"
 ---
 
 This is Part 2 of a 3-part series on [`std::string_view`](https://en.cppreference.com/w/cpp/string/basic_string_view).
@@ -62,7 +63,7 @@ low-level C-style functions. For example, we could simply test if `sv1 > sv2`, i
 testing if `std::strcmp(z1, z2) > 0`, where `z1` and `z2` represent C-strings, and sv1
 and sv2 are corresponding string_view objects. Likewise, we can use the function member
 `find` instead of the low-level functions `std::strchr`, and `std::strstr`. (The
-string_view function `find` can find both single characters and multi-character texts.)
+string_view function `find` can find both single-character and multi-character texts.)
 
 The string_view approach also has the advantage that it works with any character array,
 not just with C-strings. As a result, there is no need to resort to using functions such
@@ -282,6 +283,4 @@ std::size_t vowel_count(const std::string_view& sv) {
      use a `const` qualified variable/parameter to represent the text to process exactly
      as required in the preceding bullet.
 
-Contact [SIGCPP on Twitter](https://twitter.com/sigcpp) if you need clarifications on
-the exercises. Submit solutions by DM on Twitter (and only by DM). Place textual
-answers in GitHub repos or gists, and share Compiler-Explorer links to code.
+{%- include twitter-submission.html -%}
