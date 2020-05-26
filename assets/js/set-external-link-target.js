@@ -1,3 +1,6 @@
+---
+---
+
 /*
 * set-external-link-target.js
 * Sean Murthy
