@@ -17,8 +17,8 @@ layout: blank
 */
 
 function setExternalLinkTarget() {
-    var new_window_image_path = "{{ /assets/images/new-window.png | relative_url }}";
-    var new_window_image_html = 'img src="' + new_window_image_path + '"/>';
+    var new_window_image_path = "{{ '/assets/images/new-window.png' | relative_url }}";
+    var new_window_image_html = '<img src="' + new_window_image_path + '"/>';
     var links = document.links;
     var host_name = window.location.hostname;
     
