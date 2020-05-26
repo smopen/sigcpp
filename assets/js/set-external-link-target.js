@@ -2,20 +2,28 @@
 * set-external-link-target.js
 * Sean Murthy
 *
-* Change the target attribute of all external links to "_blank"
+* Change the target attribute of external links to "_blank" and add a title and image
+* to inform the user that links open in a new tab
+* - include only links attached to "a" element
 * - exclude links that already have a target (to allow customization in source)
 *
-* Call function setExternalLinkTarget at document onload 
+* Function setExternalLinkTarget is expected to be called at document onload 
 *
-* Core solution from: https://stackoverflow.com/a/4425214
+* Core solution of identifying external links from: https://stackoverflow.com/a/4425214
 */
 
 function setExternalLinkTarget() {
+    var new_window_image_path = "{{ /assets/images/new-window.png | relative_url }}";
+    var new_window_image_html = 'img src="' + new_window_image_path + '"/>';
     var links = document.links;
-
+    var host_name = window.location.hostname;
+    
     for (var i = 0, linksLength = links.length; i < linksLength; i++) {
-        if (links[i].hostname != window.location.hostname && links[i].target.length == 0) {
-            links[i].target = '_blank';
-        } 
+        var link = links[i];
+        if (link.tagName == 'A' && link.hostname != host_name && link.target.length == 0) {
+            link.target = '_blank';
+            link.title = 'Opens in new tab';
+            link.parentElement.innerHTML += new_window_image_html;
+       }
     }
 }
