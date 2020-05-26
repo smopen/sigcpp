@@ -27,7 +27,7 @@ function setExternalLinkTarget() {
         if (link.tagName == 'A' && link.hostname != host_name && link.target.length == 0) {
             link.target = '_blank';
             link.title = 'Opens in new tab';
-            link.parentElement.innerHTML += new_window_image_html;
+            link.parentElement.innerHTML += " <small>&nearr;<small>";
        }
     }
 }
