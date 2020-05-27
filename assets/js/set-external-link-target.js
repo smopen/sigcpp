@@ -21,7 +21,7 @@ function setExternalLinkTarget() {
         if (anchor.hostname != host_name && anchor.target.length == 0) {
             anchor.target = '_blank';
             anchor.title = 'Opens in new tab';
-            anchor.insertAdjacentHTML('afterend', '<span class="external"> &nearr;</span>');
+            anchor.insertAdjacentHTML('afterend', '<span class="external">+</span>');
        }
     }
 }
