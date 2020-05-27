@@ -1,0 +1,68 @@
+---
+---
+
+/*! 
+* style.scss
+* Sean Murthy, Caleb Garrick
+* 
+* Customize style (override theme's style)
+*/
+
+@import "{{ site.theme }}";
+
+header {
+  width:auto;
+  float:none;
+  position:static;
+  margin-left: 10px;
+  padding: 10px 20px 0;
+}
+
+@media print, screen and (max-width: 960px){
+  header{padding:10px 20px 0;}
+  header ul{right:80px;top:93px}
+}
+
+@media print, screen and (max-width: 480px){
+  header li {width:auto;margin:0;padding:3px 3px 3px 4px;}
+}
+
+h1.header {
+  margin-bottom: 0px;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+footer {
+  float:none;
+}
+
+ul.posts { 
+  padding: 0px;
+}
+
+ul.posts li {
+  list-style: none;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+ul.posts li div.page-date, section div.page-date {
+  color: gray;
+  margin-bottom: 5px;
+}
+
+ul.posts li h2.page-title, section h2.page-title {
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+
+a + span.external {
+  vertical-align: super;
+  font-size: 70%;
+  color: blue;
+}
+
