@@ -60,8 +60,8 @@ ul.posts li h2.page-title, section h2.page-title {
   margin-bottom: 10px;
 }
 
-img.external {
-  width: 20px;
-  height: 20px;
-  margin: auto;
+a + span.external {
+  vertical-align: super;
+  font-size: 70%;
+  color: blue;
 }
