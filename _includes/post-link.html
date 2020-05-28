@@ -1,10 +1,12 @@
-{% assign link_parts = include.id | split: "#" %}
-{% assign id = link_parts[0] %}
-{% assign bookmark = link_parts[1] %}
-{% assign page = site.posts | find: 'id', id %}
-{%- if page -%}
-   {{ id }} {{ page.title }}
-   {{ page.url | relative_url }}{%- if bookmark -%}#{{ bookmark }}{%- endif -%}
+{%- assign link_parts = include.id | split: "#" -%}
+{%- assign id = link_parts[0] -%}
+{%- assign bookmark = link_parts[1] -%}
+
+{%- assign post = site.posts | where: 'id', id  | first -%}
+{%- if post -%}
+   {% comment %} comes here but does not get any info for post {% endcomment %}
+   {{- post.url | relative_url -}}
+   {%- if bookmark -%}#{{- bookmark -}}{%- endif -%}
 {%- else -%}
    /404
 {%- endif -%}
