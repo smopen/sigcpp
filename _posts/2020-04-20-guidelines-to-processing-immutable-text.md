@@ -15,7 +15,7 @@ focuses on the safety aspects, and Part 3 (this post) provides some guidelines o
 
 ### General guidelines
 
-[Part 3]({% include post-link.html id="5" %})
+[Part 3]({%- include post-link.html id="5" -%})
 
 [Part 3 Section]({% include post-link.html id="5#general-guidelines" %})
 
