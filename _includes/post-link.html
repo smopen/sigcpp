@@ -1,0 +1,10 @@
+{% assign link_parts = include.id | split: "#" %}
+{% assign id = link_parts[0] %}
+{% assign bookmark = link_parts[1] %}
+
+{% assign post = site.posts | find: 'id', id %}
+{%- if post -%}
+   {{ post.url }}{%- if bookmark -%}#{{ bookmark }}{%- endif -%}
+{%- else -%}
+   /404
+{%- endif -%}
