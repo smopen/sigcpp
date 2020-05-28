@@ -12,7 +12,7 @@ focuses on the safety aspects, and Part 3 (this post) provides some guidelines o
 `std::string_view`.
 <!--more-->
 
-### General guidelines {#1}
+### General guidelines
 
 Overall, there are three approaches to model immutable text: `char` arrays (including
 C-strings), `std::string` ("string"), and `std::string_view`.
