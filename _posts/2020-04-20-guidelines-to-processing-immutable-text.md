@@ -1,4 +1,5 @@
 ---
+id: 5
 title: "Guidelines to processing immutable text"
 date: 2020-04-20
 authors: smurthys
@@ -12,7 +13,11 @@ focuses on the safety aspects, and Part 3 (this post) provides some guidelines o
 `std::string_view`.
 <!--more-->
 
-### General guidelines {#1}
+### General guidelines
+
+[Part 3]({% include post-link.html id="5" %})
+
+[Part 3 Section]({% include post-link.html id="5#general-guidelines" %})
 
 Overall, there are three approaches to model immutable text: `char` arrays (including
 C-strings), `std::string` ("string"), and `std::string_view`.
@@ -44,8 +49,6 @@ std::string_view sv{"hello"};       // prefer; note the missing const qual.
 ```
 
 ### Run-time data
-
-Reference [Section 1](#1).
 
 First, only literal text (C-strings, char arrays, string literals, and string_view
 literals) can start as string_view. No text that is read or constructed at run time can
