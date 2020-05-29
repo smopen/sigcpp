@@ -6,34 +6,38 @@ cpp_level: intermediate
 cpp_version: "C++17"
 ---
 
-Introduced in C++17, the STL class [`std::string_view`](https://en.cppreference.com/w/cpp/string/basic_string_view)
-provides more efficient ways than [`std::string`](https://en.cppreference.com/w/cpp/string/basic_string)
-to process immutable (read only) text data. It also provides a safer means to perform
-read-only operations on character arrays. Overall, using `std::string_view` for read-only operations on text data can improve execution speed as well as reduce both
+Introduced in C++17, the STL class `std::string_view` provides more efficient ways than
+`std::string` to process immutable (read only) text data. It also provides a safer means
+to perform read-only operations on character arrays. Overall, using `std::string_view` for
+read-only operations on text data can improve execution speed as well as reduce both
 main-memory usage and executable size. It can also make programs safer and more
 maintainable.
 
 This is Part 1 of a 3-part series on `std::string_view`. This part focuses on efficiency
-of `std::string_view` over `std::string`. [Part 2]( {{ '/2020/04/07/safely-processing-immutable-text' | relative_url }} ) focuses on safety. Part 3 provides guidelines
-on using `std::string_view`.
+of `std::string_view` over `std::string`. [Part 2]( {{ '/2020/04/07/safely-processing-immutable-text' | relative_url }} )
+focuses on safety. Part 3 provides guidelines on using `std::string_view`.
 <!--more-->
+
+{% include bookmark.html id="1" %}
 
 ### Creating string_view objects
 
-A string_view is just a read-only wrapper around a character array ("a constant
-contiguous sequence of `char`-like objects", to be precise [[string.view](https://timsong-cpp.github.io/cppwp/n4659/string.view)]).
+[`std::string_view`](https://en.cppreference.com/w/cpp/string/basic_string_view) is just a
+read-only wrapper around a character array ("a constant contiguous sequence of `char`-like
+objects", to be precise [[string.view](https://timsong-cpp.github.io/cppwp/n4659/string.view)]).
 
 A string_view object can be created using one of its [five constructors](https://en.cppreference.com/w/cpp/string/basic_string_view/basic_string_view):
 
 1. Default constructor: represents an empty string
 2. Copy constructor
 3. Custom constructor which accepts a character array and a size
-4. Custom constructor which accepts a [C-strings]( {{ '/2020/03/30/exploring-c-strings' | relative_url }} )
+4. Custom constructor which accepts a [C-string]( {{ '/2020/03/30/exploring-c-strings' | relative_url }} )
 5. Custom constructor which accepts a range of characters as iterators (not discussed
    in this post)
 
-A string_view object can also be constructed using or be assigned from a `std::string`
-object because `std::string` defines an [operator](https://en.cppreference.com/w/cpp/string/basic_string/operator_basic_string_view)
+A string_view object can also be constructed using or be assigned from a
+[`std::string`](https://en.cppreference.com/w/cpp/string/basic_string) object because
+`std::string` defines an [operator](https://en.cppreference.com/w/cpp/string/basic_string/operator_basic_string_view)
 to return a string_view version of a string object. For example, the following creation
 operations are permitted:
 
@@ -46,11 +50,13 @@ std::string_view sv2 = s; // initialize by assigning a string
 **Note:** [Part 2]( {{ '/2020/04/07/safely-processing-immutable-text#string_view-creation-means' | relative_url }} )
 of this series examines string_view creation means in more detail.
 
+{% include bookmark.html id="2" %}
+
 ### Creation efficiency
 
 For starters, compare the effect of creating an object to work with the text `"hello"`
-using `std::string` and `std::string_view`. A comparison of the [code generated](https://godbolt.org/z/2tEvxC)
-shows the following differences:
+using `std::string` and `std::string_view`. A [comparison](https://godbolt.org/z/2tEvxC)
+of the code generated shows the following differences:
 
 1. `std::string s1("hello");`
    - 316 instructions: 32 in `main`
@@ -82,6 +88,7 @@ but the results from this program consistently show that the string approach is 
 of magnitude slower than the string_view approach (for example, 5 msecs versus 0.7 msecs).
 
 ---
+{% include bookmark.html id="Listing A" %}
 
 ##### Listing A: measure time to create string and string_view objects ([run this code](https://godbolt.org/z/SFRVNo))
 
@@ -132,11 +139,13 @@ const std::string cs{"pack my box with five dozen liquor jugs"};
 const std::string_view csv{"pack my box with five dozen liquor jugs"};
 ```
 
+{% include bookmark.html id="3" %}
+
 ### Processing efficiency
 
 Generally speaking, `std::string_view` supports only the sub-set of the functionality of
 `std::string` that pertains to the following operations: reading array elements,
-obtaining read-only iterators, finding test size, extracting a read-only sub-string,
+obtaining read-only iterators, finding text size, extracting a read-only sub-string,
 comparing with another string_view, and searching for sub-strings. In addition to these
 functions, the `<string_view>` header includes functions to perform relational
 operations on string_view objects and a function to insert a string_view to an output
@@ -166,6 +175,8 @@ on this topic.)
 
 ---
 
+{% include bookmark.html id="Listing B" %}
+
 ##### Listing B: extract space-delimited words ([run this code](https://godbolt.org/z/G-EbgE))
 
 ```cpp
@@ -187,6 +198,8 @@ int main() {
 ```
 
 ---
+
+{% include bookmark.html id="4" %}
 
 ### Modification efficiency
 
@@ -222,6 +235,8 @@ to its improved readability and maintainability.
 
 ---
 
+{% include bookmark.html id="Listing C" %}
+
 ##### Listing C: extract space-delimited words through modification ([run this code](https://godbolt.org/z/68raty))
 
 ```cpp
@@ -250,6 +265,8 @@ except the call to `remove_prefix` needs to be replaced with a call to function 
 A [comparison](https://godbolt.org/z/53RF7r) of word-extraction through modification in
 the string and string_view approaches shows that the string approach is slightly slower
 (20%-160%).
+
+{% include bookmark.html id="5" %}
 
 ### Part-1 summary
 
