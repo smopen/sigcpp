@@ -61,7 +61,7 @@ ul.posts li h2.page-title, section h2.page-title {
 }
 
 /* heading for captions such as listings */
-hr + div + h5 {
+hr + div > h5 {
   margin-top: 10px;
 }
 
