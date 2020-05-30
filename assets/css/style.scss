@@ -62,7 +62,7 @@ ul.posts li h2.page-title, section h2.page-title {
 
 /* 
   heading for captions such as listings
-  hr is auto added; div added by bookmark.html; h5 by markdown to html
+  hr is added in markdown; div added by bookmark.html; h5 by markdown-to-html xform
   hr, div, and h5 are strictly in that sequence
 */
 hr + div + h5 {
