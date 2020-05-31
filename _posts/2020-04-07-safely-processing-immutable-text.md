@@ -274,21 +274,32 @@ std::size_t vowel_count(const std::string_view& sv) {
 
 ### 6.&nbsp;&nbsp; Exercises
 
+{% include bookmark.html id="6.1" %}
+
 1. Answer the questions embedded in the bulleted list in the summary section.
+
+{% include bookmark.html id="6.2" %}
 
 2. Which of the two versions of function `vowel_count` in Listing D is faster? Which
    version is likely to use more run-time memory? Why?
+
    - Use the code in [Listing A of Part 1]( {{ '/2020/04/03/efficiently-processing-immutable-text#listing-a' | relative_url }} )
      as a model to measure wall times.
 
+{% include bookmark.html id="6.3" %}
+
 3. Which of the two versions `vowel_count` is better to count vowels in a character
    array that is not null-terminated? Why?
+
+{% include bookmark.html id="6.4" %}
 
 4. Using only the string_view version of `vowel_count`, write a `main` function to count
    vowels in a C-string and a character array that is not null-terminated. That is, make
    two calls to the string_view version of `vowel_count`, each time with a different
    argument. (For this part of the exercise, it might help to remove the C-string
    version of `vowel_count` from the program.)
+
+{% include bookmark.html id="6.5" %}
 
 5. Assuming the string_view abstraction (or something comparable) does not exist or
    cannot be used, write a function or functions to count vowels in a character array
@@ -298,17 +309,25 @@ std::size_t vowel_count(const std::string_view& sv) {
    possible, but also strive to make code maintainable and "efficient". Include comments
    that clearly explain the rationale for your choices.
 
+{% include bookmark.html id="6.6" %}
+
 6. Rewrite the string_view version of `vowel_count` using member function
    [`remove_prefix`]( {{ '/2020/04/03/efficiently-processing-immutable-text#4' | relative_url }} ).
    There are three different approaches to this rewrite. Try all three approaches and
    outline the pros and cons of each approach. State which approach you prefer and
    include a rationale.
 
+{% include bookmark.html id="6.7" %}
+
 7. Rewrite the string_view version of `vowel_count` using member function
    [`find_first_of`](https://en.cppreference.com/w/cpp/string/basic_string_view/find_first_of).
    Which version is "better": the one in Listing D, or the rewritten one? Why?
 
+{% include bookmark.html id="6.8" %}
+
 8. Write a C-string version of the code in [Listing B of Part 1]( {{ '/2020/04/03/efficiently-processing-immutable-text#listing-b' | relative_url }} ).
+
+{% include bookmark.html id="6.9" %}
 
 9. Write a program to extract words from text, where words may be separated by space,
    comma, semi-colon, or period. Write both a C-string version and a string_view version.
