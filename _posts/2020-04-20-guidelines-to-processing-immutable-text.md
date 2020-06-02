@@ -23,10 +23,9 @@ C-strings), `std::string` ("string"), and `std::string_view`.
 1. **Do not let a string_view object outlive the data it wraps**. This issue is discussed
    and illustrated in [Part 2] ( {{ '/2020/04/07/safely-processing-immutable-text#4' | relative_url }} ).
 
-2. **Prefer string_view over character arrays (including C-strings)** even though
-   'char` arrays use less memory. (String_view maintains both a pointer and a size
-   for each array). This recommendation is because the memory savings obtained with an
-   array is small compared to the safety obtained with a string_view. Also, working
+2. **Prefer string_view over character arrays (including C-strings)**. A character array
+   may use less memory (string_view maintains both a pointer and a size ), but the memory
+   savings is small compared to the safety obtained with a string_view. Also, working
    directly with an array often requires carrying array size in an additional variable
    (or requires computing length in case of C-strings).
 
@@ -70,8 +69,8 @@ C-strings), `std::string` ("string"), and `std::string_view`.
 
 {:start="7"}
 
-7. If text is read at run time and the text is immutable after reading it in, model the
-   text as character array or string object and create a string_view after the text is
+7. If text is read at run time and the text is immutable after reading it, model the
+   text as a character array or a string object and create a string_view after the text is
    read. This 2-step approach is required because, expectedly, string_view does not
    provide any means to read text.
 
@@ -87,41 +86,37 @@ C-strings), `std::string` ("string"), and `std::string_view`.
 
 {% include bookmark.html id="3" %}
 
-### 3.&nbsp;&nbsp; Specific to character arrays (including C-strings)
+### 3.&nbsp;&nbsp; Specific to character arrays
 
-**Note:** For ease of writing, this section uses the term `char` array to mean a `char`
-array that is not null-terminated.
+**Note:** For ease of writing, this section uses the term "bare array to mean a character
+array that is not null-terminated. It uses the term "character array" to mean an array
+that may or may not be null-terminated.
 
-8. **Use string_view instead of C-strings and `char` arrays** if find, sub-string,
-   comparison, and iteration operations are required. All of these operations are much
-   safer than directly performing those operations on arrays. However, it is OK use
-   arrays directly if they are simply read and written (meaning practically no text
-   processing).
+{:start="8"}
 
-9. **Use string_view instead of `char` array if array size should also be tracked**,
+8. **Use string_view instead of character array** if find, sub-string, comparison, and
+   iteration operations are required. All of these operations on string_view are much safer than directly performing them on arrays.
+
+9. **Use string_view instead of an array if array size should also be tracked**,
    which is quite often necessary as evidenced in functions such as `strncpy`, `strncmp`,
    `memcpy`, and `memcmp`. In fact, only a local array (with automatic storage) can ever
    be used without explicitly knowing its size, and even that use is limited to the
    `sizeof` operator and range-based for loops (as illustrated in [this program](https://godbolt.org/z/cPhXF3)).
    
-10. **Use string_view if the code should work equally for C-strings and `char` arrays.**
-   Using string_view expands the contexts in which code can be used while also improving
-   efficiency, safety, and maintainability.
+10. **Use string_view if the code should work for both C-strings and bare arrays.** Using
+    string_view expands the contexts in which code can be used while also improving
+    efficiency, safety, and maintainability.
 
     For example, consider function `vowel_count` in [Listing D of Part 2]( {{ '/2020/04/07/safely-processing-immutable-text#listing-d' | relative_url }} ).
-   The string_view overload there works for both C-strings and `char` arrays, but the
-   `const char*` overload works only for C-strings; not for char `arrays`. Indeed, anyone
-   attempting [Exercise 4 of Part 2] ( {{ '/2020/04/07/safely-processing-immutable-text#6' | relative_url }} )
-   quickly sees that supporting `vowel_count` for char arrays results in inefficient
-   code, redundant code, or somewhat convoluted (less maintainable) code.
+    The string_view overload there works for any kind of character arrays, but the
+    `const char*` overload works only for C-strings. Indeed, anyone attempting [Exercise 4 of Part 2] ( {{ '/2020/04/07/safely-processing-immutable-text#6' | relative_url }} )
+    sees that supporting `vowel_count` for bare arrays can result in inefficient code,
+    redundant code, or somewhat convoluted (less maintainable) code.
 
-11. **Avoid using a C-string or `char` array directly while it is also wrapped in a
-   string_view**, or do so with a lot care. The mixture can make it hard to reason about
-   code, especially if the data is modified (by an obscure function). For example, avoid
-   mixing access such as the following. In this particular case, the code should probably
-   use a string object instead of C-string or string_view, or it should separate the
-   mutable and immutable parts into different functions and still be careful when
-   interleaving calls to the new functions.
+11. **Avoid using a character array directly while it is also wrapped in a string_view**,
+    or do so with a lot care. For example, avoid mixing access such as the following. If
+    this kind of mixed access is required, it may be better to model text as a string
+    object:
 
     ```cpp
     char z[]{"hello"};
@@ -131,67 +126,75 @@ array that is not null-terminated.
     ```
 
 12. **Do not cast away `const`ness of data in a string_view**. In addition to mixing
-   mutable and immutable operations against the preceding guidance, having to remove
+    mutable and immutable operations against the preceding guidance, having to remove
    `const`ness likely means the program design needs to be reviewed.
    
     If `const`ness must be removed (say a third-party function requires that), [copy](https://en.cppreference.com/w/cpp/string/basic_string_view/copy)
     the string_view data to another array and work on the copy. However, the copy and the
     string_view data are not synchronized. If string_view's data should match the copy
-    after it is worked on, assign the copy to the string_view.
+    after it is worked on, assign the copy back to the string_view.
 
     I recommend studying [this program](https://godbolt.org/z/HHfAsw) prepared to
     illustrate some means and side effects of removing `const`ness from string_view data.
     The program also includes an example of copying string_view data, changing the copy,
     and then assigning the changed copy back to string_view.
 
-13. **Replace `const` C-string or `char` array parameters with string_views**. However,
-    it is OK to receive a C-string or a `char` array parameter and create a string_view
-    only at an appropriate juncture within the function. This guidance is motivated by
-    the desire to get the benefit of using string_view but prevent premature creation of string_view object in the calling function, if the called function is less likely or
-    unlikely to use the parameter.
+13. **Replace `const` character array parameters with string_views**. However, it is OK
+    to receive an array parameter and create a string_view only at an appropriate
+    juncture within the function. The idea is to get the benefit of using string_view but
+    prevent premature creation of string_view object in the calling function if the
+    called function is less likely or unlikely to use the parameter.
 
-    If a function receives a non-const C-string or `char` array parameter, check if
-    the function really performs mutable operations. If it does not, add `const`
-    qualification to the parameter or change the parameter to string_view.
+    If a function receives a non-`const` array parameter, see if the function really
+    performs mutable operations. If it does not, add `const` qualification to the
+    parameter or change the parameter to string_view.
 
 {% include bookmark.html id="4" %}
 
 ### 4.&nbsp;&nbsp; Specific to string objects
 
-Except for the erase function in std::string and the functions remove_prefix and remove_suffix in std::string_view, std::string_view is
-a drop-in replacement for std::string. And string and string_view can be
-implicitly created from each other. So, go ahead and replace. 
+{:start="14"}
 
-If you already have a string
-Parameters: `const std::string&` or `std::string-view&`?
+14. **Replace `const` string variables (not parameter) with string_view**, because
+    `std::string_view` is a drop-in replacement for `std::string` as far as immutable operations are concerned.
 
-- cost of creating string_view from string vs efficiency gained
+15. **Replace `const` string parameters received by value with string_view**. The
+    rationale for this guideline is the same as the one for the preceding guideline.
 
-Parameters: `std::string-view&`
+16. **Replace `const` string parameters received by reference with string_view reference**
+    if the function calls the `substr` function many times, because sub-string creation
+    is slower with `std::string` due to new object construction.
 
-- clearly latter, even if the string_view takes adds a bit more inefficient
+    It is **not** beneficial to change a `const std::string&` to `const std::string_view&`
+    if the function does not create sub-strings, because the change would unnecessarily
+    create a new string_view object when the existing string object already provides the
+    same functionality and efficiency.
+
 
 {% include bookmark.html id="5" %}
 
 ### 5.&nbsp;&nbsp; Manipulating a string_view
 
-**Avoid using the `data` function directly.** Instead, use task-specific functions and
-operators. For example:
+{:start="17"}
 
-- Use member functions such as `find`, `substr`, and `copy`
-- Use iterators for traversal: for cleaner code, use range-based for loops when possible
-- Use operators such as subscript, comparison, and insertion
+17. **Avoid using the `data` function directly.** Instead, use task-specific functions and
+    operators. For example:
 
-**Check string_view size before accessing data** unless it is certain that the string_view
-cannot be empty. The subscript operator as well as functions `front` and `back` do
-**not** check bounds and thus have undefined behavior if size is zero. Use [`at` function](https://en.cppreference.com/w/cpp/string/basic_string_view/at)
-if bounds checking is required.
+    - Use member functions such as `find`, `substr`, and `copy`
+    - Use iterators: for cleaner code, use range-based for loops when possible
+    - Use operators such as subscript, comparison, and stream insertion
 
-**Prefer subscript operator over `at` function for greater speed** and if it is certain
-that data cannot be empty.
+    It might be necessary to use the `data` function if  
 
-Listing A shows poor and good ways to copy data:
+18. **Check string_view size before accessing data** unless it is certain that the
+    string_view cannot be empty. The subscript operator as well as functions `front` and
+    `back` do **not** check bounds and thus have undefined behavior if size is zero. Use
+    [`at` function](https://en.cppreference.com/w/cpp/string/basic_string_view/at)
+    if bounds checking is required.
+
+19. **Prefer subscript operator over `at` function for greater speed** and if it is
+    certain that data cannot be empty.
+
 
 ### Summary
 
-[Link to heading](#1)
