@@ -68,6 +68,8 @@ C-strings), `std::string` ("string"), and `std::string_view`.
 
 ### 2.&nbsp;&nbsp; "Run-time" data
 
+{:start="7"}
+
 7. If text is read at run time and the text is immutable after reading it in, model the
    text as character array or string object and create a string_view after the text is
    read. This 2-step approach is required because, expectedly, string_view does not
