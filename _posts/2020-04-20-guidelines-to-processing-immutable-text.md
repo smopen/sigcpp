@@ -26,9 +26,9 @@ C-strings), `std::string` ("string"), and `std::string_view`.
    array often requires carrying array size in an additional variable (or requires
    computing length in case of C-strings).
 
-2. **Prefer string_view over string** if many objects are created either directly with a
-   constructor or indirectly due to `substr` function. Likewise, prefer string_view over
-   string if many assignments are made.
+2. **Prefer string_view over string** if many objects are created either directly using
+   constructors or indirectly using `substr` function (because string creation is [slower]( {{ '/2020/04/03/efficiently-processing-immutable-text#2' | relative_url }} )).
+   Likewise, prefer string_view over string if many assignments are made.
 
 3. **`const` qualify immutable data**. In a situation where data is mutable and a part
    of the code performs immutable operations, refactor the part with immutable
