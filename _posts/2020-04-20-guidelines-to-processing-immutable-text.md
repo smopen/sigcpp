@@ -20,15 +20,15 @@ focuses on the safety aspects, and Part 3 (this post) provides some guidelines o
 Overall, there are three ways to model immutable text: character arrays (including
 C-strings), `std::string` ("string"), and `std::string_view`.
 
-1. **Prefer string_view over character arrays (including C-strings)**. A character array
-   may use less memory (string_view maintains both a pointer and a size ), but the memory
-   savings is small compared to the safety obtained with a string_view. Also, working
-   directly with an array often requires carrying array size in an additional variable
-   (or requires computing length in case of C-strings).
+1. **Prefer string_view over character arrays**. A character array uses less memory
+   (string_view maintains both a pointer and a size), but the memory savings is small
+   compared to the safety obtained with a string_view. Also, working directly with an
+   array often requires carrying array size in an additional variable (or requires
+   computing length in case of C-strings).
 
-2. **Prefer string_view over string** if many objects are created directly using a
-   constructor or indirectly due to sub-string extraction using the `substr` function.
-   Likewise, prefer string_view over string if many assignments are made.
+2. **Prefer string_view over string** if many objects are created either directly with a
+   constructor or indirectly due to `substr` function. Likewise, prefer string_view over
+   string if many assignments are made.
 
 3. **`const` qualify immutable data**. In a situation where data is mutable and a part
    of the code performs immutable operations, refactor the part with immutable
