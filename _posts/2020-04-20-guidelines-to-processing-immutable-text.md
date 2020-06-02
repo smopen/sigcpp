@@ -7,8 +7,8 @@ cpp_level: intermediate
 cpp_version: "C++17, C++20"
 ---
 
-This post concludes the 3-part series on `std::string_view`: [Part 1](/2020/04/03/efficiently-processing-immutable-text)
-focuses on the efficiency aspects, [Part 2](/2020/04/07/safely-processing-immutable-text)
+This post concludes the 3-part series on `std::string_view`: [Part 1]( {{ '/2020/04/03/efficiently-processing-immutable-text' | relative_url }} )
+focuses on the efficiency aspects, [Part 2]( {{ '/2020/04/07/safely-processing-immutable-text' | relative_url }} )
 focuses on the safety aspects, and Part 3 (this post) provides some guidelines on using
 `std::string_view`.
 <!--more-->
@@ -125,21 +125,7 @@ that may or may not be null-terminated.
     std::cout << sv;
     ```
 
-12. **Do not cast away `const`ness of data in a string_view**. In addition to mixing
-    mutable and immutable operations against the preceding guidance, having to remove
-   `const`ness likely means the program design needs to be reviewed.
-   
-    If `const`ness must be removed (say a third-party function requires that), [copy](https://en.cppreference.com/w/cpp/string/basic_string_view/copy)
-    the string_view data to another array and work on the copy. However, the copy and the
-    string_view data are not synchronized. If string_view's data should match the copy
-    after it is worked on, assign the copy back to the string_view.
-
-    I recommend studying [this program](https://godbolt.org/z/HHfAsw) prepared to
-    illustrate some means and side effects of removing `const`ness from string_view data.
-    The program also includes an example of copying string_view data, changing the copy,
-    and then assigning the changed copy back to string_view.
-
-13. **Replace `const` character array parameters with string_views**. However, it is OK
+12. **Replace `const` character array parameters with string_views**. However, it is OK
     to receive an array parameter and create a string_view only at an appropriate
     juncture within the function. The idea is to get the benefit of using string_view but
     prevent premature creation of string_view object in the calling function if the
@@ -153,7 +139,18 @@ that may or may not be null-terminated.
 
 ### 4.&nbsp;&nbsp; Specific to string objects
 
-{:start="14"}
+{:start="13"}
+
+13. **Use string, not string_view, if access to null-terminated data is required.**
+    The `data` function member of string is guaranteed to return a null-terminated array
+    (since C++11), and the return value is never `nullptr`. In contrast, the same
+    function in string_view returns a null-terminated array only if the array used to
+    construct the string_view is null-terminated. Also, the function returns `nullptr`
+    for a default-initialized string_view.
+
+    I recommend studying [this program](https://godbolt.org/z/3wgKRr) (presented in Part
+    2) to visualize the differences in the behavior of `data` function between string and
+    string_view.
 
 14. **Replace `const` string variables (not parameter) with string_view**, because
     `std::string_view` is a drop-in replacement for `std::string` as far as immutable operations are concerned.
@@ -170,31 +167,68 @@ that may or may not be null-terminated.
     create a new string_view object when the existing string object already provides the
     same functionality and efficiency.
 
+17. **Create a function template if a function should work with both string and
+    string_view arguments** without converting a string to string_view and vice versa.
+    This need is likely to arise as the use of string_views increases over time. For
+    example, it makes sense to have function [`vowel_count`]( {{ '/2020/04/07/safely-processing-immutable-text#listing-d' | relative_url }} )
+    work with both string and string_view arguments without creating new a object first.
 
 {% include bookmark.html id="5" %}
 
 ### 5.&nbsp;&nbsp; Manipulating a string_view
 
-{:start="17"}
+{:start="18"}
 
-17. **Avoid using the `data` function directly.** Instead, use task-specific functions and
+18. **Check string_view size before accessing data** unless it is certain that the
+    string_view cannot be empty. The subscript operator as well as functions `front`,
+    `back`, `remove_prefix`, and `remove_suffix` do **not** check bounds and thus can
+    result in undefined behavior.
+
+    Use the [`at`](https://en.cppreference.com/w/cpp/string/basic_string_view/at)
+    function if bounds checking is required.
+
+19. **Use subscript operator instead of `at` function to improve speed**, but only if it
+    is certain that index cannot be out of bounds. The subscript operator is faster only
+    because it does not check bounds.
+
+20. **Avoid using the `data` function directly.** Instead, use task-specific functions and
     operators. For example:
 
     - Use member functions such as `find`, `substr`, and `copy`
-    - Use iterators: for cleaner code, use range-based for loops when possible
+    - Use iterators: For cleaner code, use range-based for loops where possible
+    - Use the [algorithm library](https://en.cppreference.com/w/cpp/header/algorithm)
+      where possible
     - Use operators such as subscript, comparison, and stream insertion
+    
+21. **Do not cast away `const`ness of data**. It might be necessary to
+    use the `data` function when invoking a function that can only receive a character
+    array, but having to remove `const`ness likely means the program design needs to be
+    reviewed.
 
-    It might be necessary to use the `data` function if  
+    If `const`ness must be removed (say a third-party function requires that), [copy](https://en.cppreference.com/w/cpp/string/basic_string_view/copy)
+    the string_view data to another array and work on the copy. However, the copy and the
+    string_view data are not synchronized. If string_view's data should match the copy
+    after it is worked on, assign the copy back to the string_view.
 
-18. **Check string_view size before accessing data** unless it is certain that the
-    string_view cannot be empty. The subscript operator as well as functions `front` and
-    `back` do **not** check bounds and thus have undefined behavior if size is zero. Use
-    [`at` function](https://en.cppreference.com/w/cpp/string/basic_string_view/at)
-    if bounds checking is required.
+    I recommend studying [this program](https://godbolt.org/z/HHfAsw) prepared to
+    illustrate some means and side effects of removing `const`ness from string_view data.
+    The program also includes an example of copying string_view data, changing the copy,
+    and then assigning the changed copy back to string_view.
 
-19. **Prefer subscript operator over `at` function for greater speed** and if it is
-    certain that data cannot be empty.
+{% include bookmark.html id="6" %}
 
+### 6.&nbsp;&nbsp; Summary
 
-### Summary
+As [Part 1]( {{ '/2020/04/03/efficiently-processing-immutable-text' | relative_url }} )
+of this series shows, `std::string_view` can be more efficient than `std::string` when
+working with immutable text. And, as [Part 2]( {{ '/2020/04/07/safely-processing-immutable-text' | relative_url }} )
+shows, string_view is safer than directly using an immutable character array. However,
+there are many efficiency and safety considerations to be made when using string_view.
+The guidelines included in this post are designed to help make informed choices.
 
+{% include bookmark.html id="7" %}
+
+### 7.&nbsp;&nbsp; Exercise
+
+Write a function template to count the number of vowel occurrences in a string or a
+string_view.
