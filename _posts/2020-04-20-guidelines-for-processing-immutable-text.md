@@ -18,7 +18,7 @@ focuses on safety.
 
 {% include bookmark.html id="1" %}
 
-### 1.&nbsp;&nbsp; General guidelines
+### 1.&nbsp;&nbsp; General
 
 Overall, there are three means to model immutable text: character arrays (including
 C-strings), `std::string` ("string"), and `std::string_view` ("string_view"). The
@@ -115,9 +115,9 @@ may or may not be null-terminated.
    redundant code, or somewhat convoluted (less maintainable) code.
 
 10. **Avoid using a character array directly while it is also wrapped in a string_view**,
-    or do so with a lot care. For example, avoid mixing access such as the following. If
-    this kind of mixed access is required, it may be better to model text as a string
-    object:
+    or do so with a lot care. For example, avoid mixing access as shown in the following
+    code segment. If such mixed access is required, it may be better to model text as a
+    string object:
 
     ```cpp
     char z[]{"hello"};
@@ -129,7 +129,7 @@ may or may not be null-terminated.
 11. **Replace `const` character array parameters with string_views**. However, it is OK
     to receive an array parameter and create a string_view at an appropriate juncture
     within the function. The idea is to get the benefit of using string_view but
-    prevent premature creation of string_view object in the calling function if the
+    prevent premature creation of string_view object in the calling function, if the
     called function is less likely or unlikely to use the parameter.
 
     If a function receives a non-`const` array parameter, see if the function really
@@ -143,30 +143,31 @@ may or may not be null-terminated.
 {:start="12"}
 
 12. **Use string, not string_view, if access to null-terminated data is required.**
-    The `data` function member of string is guaranteed to return a null-terminated array
-    (since C++11), and the return value is never `nullptr`. In contrast, the same
-    function in string_view returns a null-terminated array only if the array used to
-    construct the string_view is null-terminated. Also, the function returns `nullptr`
-    for a default-initialized string_view.
+    The [`data`](https://en.cppreference.com/w/cpp/string/basic_string/data) function
+    member of string is guaranteed to return a null-terminated array (since C++11), and
+    the return value is never `nullptr`. In contrast, the same function in string_view
+    returns a null-terminated array only if the array used to construct the string_view
+    is null-terminated. Also, the function returns `nullptr` for a default-initialized
+    string_view.
 
-    I recommend studying [this program](https://godbolt.org/z/QeZR7T) (presented in Part
+    I recommend studying [this program]https://godbolt.org/z/T69FXy) (presented in Part
     2) to visualize the differences in the behavior of `data` function between string and
     string_view.
 
-13. **Replace `const` string variables (not parameter) with string_view**, because
-    `std::string_view` is a drop-in replacement for `std::string` as far as immutable operations are concerned.
+13. **Replace `const` string variables with string_view**, because `std::string_view` is
+    a drop-in replacement for `std::string` as far as immutable operations are concerned.
 
 14. **Replace `const` string parameters received by value with string_view**. The
     rationale for this guideline is the same as the one for the preceding guideline.
 
 15. **Replace `const` string parameters received by reference with string_view reference**
-    if the function calls the `substr` function many times, because sub-string creation
-    is slower with `std::string` due to new object construction.
+    only if the function calls the `substr` function many times, because sub-string
+    creation is slower with `std::string` due to new object construction.
 
-    It is **not** beneficial to change a `const std::string&` to `const std::string_view&`
-    if the function does not create sub-strings, because the change would unnecessarily
-    create a new string_view object when the existing string object already provides the
-    same functionality and efficiency.
+    It is **not** beneficial to replace a `const std::string&` with
+    `const std::string_view&` if the function does not create sub-strings, because the
+    change would unnecessarily create a new string_view object when the existing string
+    object already provides the same functionality and efficiency.
 
 16. **Create a function template if a function should work with both string and
     string_view arguments** without converting a string to string_view and vice versa.
@@ -181,12 +182,11 @@ may or may not be null-terminated.
 {:start="17"}
 
 17. **Do not let a string_view object outlive the data it wraps**. [Part 2]( {{ '/2020/04/07/safely-processing-immutable-text#4' | relative_url }} )
-discusses the issue behind this guideline.
+discusses the issue that motivates this guideline.
 
-18. **Check string_view size before accessing data** unless it is certain that the
-    string_view cannot be empty. The subscript operator as well as functions `front`,
-    `back`, `remove_prefix`, and `remove_suffix` do **not** check bounds and thus can
-    result in undefined behavior.
+18. **Check string_view size before accessing data**. The subscript operator as well as
+     functions `front`, `back`, `remove_prefix`, and `remove_suffix` do **not** check
+     bounds and thus can result in undefined behavior.
 
     Use the [`at`](https://en.cppreference.com/w/cpp/string/basic_string_view/at)
     function if bounds checking is required.
@@ -198,23 +198,22 @@ discusses the issue behind this guideline.
 20. **Avoid using the `data` function directly.** Instead, use task-specific functions and
     operators. For example:
 
-    - Use member functions such as `find`, `substr`, and `copy`
+    - Use member functions such as `at`, `find`, `substr`, and `copy`
     - Use iterators: For cleaner code, use range-based for loops where possible
-    - Use the [algorithm library](https://en.cppreference.com/w/cpp/header/algorithm)
+    - Use the [algorithms library](https://en.cppreference.com/w/cpp/algorithm)
       where possible
     - Use operators such as subscript, comparison, and stream insertion
     
-21. **Do not cast away `const`ness of data**. It might be necessary to
-    use the `data` function when invoking a function that can only receive a character
-    array, but having to remove `const`ness likely means the program design needs to be
-    reviewed.
+21. **Do not cast away `const`ness of data**. Sometimes it might be necessary to use the
+    `data` member when invoking a function that can only receive a character array, but
+    having to remove `const`ness likely means the program design needs to be reviewed.
 
     If `const`ness must be removed (say a third-party function requires that), [copy](https://en.cppreference.com/w/cpp/string/basic_string_view/copy)
     the string_view data to another array and work on the copy. However, the copy and the
     string_view data are not synchronized. If string_view's data should match the copy
     after it is worked on, assign the copy back to the string_view.
 
-    I recommend studying [this program](https://godbolt.org/z/HHfAsw) prepared to
+    I recommend studying [this program](https://godbolt.org/z/vGYxyo) prepared to
     illustrate some means and side effects of removing `const`ness from string_view data.
     The program also includes an example of copying string_view data, changing the copy,
     and then assigning the changed copy back to string_view.
