@@ -118,12 +118,13 @@ may or may not be null-terminated.
 10. **Avoid using a character array directly while it is also wrapped in a string_view**,
     or do so with a lot care. For example, avoid mixing access as shown in the following
     code segment. If such mixed access is required, it may be better to model text as a
-    string object:
+    mutable string object:
 
     ```cpp
     char z[]{"hello"};
     std::string_view sv{z};    // create a string_view for immutability
     std::strncpy(z+1, "a", 1); // mutable operation directly on z
+    //... other mutable and immutable operations directly/indirectly on z
     std::cout << sv;           // immutable operation on z
     ```
 
@@ -207,9 +208,11 @@ discusses the issue that motivates this guideline.
     
 21. **Do not cast away `const`ness of data**. Sometimes it might be necessary to use the
     `data` member when invoking a function that can only receive a character array, but
-    having to remove `const`ness likely means the program design needs to be reviewed.
+    beware of functions that require a non-`const` array. Having to remove `const`ness
+    is a code smell and that situation likely means the program design needs to be
+    reviewed.
 
-    If `const`ness must be removed (say a third-party function requires that), [copy](https://en.cppreference.com/w/cpp/string/basic_string_view/copy)
+    If `const`ness must be removed, [copy](https://en.cppreference.com/w/cpp/string/basic_string_view/copy)
     the string_view data to another array and work on the copy. However, the copy and the
     string_view data are not synchronized. If string_view's data should match the copy
     after it is worked on, assign the copy back to the string_view.
@@ -218,6 +221,10 @@ discusses the issue that motivates this guideline.
     illustrate some means and side effects of removing `const`ness from string_view data.
     The program also includes an example of copying string_view data, changing the copy,
     and then assigning the changed copy back to string_view.
+
+    **Note:** An alternative to creating a copy of string_view data is to use a mutable
+    string instead of string_view and use the `data` function of string to access the
+    array.
 
 {% include bookmark.html id="6" %}
 
