@@ -222,9 +222,8 @@ discusses the issue that motivates this guideline.
     The program also includes an example of copying string_view data, changing the copy,
     and then assigning the changed copy back to string_view.
 
-    **Note:** An alternative to creating a copy of string_view data is to use a mutable
-    string instead of string_view and use the `data` function of string to access the
-    array.
+    **Note:** An alternative to creating a copy of string_view data is to model the text
+    as mutable string and use the `data` function of string to access the array.
 
 {% include bookmark.html id="6" %}
 
