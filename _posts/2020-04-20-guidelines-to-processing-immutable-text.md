@@ -1,5 +1,5 @@
 ---
-serial_number: 5
+pid: 5
 title: "Guidelines to processing immutable text"
 date: 2020-04-20
 authors: smurthys
@@ -7,10 +7,13 @@ cpp_level: intermediate
 cpp_version: "C++17, C++20"
 ---
 
-This post concludes the 3-part series on `std::string_view`: [Part 1]( {{ '/2020/04/03/efficiently-processing-immutable-text' | relative_url }} )
-focuses on the efficiency aspects, [Part 2]( {{ '/2020/04/07/safely-processing-immutable-text' | relative_url }} )
-focuses on the safety aspects, and Part 3 (this post) provides some guidelines on using
-`std::string_view`.
+This post presents detailed guidelines to using `std::string_view`. It presents a total of
+21 guidelines, grouped into five categories.  
+
+This post concludes the 3-part series on processing immutable text.
+[Part 1]( {{ '/2020/04/03/efficiently-processing-immutable-text' | relative_url }} )
+of the series focuses on efficiency aspects of processing immutable text. [Part 2]( {{ '/2020/04/07/safely-processing-immutable-text' | relative_url }} )
+focuses on safety aspects.
 <!--more-->
 
 {% include bookmark.html id="1" %}
@@ -85,20 +88,21 @@ C-strings), `std::string` ("string"), and `std::string_view`.
 
 ### 3.&nbsp;&nbsp; Specific to character arrays
 
-**Note:** For ease of writing, this section uses the term "bare array to mean a character
-array that is not null-terminated. It uses the term "character array" to mean an array
+**Note:** For ease of writing, this section uses the term "bare array" to mean a character
+array that is not null-terminated, and the term "character array" to mean a text array
 that may or may not be null-terminated.
 
 {:start="7"}
 
 7. **Use string_view instead of character array** if find, sub-string, comparison, and
-   iteration operations are required. All of these operations on string_view are much safer than directly performing them on arrays.
+   iteration operations are required. All these operations on string_view are generally
+   safer than comparable operations performed directly on arrays.
 
-8. **Use string_view instead of an array if array size should also be tracked**,
-   which is quite often necessary as evidenced in functions such as `strncpy`, `strncmp`,
-   `memcpy`, and `memcmp`. In fact, only a local array (with automatic storage) can ever
-   be used without explicitly knowing its size, and even that use is limited to the
-   `sizeof` operator and range-based for loops (as illustrated in [this program](https://godbolt.org/z/cPhXF3)).
+8. **Use string_view instead of an array if array size should also be tracked**, and it is
+   often necessary to track array size. In fact, only a local array (with automatic
+   storage) can ever be used without explicitly knowing its size, and even that use is
+   limited to the `sizeof` operator and range-based for loops (as illustrated in
+   [this program](https://godbolt.org/z/cPhXF3)).
    
 9. **Use string_view if the code should work for both C-strings and bare arrays.** Using
    string_view expands the contexts in which code can be used while also improving
@@ -145,7 +149,7 @@ that may or may not be null-terminated.
     construct the string_view is null-terminated. Also, the function returns `nullptr`
     for a default-initialized string_view.
 
-    I recommend studying [this program](https://godbolt.org/z/3wgKRr) (presented in Part
+    I recommend studying [this program](https://godbolt.org/z/QeZR7T) (presented in Part
     2) to visualize the differences in the behavior of `data` function between string and
     string_view.
 
