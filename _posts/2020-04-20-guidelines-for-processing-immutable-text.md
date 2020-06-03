@@ -5,10 +5,11 @@ date: 2020-04-20
 authors: smurthys
 cpp_level: intermediate
 cpp_version: "C++17, C++20"
+reader_activity: exercise
 ---
 
-This post presents detailed guidelines for using `std::string_view`. It presents a total
-of 21 guidelines, grouped into five categories.  
+This post presents detailed guidelines for using `std::string_view`. It includes a total
+of 21 guidelines, grouped into five categories.
 
 This post concludes the 3-part series on processing immutable text.
 [Part 1]( {{ '/2020/04/03/efficiently-processing-immutable-text' | relative_url }} )
@@ -102,7 +103,7 @@ may or may not be null-terminated.
    often necessary to track array size. In fact, only a local array (with automatic
    storage) can ever be used without explicitly knowing its size, and even that use is
    limited to the `sizeof` operator and range-based for loops (as illustrated in
-   [this program](https://godbolt.org/z/_Eqcnn)).
+   [this program](https://godbolt.org/z/iN5CQN)).
    
 9. **Use string_view if the code should work for both C-strings and bare arrays.** Using
    string_view expands the contexts in which code can be used while also improving
@@ -121,9 +122,9 @@ may or may not be null-terminated.
 
     ```cpp
     char z[]{"hello"};
-    std::string_view sv{z};
-    std::strncpy(z+1, "a", 1);    // include <cstring>
-    std::cout << sv;
+    std::string_view sv{z};    // create a string_view for immutability
+    std::strncpy(z+1, "a", 1); // mutable operation directly on z
+    std::cout << sv;           // immutable operation on z
     ```
 
 11. **Replace `const` character array parameters with string_views**. However, it is OK
