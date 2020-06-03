@@ -149,18 +149,17 @@ may or may not be null-terminated.
     member of string is guaranteed to return a null-terminated array (since C++11), and
     the return value is never `nullptr`. In contrast, the same function in string_view
     returns a null-terminated array only if the array used to construct the string_view
-    is null-terminated. Also, the function returns `nullptr` for a default-initialized
+    is null-terminated. Also, that function returns `nullptr` for a default-initialized
     string_view.
 
-    I recommend studying [this program]https://godbolt.org/z/T69FXy) (presented in Part
+    I recommend studying [this program](https://godbolt.org/z/jUo9bh) (presented in Part
     2) to visualize the differences in the behavior of `data` function between string and
     string_view.
 
-13. **Replace `const` string variables with string_view**, because `std::string_view` is
-    a drop-in replacement for `std::string` as far as immutable operations are concerned.
+13. **Replace `const` string variables with string_view**. `std::string_view` is a
+    drop-in replacement for `std::string` as far as immutable operations are concerned.
 
-14. **Replace `const` string parameters received by value with string_view**. The
-    rationale for this guideline is the same as the one for the preceding guideline.
+14. **Replace `const` string parameters received by value with string_view**.
 
 15. **Replace `const` string parameters received by reference with string_view reference**
     only if the function calls the `substr` function many times, because sub-string
@@ -188,9 +187,7 @@ discusses the issue that motivates this guideline.
 
 18. **Check string_view size before accessing data**. The subscript operator as well as
      functions `front`, `back`, `remove_prefix`, and `remove_suffix` do **not** check
-     bounds and thus can result in undefined behavior.
-
-    Use the [`at`](https://en.cppreference.com/w/cpp/string/basic_string_view/at)
+     bounds and thus can result in undefined behavior. Use the [`at`](https://en.cppreference.com/w/cpp/string/basic_string_view/at)
     function if bounds checking is required.
 
 19. **Use subscript operator instead of `at` function to improve speed**, but only if it
@@ -209,10 +206,9 @@ discusses the issue that motivates this guideline.
 21. **Do not cast away `const`ness of data**. Sometimes it might be necessary to use the
     `data` member when invoking a function that can only receive a character array, but
     beware of functions that require a non-`const` array. Having to remove `const`ness
-    is a code smell and that situation likely means the program design needs to be
-    reviewed.
+    is a code smell and it is a hint that the program design needs to be reviewed.
 
-    If `const`ness must be removed, [copy](https://en.cppreference.com/w/cpp/string/basic_string_view/copy)
+    Instead of removing `const`ness, [copy](https://en.cppreference.com/w/cpp/string/basic_string_view/copy)
     the string_view data to another array and work on the copy. However, the copy and the
     string_view data are not synchronized. If string_view's data should match the copy
     after it is worked on, assign the copy back to the string_view.
@@ -232,13 +228,14 @@ discusses the issue that motivates this guideline.
 As [Part 1]( {{ '/2020/04/03/efficiently-processing-immutable-text' | relative_url }} )
 of this series shows, `std::string_view` can be more efficient than `std::string` when
 working with immutable text. And, as [Part 2]( {{ '/2020/04/07/safely-processing-immutable-text' | relative_url }} )
-shows, string_view is safer than directly using an immutable character array. However,
-there are many efficiency and safety considerations to be made when using string_view.
-The guidelines included in this post are designed to help make informed choices.
+shows, string_view is safer than directly operating on an immutable character array.
+However, there are many efficiency and safety considerations to be made when using
+string_view. The guidelines included in this post are designed to help make informed
+choices.
 
 {% include bookmark.html id="7" %}
 
 ### 7.&nbsp;&nbsp; Exercise
 
 Write a function template to count the number of vowel occurrences in an immutable string
-or string_view.
+or an immutable string_view.
