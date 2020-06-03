@@ -13,20 +13,22 @@ This post presents detailed guidelines to using `std::string_view`. It presents 
 This post concludes the 3-part series on processing immutable text.
 [Part 1]( {{ '/2020/04/03/efficiently-processing-immutable-text' | relative_url }} )
 of the series focuses on efficiency aspects of processing immutable text. [Part 2]( {{ '/2020/04/07/safely-processing-immutable-text' | relative_url }} )
-focuses on safety aspects.
+focuses on safety.
 <!--more-->
 
 {% include bookmark.html id="1" %}
 
 ### 1.&nbsp;&nbsp; General guidelines
 
-Overall, there are three ways to model immutable text: character arrays (including
-C-strings), `std::string` ("string"), and `std::string_view`.
+Overall, there are three means to model immutable text: character arrays (including
+C-strings), `std::string` ("string"), and `std::string_view` ("string_view"). The
+guidelines in this section pertain to choosing among these means and some high-level notes
+on `const` qualification.
 
 1. **Prefer string_view over character arrays**. A character array uses less memory
-   (string_view maintains both a pointer and a size), but the memory savings is small
-   compared to the safety obtained with a string_view. Also, working directly with an
-   array often requires carrying array size in an additional variable (or requires
+   (string_view maintains both a pointer and a size), but the benefit from memory saved
+   is small compared to the safety obtained with a string_view. Also, working directly
+   with an array often requires carrying array size in an additional variable (or requires
    computing length in case of C-strings).
 
 2. **Prefer string_view over string** if many objects are created either directly using
@@ -56,12 +58,12 @@ C-strings), `std::string` ("string"), and `std::string_view`.
    ```
 
    **Note:** Data in a string_view is immutable even if the string_view is not `const`
-   qualified. The effect of`const` qualification is to prevent assignment and the use of
+   qualified. The effect of `const` qualification is to prevent assignment and the use of
    [modifiers]( {{ '/2020/04/03/efficiently-processing-immutable-text#4' | relative_url }} )
    `remove_prefix`, `remove_suffix`, and `swap`.
 
-   It is good practice to `const` qualify string_views and selectively remove `const` if
-   assignment or modification is required.
+   It is good practice to `const` qualify string_views and selectively remove `const`
+   where assignment or modification is required.
 
 {% include bookmark.html id="2" %}
 
@@ -69,10 +71,10 @@ C-strings), `std::string` ("string"), and `std::string_view`.
 
 {:start="6"}
 
-6. If text is read at run time and the text is immutable after reading it, model the
-   text as a character array or a string object and create a string_view after the text is
-   read. This 2-step approach is required because, expectedly, string_view does not
-   provide any means to read text.
+6. If text is read at run time and is immutable after reading, model the text as a
+   character array or a string object and create a string_view after the text is read.
+   This 2-step approach is required because, expectedly, string_view does not provide any
+   means to read text.
 
    ```cpp
    char z3[10];                // z3 cannot be const
@@ -176,7 +178,7 @@ that may or may not be null-terminated.
 
 {% include bookmark.html id="5" %}
 
-### 5.&nbsp;&nbsp; Manipulating a string_view
+### 5.&nbsp;&nbsp; Using string_view
 
 {:start="17"}
 
