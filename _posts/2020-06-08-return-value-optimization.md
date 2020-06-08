@@ -73,7 +73,7 @@ Without RVO, the code
 
 <div style="-webkit-column-count: 2; -moz-column-count: 2; column-count: 2; -webkit-column-rule: 1px dotted #e0e0e0; -moz-column-rule: 1px dotted #e0e0e0; column-rule: 1px dotted #e0e0e0;">
 <div style="display: inline-block;">
-<h6>Without RVO</h6>
+<strong>Without RVO</strong>
 
 ```cpp
 S get() {
@@ -88,10 +88,9 @@ int main() {
 ```
 
 </div>
-</div>
 
 <div style="display: inline-block;">
-<h6>With RVO</h6>
+<strong>With RVO</strong>
 
 ```cpp
 S get() {
