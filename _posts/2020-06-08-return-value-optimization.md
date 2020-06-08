@@ -72,12 +72,12 @@ Without RVO, the code
 ##### Listing B: comparing object value return without RVO and with RVO
 
 <div class="row">
-<div class="column"><h6>Without RVO</h6></div>
-<div class="column"><h6>With RVO</h6></div>
+<div class="column-2"><h6>Without RVO</h6></div>
+<div class="column-2"><h6>With RVO</h6></div>
 </div>
 
 <div class="row">
-<div class="column" markdown="1">
+<div class="column-2" markdown="1">
 
 ```cpp
 S get() {
@@ -92,7 +92,7 @@ int main() {
 ```
 
 </div>
-<div class="column" markdown="1">
+<div class="column-2" markdown="1">
 
 ```cpp
 S get() {
