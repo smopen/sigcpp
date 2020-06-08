@@ -72,8 +72,8 @@ Without RVO, the code
 ##### Listing B: comparing object value return without RVO and with RVO
 
 
-<div class="row">
-<div class="column" markdown="1">
+<div style="display:flex;">
+<div style="flex:50%;" markdown="1">
 
 ```cpp
 S get() {
@@ -88,7 +88,7 @@ int main() {
 ```
 
 </div>
-<div class="column" markdown="1">
+<div style="flex:50%;" markdown="1">
 
 ```cpp
 S get() {
