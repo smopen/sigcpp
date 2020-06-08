@@ -72,8 +72,8 @@ Without RVO, the code
 ##### Listing B: comparing object value return without RVO and with RVO
 
 <div style="display:flex;">
-<div style="flex:50%;border-right:3px;"><th>Without RVO</th></div>
-<div style="flex:50%;"><th>With RVO</th></div>
+<div style="flex:50%;border-right:3px;" markdown="1">**Without RVO**</div>
+<div style="flex:50%;border-right:3px;" markdown="1">**With RVO**</div>
 </div>
 
 <div style="display:flex;">
