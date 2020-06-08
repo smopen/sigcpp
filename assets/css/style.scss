@@ -93,7 +93,7 @@ div.row {
 }
 
 div.row > h6 {
-  font-weight: bold;
+  font-weight: bolder;
 }
 
 div.row > div.column-2 {
@@ -104,8 +104,16 @@ div.row > div.column-3 {
   flex: 33%;
 }
 
+div.row > div.column-4 {
+  flex: 25%;
+}
+
+/*
+ stack columns when window is narrow
+*/
+
 @media print, screen and (max-width: 600px) {
-  div.row > div.column-2, div.row > div.column-3 {
+  div.row > div.column-2, div.row > div.column-3, div.row > div.column-4 {
     width: 100%;
   }
 }
