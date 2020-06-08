@@ -74,7 +74,7 @@ Without RVO, the code
 <div class="row">
 <div class="column-2" markdown="1">
 
-###### Without RVO
+**Without RVO**
 
 ```cpp
 S get() {
@@ -91,7 +91,7 @@ int main() {
 </div>
 <div class="column-2" markdown="1">
 
-###### With RVO
+**With RVO**
 
 ```cpp
 S get() {
