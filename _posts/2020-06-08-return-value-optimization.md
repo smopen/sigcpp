@@ -71,11 +71,44 @@ Without RVO, the code
 
 ##### Listing B: comparing object value return without RVO and with RVO
 
+
+<div class="row">
+<div class="col-md-6" markdown="1">
+
+```cpp
+S get() {
+    S s;      // default ctor 1
+    s.i = 5;
+    return s; // copy ctor 2
+}             // dtor 1  
+
+int main() {
+    S s = get();
+}             // dtor 2
+```
+
+</div>
+<div class="col-md-6" markdown="1">
+
+```cpp
+S get() {
+    S s;      // defaulr ctor 1
+    s.i = 5;
+    return s;
+}
+
+int main() {
+    S s = get();
+}             // dtor 1
+```
+</div>
+</div>
+
+
 <div style="-webkit-column-count: 2; -moz-column-count: 2; column-count: 2; -webkit-column-rule: 1px dotted #e0e0e0; -moz-column-rule: 1px dotted #e0e0e0; column-rule: 1px dotted #e0e0e0;">
 <div style="display: inline-block;">
 <strong>Without RVO</strong>
-<pre><code class="language-cpp">
-S get() {
+<pre><code class="language-cpp">S get() {
     S s;      // default ctor 1
     s.i = 5;
     return s; // copy ctor 2
@@ -89,8 +122,7 @@ int main() {
 
 <div style="display: inline-block;">
 <strong>With RVO</strong>
-<pre><code class="language-cpp">
-S get() {
+<pre><code class="language-cpp">S get() {
     S s;      // defaulr ctor 1
     s.i = 5;
     return s;
