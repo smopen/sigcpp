@@ -71,28 +71,28 @@ Without RVO, the code
 
 ##### Listing B: comparing object value return without RVO and with RVO
 
-<div style="display:flex;">
-<div style="flex:50%;border-right:3px;" markdown="1">**Without RVO**</div>
-<div style="flex:50%;border-right:3px;" markdown="1">**With RVO**</div>
+<div class="row">
+<div class="column"><h6>Without RVO</h6></div>
+<div class="column"><h6>With RVO</h6></div>
 </div>
 
-<div style="display:flex;">
-<div style="flex:50%;border-right:3px;" markdown="1">
+<div class="row">
+<div class="column" markdown="1">
 
 ```cpp
 S get() {
     S s;      // default ctor 1
     s.i = 5;
     return s; // copy ctor 2
-}             // dtor 1  
+} // dtor 1  
 
 int main() {
     S s = get();
-}             // dtor 2
+} // dtor 2
 ```
 
 </div>
-<div style="flex:50%;" markdown="1">
+<div class="column" markdown="1">
 
 ```cpp
 S get() {
@@ -103,8 +103,9 @@ S get() {
 
 int main() {
     S s = get();
-}             // dtor 1
+} // dtor 1
 ```
+
 </div>
 </div>
 
