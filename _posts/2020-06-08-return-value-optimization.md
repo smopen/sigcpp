@@ -312,6 +312,7 @@ int main() {
 
         if (s.i == 3) // use s again
             std::cout << "It was 3 all along";
+
     } catch (...) {
         std::cout << "error getting/using s";
         return 1;
