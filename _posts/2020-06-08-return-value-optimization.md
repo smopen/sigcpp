@@ -12,7 +12,7 @@ function without incurring the penalty of creating a temporary object. RVO permi
 avoid reference parameters or pointer return values just to avoid copying objects. It
 also simplifies function design and reduces scope for errors. However, there are
 situations where a compiler may be unable to perform RVO, and there are programming
-patterns where it may be better to forego RVO.
+patterns where it may be better or acceptable to forego RVO.
 <!--more-->
 
 RVO is a relatively old technique and has been permitted since [C++98](http://www.lirmm.fr/~ducour/Doc-objets/ISO+IEC+14882-1998.pdf)
@@ -22,18 +22,20 @@ and [GCC 4.1.2](https://godbolt.org/z/bPNMaw) (which was released in [2007](http
 
 **Note:** GCC performs RVO by default, whereas [MSVC requires /O2 optimization for RVO](https://docs.microsoft.com/en-us/previous-versions/ms364057(v=vs.80)#optimization-side-effects).
 
-### Scope for RVO
+{% include bookmark.html id="1" %}
+
+### RVO illustration
 
 Listing A shows a simple struct that is rigged to show which constructor is called as
-well as to show when the destructor is called. The global variable counter is used to
-assign unique identifiers to instances of the struct.
+well as to show when the assignment operator and the destructor are called. The static
+variable `counter` is used to assign unique identifiers to instances of the struct.
 
 ---
 {% include bookmark.html id="Listing A" %}
 ##### Listing A: a struct rigged to show constructor and destructor calls
 
 ```cpp
-int counter; // counter to identify instances of S
+static int counter; // counter to identify instances of S
 
 struct S {
     int i;
@@ -61,48 +63,46 @@ struct S {
 
 ---
 
-Listing B compares some code to instantiate struct S without RVO and with RVO. The code
-is the same in both scenarios, but the result is different as shown in the comments and
-the output text.
-
-Without RVO, the code
+Listing B compares some code to instantiate struct S (shown in Listing A) without RVO and
+with RVO. The code is the same in both scenarios, but the result is different: Without
+RVO, two instances of S are created and destroyed, whereas with RVO, only one object is
+created and destroyed. The comments in code show the location and sequence of creation
+and destruction in both cases.
 
 ---
 
-##### Listing B: comparing object value return without RVO and with RVO
+##### Listing B: return object value without RVO and with RVO ([run this code](https://godbolt.org/z/_dCFgN))
 
 <div class="row">
 <div class="column-2" markdown="1">
-
-**Without RVO**
+<div class="column-head">Without RVO</div>
 
 ```cpp
 S get() {
-    S s;      // default ctor 1
+    S s;      // 1. default ctor 1
     s.i = 5;
-    return s; // copy ctor 2
-} // dtor 1  
+    return s; // 2. copy ctor 2
+} // 3. dtor 1
 
 int main() {
     S s = get();
-} // dtor 2
+} // 4. dtor 2
 ```
 
 </div>
 <div class="column-2" markdown="1">
-
-**With RVO**
+<div class="column-head">With RVO</div>
 
 ```cpp
 S get() {
-    S s;      // defaulr ctor 1
+    S s;      // 1. default ctor 1
     s.i = 5;
     return s;
 }
 
 int main() {
     S s = get();
-} // dtor 1
+} // 2. dtor 1
 ```
 
 </div>
@@ -110,7 +110,7 @@ int main() {
 
 ---
 
-Compiler Explorer: 
+Compiler Explorer:
 1. with in-out param: https://godbolt.org/z/TRRKWk
 2. with RVO: https://godbolt.org/z/7zAn88
 3. with RVO but not taking advantage: https://godbolt.org/z/HdAvgn
@@ -120,3 +120,5 @@ Compiler Explorer:
 Distinguish between RVO and NRVO: https://www.fluentcpp.com/2016/11/28/return-value-optimizations/
 
 Wikipedia: https://en.wikipedia.org/wiki/Copy_elision
+
+reddit thread: https://www.reddit.com/r/cpp/comments/6u78dp/need_to_demonstrate_rvo_performance_with_clang/
