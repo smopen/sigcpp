@@ -41,14 +41,14 @@ variable `counter` is used to assign unique identifiers to instances of the stru
 static int counter; // counter to identify instances of S
 
 struct S {
-    int i{ 0 };
+    int i;
     int id;
 
-    S() : id(++counter) {
+    S() : id{++counter} {
         std::cout << "default ctor " << id << "\n";
     }
 
-    S(const S& s) : i(s.i), id(++counter) {
+    S(const S& s) : i{s.i}, id{++counter} {
         std::cout << "copy ctor " << id << "\n";
     }
 
