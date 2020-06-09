@@ -41,7 +41,7 @@ variable `counter` is used to assign unique identifiers to instances of the stru
 static int counter; // counter to identify instances of S
 
 struct S {
-    int i;
+    int i{ 0 };
     int id;
 
     S() : id{++counter} {
