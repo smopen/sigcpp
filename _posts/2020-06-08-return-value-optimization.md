@@ -92,6 +92,8 @@ of struct `S` without NRVO and with NRVO: Without NRVO, two instances of `S` are
 and destroyed; with NRVO, only one object is created and destroyed. The comments in code
 show the location and sequence of object creation and destruction in each case.
 
+**Note:** GCC performs NRVO by default, whereas [MSVC requires `/O2` optimization for NRVO](https://docs.microsoft.com/en-us/previous-versions/ms364057(v=vs.80)#optimization-side-effects).
+
 ---
 {% include bookmark.html id="Listing B" %}
 
@@ -133,8 +135,6 @@ int main() {
 </div>
 ---
 
-**Note:** GCC performs NRVO by default, whereas [MSVC requires `/O2` optimization for NRVO](https://docs.microsoft.com/en-us/previous-versions/ms364057(v=vs.80)#optimization-side-effects).
-
 {% include bookmark.html id="3" %}
 
 ### 3.&nbsp;&nbsp; NRVO limitations
@@ -145,6 +145,9 @@ objects. Listing C illustrates this issue: Function `get_C1` has two different p
 it returns the same named object in both parts. Thus, the compiler is able to perform
 NRVO. Function `get_C2` also has two return paths, but each path creates and returns a
 different named object. In this case, the compiler does not perform NRVO.
+
+**Note:** MSVC does **not** perform NRVO even for function `get_C1`. It creates two
+instances of `S` in that function.
 
 ---
 {% include bookmark.html id="Listing C" %}
@@ -186,9 +189,6 @@ int main() {
 ```
 
 ---
-
-**Note:** MSVC does **not** perform NRVO even for function `get_C1`. It creates two
-instances of `S` in that function.
 
 {% include bookmark.html id="4" %}
 
