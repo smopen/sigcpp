@@ -8,11 +8,11 @@ cpp_version: "C++03"
 ---
 
 Return-value optimization (RVO) is a compiler technique to return an object value from a
-function without incurring the penalty of creating a temporary object. RVO permits us to
-avoid reference parameters or pointer return values just to avoid copying objects. It
-also simplifies function design and reduces scope for errors. However, there are
-situations where a compiler may be unable to perform RVO, and there are programming
-patterns where it may be better or acceptable to forego RVO.
+function without creating a temporary object. RVO permits us to avoid reference
+parameters or pointer return values just to avoid copying objects. It also simplifies
+function design and reduces scope for errors. However, there are situations where a
+compiler may be unable to perform RVO, and there are programming patterns where it may be
+better or acceptable to forego RVO.
 <!--more-->
 
 RVO is a relatively old technique and has been permitted since [C++98](http://www.lirmm.fr/~ducour/Doc-objets/ISO+IEC+14882-1998.pdf)
@@ -24,7 +24,7 @@ and [GCC 4.1.2](https://godbolt.org/z/bPNMaw) (which was released in [2007](http
 
 {% include bookmark.html id="1" %}
 
-### RVO illustration
+### 1.&nbsp;&nbsp; RVO illustration
 
 Listing A shows a simple struct that is rigged to show which constructor is called as
 well as to show when the assignment operator and the destructor are called. The static
@@ -32,7 +32,8 @@ variable `counter` is used to assign unique identifiers to instances of the stru
 
 ---
 {% include bookmark.html id="Listing A" %}
-##### Listing A: a struct rigged to show constructor and destructor calls
+
+##### Listing A: a struct rigged to show constructor, assignment, and destructor calls
 
 ```cpp
 static int counter; // counter to identify instances of S
@@ -63,13 +64,14 @@ struct S {
 
 ---
 
-Listing B compares some code to instantiate struct S (shown in Listing A) without RVO and
-with RVO. The code is the same in both scenarios, but the result is different: Without
-RVO, two instances of S are created and destroyed, whereas with RVO, only one object is
-created and destroyed. The comments in code show the location and sequence of creation
-and destruction in both cases.
+Listing B shows some code to return an instance of struct S (from Listing A) and the
+results without RVO and with RVO: Without RVO, two instances of S are created and
+destroyed, whereas with RVO, only one object is created and destroyed. The comments in
+code show the location and sequence of creation and destruction in both cases.
 
 ---
+
+{% include bookmark.html id="Listing B" %}
 
 ##### Listing B: return object value without RVO and with RVO ([run this code](https://godbolt.org/z/_dCFgN))
 
