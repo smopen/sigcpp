@@ -246,46 +246,82 @@ advantage of the optimization.
 
 It is not possible to take advantage of RVO if the object returned from a function has
 block scope and that object needs to be used in a later block. In this case, the variable
-must be declared in an outer block and thus RVO is thus missed. Alternatives such as
-those outlined in [Section 4](#4) would need to be used if it is necessary to benefit
-from RVO.
+must be declared in an outer block and thus RVO is missed. Alternatives such as those
+outlined in [Section 4](#4) would need to be used if it is necessary to benefit from RVO.
 
 Listing E shows an example situation where it is not possible to benefit from RVO.
+Functions `get_E` and `use_E` are some functions that return and accept an instance of S,
+respectively. (The code is a simplified version of a real-life code.) The code in the
+"Lose RVO" scenario misses out on RVO, but it is simple and readable. In contrast, the
+code in the "Gain RVO" scenario benefits from RVO, but it is apparently less readable.
+
+**Note:** Listing E is meant only to illustrate common trade-offs involving RVO. It is not
+meant to promote any particular programming pattern. Other (better) approaches can exist,
+and the approach chosen depends on application needs.
 
 ---
 {% include bookmark.html id="Listing E" %}
 
-##### Listing E: inability to use RVO ([run this code](https://godbolt.org/z/aPxNod))
+##### Listing E: losing or gaining RVO ([run this code](https://godbolt.org/z/Sqy4Zh))
+
+<div class="row">
+<div class="column-2" markdown="1">
+<div class="column-head">Lose RVO</div>
 
 ```cpp
-S get_E() {
-    S s;
-    s.i = 5;
-    return s;
-}
-
-void use_E(const S&) {
-    // use s
-}
-
+int main() {
 int main() {
     S s;                // default ctor
 
     try {
         s = get_E();    // missed RVO
+        use_E(s);
     } catch (...) {
-        std::cout << "error in get_D";
+        std::cout << "error getting/using s";
         return 1;
     }
 
     try {
-        use_E(s);
+        // do stuff, maybe unrelated to s
     } catch (...) {
-        std::cout << "error in use_D";
+        std::cout << "error doing stuff";
         return 2;
+    }
+
+    if (s.i == 3) // use s again
+        std::cout << "It was 3 all along";
+}
+```
+
+</div>
+<div class="column-2" markdown="1">
+<div class="column-head">Gain RVO</div>
+
+```cpp
+int main() {
+    try {
+        S s = get_E();    // RVO
+        use_E(s);
+
+        try {
+            // do stuff, maybe unrelated to s
+        } catch (...) {
+            std::cout << "error doing stuff";
+            return 2;
+        }
+
+        if (s.i == 3) // use s again
+            std::cout << "It was 3 all along";
+
+    } catch (...) {
+        std::cout << "error getting/using s";
+        return 1;
     }
 }
 ```
+
+</div>
+</div>
 
 ---
 
