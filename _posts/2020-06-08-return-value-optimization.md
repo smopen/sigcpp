@@ -244,14 +244,15 @@ advantage of the optimization.
 It is not possible to take advantage of RVO if the object returned from a function has
 block scope and that object needs to be used in a later block. In this case, the variable
 must be declared in an outer block and thus RVO is thus missed. Alternatives such as
-those outlined in Section 4 would need to be used if it is necessary to benefit from RVO.
+those outlined in [Section 4](#4) would need to be used if it is necessary to benefit
+from RVO.
 
 Listing E shows an example situation where it is not possible to benefit from RVO.
 
 ---
 {% include bookmark.html id="Listing E" %}
 
-##### Listing E: inability to use RVO ([run this code](https://godbolt.org/z/8qfQpH))
+##### Listing E: inability to use RVO ([run this code](https://godbolt.org/z/aPxNod))
 
 ```cpp
 S get_E() {
@@ -268,7 +269,7 @@ int main() {
     S s;                // default ctor
 
     try {
-        s = get_E();    // lost RVO
+        s = get_E();    // missed RVO
     } catch (...) {
         std::cout << "error in get_D";
         return 1;
