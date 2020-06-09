@@ -272,7 +272,6 @@ and the approach chosen depends on application needs.
 ```cpp
 int main() {
     S s;                // default ctor
-
     try {
         s = get_E();    // missed RVO
         use_E(s);
