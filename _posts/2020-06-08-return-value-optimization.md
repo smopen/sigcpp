@@ -343,4 +343,4 @@ result from each run and compare the results across runs. For ease of use, set t
 configuration to "Release" in all runs.
 
 **Note:** [Visual Studio Community](https://visualstudio.microsoft.com/vs/community/)
-is free, if you do not already have Visual Studio. (This is not product promotion.)
+is free to use. (This is not product promotion.)
