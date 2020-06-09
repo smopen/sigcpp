@@ -5,6 +5,7 @@ date: 2020-06-08
 authors: smurthys
 cpp_level: intermediate
 cpp_version: "C++03"
+reader_activity: exercise
 ---
 
 Return-value optimization (RVO) is a compiler technique to return an object value from a
@@ -341,5 +342,5 @@ optimization disabled (`/Od`) and again with optimization for speed (`/O2`). Ana
 result from each run and compare the results across runs. For ease of use, set the active
 configuration to "Release" in all runs.
 
-**Note:** [Visual Studio Community](https://visualstudio.microsoft.com/vs/community/) is
-a free and fully functional edition of Visual Studio, and it supports C++ development.
+**Note:** [Visual Studio Community](https://visualstudio.microsoft.com/vs/community/)
+is free, if you do not already have Visual Studio. (This is not product promotion.)
