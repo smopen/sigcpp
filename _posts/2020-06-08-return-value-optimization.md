@@ -20,6 +20,9 @@ RVO is a relatively old technique and has been permitted since [C++98](http://ww
 able to trace it back only to [Visual C++ 2005](https://docs.microsoft.com/en-us/previous-versions/ms364057(v=vs.80))
 and [GCC 4.1.2](https://godbolt.org/z/bPNMaw) (which was released in [2007](https://gcc.gnu.org/releases.html)).
 
+**Note:** All examples and optimizations described in this post were verified in GCC 10.1
+and Visual Studio 2019 Version 16.5.5 ([MSVC++ 14.25, _MSC_VER 1925](https://en.wikipedia.org/wiki/Microsoft_Visual_C%2B%2B#Internal_version_numbering)).
+
 {% include bookmark.html id="1" %}
 
 ### 1.&nbsp;&nbsp; RVO illustration
@@ -130,7 +133,7 @@ int main() {
 </div>
 ---
 
-**Note:** GCC performs NRVO by default, whereas [MSVC requires /O2 optimization for NRVO](https://docs.microsoft.com/en-us/previous-versions/ms364057(v=vs.80)#optimization-side-effects).
+**Note:** GCC performs NRVO by default, whereas [MSVC requires `/O2` optimization for NRVO](https://docs.microsoft.com/en-us/previous-versions/ms364057(v=vs.80)#optimization-side-effects).
 
 {% include bookmark.html id="3" %}
 
@@ -300,9 +303,9 @@ in a given situation.
 ### 8.&nbsp;&nbsp; Exercise
 
 Run all the examples in this post in MSVC. In all cases, run the code with
-optimization disabled (`/Od`) and again with optimization for speed enabled (`/O2`).
-Analyze the result from each run and compare the results across runs. For ease of use,
-set the active configuration to "Release" in all runs.
+optimization disabled (`/Od`) and again with optimization for speed (`/O2`). Analyze the
+result from each run and compare the results across runs. For ease of use, set the active
+configuration to "Release" in all runs.
 
 **Note:** [Visual Studio Community](https://visualstudio.microsoft.com/vs/community/) is
 a free and fully functional edition of Visual Studio, and it supports C++ development.
