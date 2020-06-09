@@ -160,7 +160,6 @@ S get_C1(int x) {
     }
 }
 
-
 S get_C2(int x) {
     if (x % 2 == 0) {
         S s1;          // 2. default ctor 2
@@ -172,7 +171,6 @@ S get_C2(int x) {
         return s2;     // 3. copy ctor 3 (either this or s1 above)
     }
 } // 4. dtor 2
-
 
 int main() {
     std::cout << "get_C1:\n";
@@ -225,7 +223,6 @@ S get_D() {
     return s;
 }
 
-
 int main() {
     S s;                // 1. default ctor 1
     s = get_D();        // 3. assign 2 to 1; 4. dtor 2
@@ -263,11 +260,9 @@ S get_E() {
     return s;
 }
 
-
 void use_E(const S&) {
     // use s
 }
-
 
 int main() {
     S s;                // default ctor
