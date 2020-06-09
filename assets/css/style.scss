@@ -87,12 +87,14 @@ a + span.external {
 /*
  The following styles are to create 2-column or 3-column content
  without using tables (HTML or markdown)
-*/
+
+ Stack columns when window is "narrow" (< 600px)
+ */
 div.row {
   display: flex;  
 }
 
-div.row > h6 {
+div.row div.column-head {
   font-weight: bolder;
 }
 
@@ -108,12 +110,6 @@ div.row > div.column-4 {
   flex: 25%;
 }
 
-/*
- stack columns when window is narrow
-*/
-
 @media print, screen and (max-width: 600px) {
-  div.row > div.column-2, div.row > div.column-3, div.row > div.column-4 {
-    width: 100%;
-  }
+  div.row > div.column-2, div.row > div.column-3, div.row > div.column-4 {width: 100%;}
 }
