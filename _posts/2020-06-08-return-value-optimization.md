@@ -8,29 +8,39 @@ cpp_version: "C++03"
 reader_activity: exercise
 ---
 
-Return-value optimization (RVO) is a compiler technique to return an object value from a
-function without creating a temporary object. RVO permits us to avoid reference
-parameters or pointer return values just to avoid copying objects. It also simplifies
-function design and reduces scope for errors. However, there are situations where a
-compiler may be unable to perform RVO, and there are programming patterns where it may be
-better or acceptable to forego RVO.
+Return-value optimization (RVO) is a compiler technique to avoid copying an object that
+a function returns as its value, including avoiding creation of a temporary object. This
+optimization permits a function to efficiently return large objects while also
+simplifying the function's interface and eliminating scope for issues such as resource
+leaks (depending on the approach used to avoid object copying). However, there are
+situations where a compiler may be unable to perform RVO, and there are programming
+patterns where it may be better or acceptable to forego RVO.
 <!--more-->
+
+RVO and Named RVO (NRVO) are part of a broader category of optimizations under the "copy
+elision" umbrella [[class.copy.elision]](https://timsong-cpp.github.io/cppwp/n4659/class.copy.elision). C++17 requires copy elision in some circumstances, but it does not require
+RVO or NRVO (rather it permits them). Because RVO and NRVO are not guaranteed, it is
+important to verify that the compiler indeed performs those optimizations in a given
+circumstance.
 
 RVO is a relatively old technique and has been permitted since [C++98](http://www.lirmm.fr/~ducour/Doc-objets/ISO+IEC+14882-1998.pdf)
 (see Section 12.2). C++ compilers have likely supported RVO as far back as 2001, but I am
 able to trace it back only to [Visual C++ 2005](https://docs.microsoft.com/en-us/previous-versions/ms364057(v=vs.80))
-and [GCC 4.1.2](https://godbolt.org/z/bPNMaw) (which was released in [2007](https://gcc.gnu.org/releases.html)).
+and [GCC 4.1.2]((https://gcc.gnu.org/releases.html)) (which was released in 2007).
 
-**Note:** All examples and optimizations described in this post were verified in GCC 10.1
-and Visual Studio 2019 Version 16.5.5 ([MSVC++ 14.25, _MSC_VER 1925](https://en.wikipedia.org/wiki/Microsoft_Visual_C%2B%2B#Internal_version_numbering)).
+**Note:** All examples and optimizations described in this post are verified in C++17
+using both GCC 10.1 and Visual Studio 2019 Version 16.5.5 ([MSVC++ 14.25, _MSC_VER 1925](https://en.wikipedia.org/wiki/Microsoft_Visual_C%2B%2B#Internal_version_numbering)).
+The code in Listings A and B is also verified in C++98 using [GCC 4.1.2](https://godbolt.org/z/bPNMaw).
 
 {% include bookmark.html id="1" %}
 
 ### 1.&nbsp;&nbsp; RVO illustration
 
-Listing A shows a simple struct that is rigged to show which constructor is called as
-well as to show when the assignment operator and the destructor are called. The static
-variable `counter` is used to assign unique identifiers to instances of the struct.
+Listing A shows a simple struct rigged to show which constructor is called as well as to
+show when the assignment operator and the destructor are called. The static variable
+`counter` is used to assign unique identifiers to instances of the struct. The rest of
+this post uses this rig to illustrate RVO and NRVO as well as to check the circumstances
+in which a compiler performs those optimizations.
 
 ---
 {% include bookmark.html id="Listing A" %}
@@ -62,54 +72,34 @@ struct S {
         std::cout << "dtor " << id << "\n";
     }
 };
-
-S get_A() {
-    return S(); // 1. default ctor 1
-}
-
-int main() {
-    S s = get_A();
-} // 2. dtor 1
-
 ```
 
-Without RVO, the combination of `get_A` and `main` in Listing A would create two instances
-of struct S: one instance on the `return` statement in `get_A` and another in the
-initialization of variable `s` in `main`. However only one instance is created with RVO.
-The comments in code show the location and sequence of construction and destruction.
+Listing B shows some code to return a temporary object in two different scenarios:
+without RVO and with RVO. In both cases, the object value to return is unnamed and is
+created in the `return` statement. The comments in code call out the location and
+sequence of object creation and destruction.
 
-**Note:** RVO is concerned with objects created on the `return` statement. Both GCC and
-MSVC perform RVO by default.
+When compiled with no RVO, the code creates two objects: a temporary object in function
+`get_B` using the default constructor, and the object named `s` in `main` using the copy
+constructor. However, when the same code is compiled with RVO, only one object is
+created.
 
----
-
-{% include bookmark.html id="2" %}
-
-### 2.&nbsp;&nbsp; Named RVO
-
-Named RVO (NRVO) is concerned with optimization performed on "named objects" that are
-not created on a `return` statement. Listing B shows some code to return a named instance
-of struct `S` without NRVO and with NRVO: Without NRVO, two instances of `S` are created
-and destroyed; with NRVO, only one object is created and destroyed. The comments in code
-show the location and sequence of object creation and destruction in each case.
-
-**Note:** GCC performs NRVO by default, whereas [MSVC requires `/O2` optimization for NRVO](https://docs.microsoft.com/en-us/previous-versions/ms364057(v=vs.80)#optimization-side-effects).
+**Note:** RVO is concerned only with objects created on the `return` statement. Both GCC
+and MSVC perform RVO by default.
 
 ---
 {% include bookmark.html id="Listing B" %}
 
-##### Listing B: return object value without NRVO and with NRVO ([run this code](https://godbolt.org/z/9Vpx_R))
+##### Listing B: behavior without RVO and with RVO ([run this code](https://godbolt.org/z/9Vpx_R))
 
 <div class="row">
 <div class="column-2" markdown="1">
-<div class="column-head">Without NRVO</div>
+<div class="column-head">Without RVO</div>
 
 ```cpp
 S get_B() {
-    S s;      // 1. default ctor 1
-    s.i = 8;
-    return s; // 2. copy ctor 2
-} // 3. dtor 1
+    return S(); // 1. default ctor 1
+} // 2. copy ctor 2; 3. dtor 1
 
 int main() {
     S s = get_B();
@@ -118,17 +108,69 @@ int main() {
 
 </div>
 <div class="column-2" markdown="1">
-<div class="column-head">With NRVO</div>
+<div class="column-head">With RVO</div>
 
 ```cpp
 S get_B() {
+    return S(); // 1. default ctor 1
+}
+
+int main() {
+    S s = get_B();
+} // 2. dtor 1
+```
+
+</div>
+</div>
+---
+
+{% include bookmark.html id="2" %}
+
+### 2.&nbsp;&nbsp; Named RVO
+
+Named RVO (NRVO) is concerned with optimization performed on "named objects", which are
+objects not created on a `return` statement. Listing C shows some code to return a named
+object without NRVO and with NRVO: Without NRVO, two instances of `S` are created and
+destroyed, whereas with NRVO, only one object is created and destroyed. The comments in
+code show the location and sequence of object creation and destruction in each case.
+
+**Note:** GCC performs NRVO by default, which can be disabled; MSVC disables NRVO by
+default, but it can be enabled using [`/O2` optimization](https://docs.microsoft.com/en-us/previous-versions/ms364057(v=vs.80)#optimization-side-effects).
+
+---
+{% include bookmark.html id="Listing C" %}
+
+##### Listing C: behavior without NRVO and with NRVO ([run this code](https://godbolt.org/z/9Vpx_R))
+
+<div class="row">
+<div class="column-2" markdown="1">
+<div class="column-head">Without NRVO</div>
+
+```cpp
+S get_C() {
+    S s;      // 1. default ctor 1
+    s.i = 8;
+    return s; // 2. copy ctor 2
+} // 3. dtor 1
+
+int main() {
+    S s = get_C();
+} // 4. dtor 2
+```
+
+</div>
+<div class="column-2" markdown="1">
+<div class="column-head">With NRVO</div>
+
+```cpp
+S get_C() {
     S s;      // 1. default ctor 1
     s.i = 8;
     return s;
 }
 
 int main() {
-    S s = get_B();
+    S s = get_C();
 } // 2. dtor 1
 ```
 
@@ -138,25 +180,24 @@ int main() {
 
 {% include bookmark.html id="3" %}
 
-### 3.&nbsp;&nbsp; NRVO limitations
+### 3.&nbsp;&nbsp; Compiler limitations
 
-At present, compilers perform NRVO only if the same named object is returned from all
-paths of a function. They do not perform NRVO if different paths return different named
-objects. Listing C illustrates this issue: Function `get_C1` has two different paths, but
-it returns the same named object in both parts. Thus, the compiler is able to perform
-NRVO. Function `get_C2` also has two return paths, but each path creates and returns a
-different named object. In this case, the compiler does not perform NRVO.
+Presently, compilers perform NRVO only if the same named object is returned from all
+paths of a function. They do **not** perform NRVO if different paths return different
+named objects. Listing D sets up the both scenarios: Function `get_D1` has two different
+paths and both paths return the same named object. Function `get_D2` also has two return
+paths, but each path creates and returns a different named object.
 
-**Note:** MSVC does **not** perform NRVO even for function `get_C1`. It creates two
-instances of `S` in that function.
+**Note:** GCC performs NRVO in `get_D1`, but not in `get_D2`. MSVC does **not** perform
+NRVO even in function `get_D1` (even with `/O2` enabled).
 
 ---
-{% include bookmark.html id="Listing C" %}
+{% include bookmark.html id="Listing D" %}
 
-##### Listing B: returning same and different named objects ([run this code](https://godbolt.org/z/QmqW6N))
+##### Listing D: returning named objects in different paths ([run this code](https://godbolt.org/z/QmqW6N))
 
 ```cpp
-S get_C1(int x) {
+S get_D1(int x) {
     S s;                // 1. default ctor 1
     if (x % 2 == 0) {
         s.i = 8;
@@ -167,7 +208,7 @@ S get_C1(int x) {
     }
 }
 
-S get_C2(int x) {
+S get_D2(int x) {
     if (x % 2 == 0) {
         S s1;          // 2. default ctor 2
         s1.i = 8;
@@ -180,13 +221,12 @@ S get_C2(int x) {
 } // 4. dtor 2
 
 int main() {
-    std::cout << "get_C1:\n";
-    S s1 = get_C1(3);
+    std::cout << "get_D1:\n";
+    S s1 = get_D1(3);
 
-    std::cout << "\nget_C2:\n";
-    S s2 = get_C2(3);
+    std::cout << "\nget_D2:\n";
+    S s2 = get_D2(3);
 } // 5. dtor 3, dtor 1
-
 ```
 
 ---
@@ -195,33 +235,33 @@ int main() {
 
 ### 4.&nbsp;&nbsp; Working around lack of RVO
 
-The struct `S` of Listing A is a good instrument to test if a compiler performs RVO
-(includes NRVO in the remainder of this post) in a given situation. In a situation
-where the optimization is not performed, a simple solution is to pass to the called
-function a reference to an instance and have the function modify the referenced object.
-This approach assumes the object supports all necessary modifier functions. It also makes
-the function interface a bit more complex.
+In a situation where the compiler does not perform RVO (includes NRVO for the remainder
+of this post), a simple solution is to pass to the called function a reference to an
+instance and have the function modify the referenced object. This approach assumes the
+object supports all necessary modifier functions. It also makes the function interface a
+bit more complex.
 
 An alternative is for the called function to dynamically allocate an object and always
-return an object pointer, but this approach can be error prone and lead to memory leaks
-if the object is not freed.
+return an object pointer, but this approach is error prone (all the issues related to
+pointer manipulation) and causes memory leaks if the object is not freed.
 
 {% include bookmark.html id="5" %}
 
 ### 5.&nbsp;&nbsp; Missed optimization
 
-Listing D shows a subtle programming error that causes loss of RVO. In `main`, an
-instance of S is created using the default constructor in the first line and is then
-assigned the return value from function `get_D`. This situation requires the compiler
-to invoke the assignment operator to set variable `s` to the function's return value.
+Listing E shows a subtle programming error that causes loss of RVO. In `main`, an
+instance of `S` is created using the default constructor in the first line and is then
+assigned the return value from function `get_E`. This situation requires the compiler
+to create two objects and invoke the assignment operator to set variable `s` to the
+function's return value.
 
 ---
-{% include bookmark.html id="Listing D" %}
+{% include bookmark.html id="Listing E" %}
 
-##### Listing D: missed RVO ([run this code](https://godbolt.org/z/ojrcdp))
+##### Listing E: missed RVO ([run this code](https://godbolt.org/z/ojrcdp))
 
 ```cpp
-S get_D() {
+S get_E() {
     S s;                // 2. default ctor 2
     s.i = 8;
     return s;
@@ -229,7 +269,7 @@ S get_D() {
 
 int main() {
     S s;                // 1. default ctor 1
-    s = get_D();        // 3. assign 2 to 1; 4. dtor 2
+    s = get_E();        // 3. assign 2 to 1; 4. dtor 2
 } // 5. dtor 1
 ```
 
@@ -239,7 +279,7 @@ int main() {
 
 ### 6.&nbsp;&nbsp; Foregoing optimization
 
-In some situations it can be acceptable or better to forego RVO. For example, if a
+In some situations it can be acceptable or even better to forego RVO. For example, if a
 function returns a small object (such as instances of the example struct `S`) it may be
 acceptable to lose the benefit of the optimization. However, if a function returns a
 large object such as a vector of 100 string objects, it might be important to take
@@ -250,31 +290,34 @@ block scope and that object needs to be used in a later block. In this case, the
 must be declared in an outer block and thus RVO is missed. Alternatives such as those
 outlined in [Section 4](#4) would need to be used if it is necessary to benefit from RVO.
 
-Listing E shows an example situation where it is not possible to benefit from RVO.
-Functions `get_E` and `use_E` are some functions that return and accept an instance of S,
-respectively. (The code is a simplified version of a real-life code.) The code in the
-"Lose RVO" scenario misses out on RVO, but it is simple and readable. In contrast, the
-code in the "Gain RVO" scenario benefits from RVO, but it is apparently less readable.
+Listing F shows an example situation where it is not possible to benefit from RVO.
+Functions `get` and `use` are some functions that return and accept an instance of `S`,
+respectively. (The code shown is actually a simplified version of real-life code.) The
+code in the "Lose RVO" scenario misses out on RVO, but it is simple and readable largely
+because the exception handlers are sequential. In contrast, the code in the "Gain RVO"
+scenario benefits from RVO, but it is obviously less readable, largely due to the nested
+exception handling.
 
-**Note:** Listing E is meant only to illustrate common trade-offs involving RVO. It is not
-meant to promote any particular programming pattern. Other (better) approaches can exist,
-and the approach chosen depends on application needs.
+**Note:** Listing F is meant only to illustrate common trade-offs involving RVO. It is
+not meant to promote any particular programming pattern. Other (better) approaches can
+exist, and the approaches available as well as the best approach depend on the
+application.
 
 ---
-{% include bookmark.html id="Listing E" %}
+{% include bookmark.html id="Listing F" %}
 
-##### Listing E: losing or gaining RVO ([run this code](https://godbolt.org/z/Sqy4Zh))
+##### Listing F: losing or gaining RVO ([run this code](https://godbolt.org/z/Sqy4Zh))
 
 <div class="row">
 <div class="column-2" markdown="1">
-<div class="column-head">Lose RVO</div>
+<div class="column-head">Lose RVO, sequential exception handling</div>
 
 ```cpp
 int main() {
     S s;             // default ctor
     try {
-        s = get_E(); // missed RVO
-        use_E(s);
+        s = get(); // missed RVO
+        use(s);
     } catch (...) {
         std::cout << "error get/use";
         return 1;
@@ -294,13 +337,13 @@ int main() {
 
 </div>
 <div class="column-2" markdown="1">
-<div class="column-head">Gain RVO</div>
+<div class="column-head">Gain RVO, nested exception handling</div>
 
 ```cpp
 int main() {
     try {
-        S s = get_E(); // RVO
-        use_E(s);
+        S s = get(); // RVO
+        use(s);
 
         try {
             // stuff, unrelated to s
@@ -328,19 +371,23 @@ int main() {
 
 ### 7.&nbsp;&nbsp; Summary
 
-Summarize RVO and NRVO. Summarize compiler limitations.
+RVO (including NRVO) is a compiler technique to avoid copying an object that
+a function returns as its value. This optimization lets a function to efficiently return large objects while also simplifying the function's interface and eliminating scope for errors. However, ISO C++ does not require RVO, and support for RVO varies across
+compilers and by situation. Thus it is necessary to verify if the compiler performs RVO
+in a given situation and rewrite code to benefit from RVO, forego RVO, or work around
+lack of RVO.
 
-The struct `S` of Listing A is a good instrument to test if a compiler performs RVO
-in a given situation.
+The struct `S` in Listing A is a good instrument to test if a compiler performs RVO and
+NRVO in a given situation.
 
 {% include bookmark.html id="8" %}
 
 ### 8.&nbsp;&nbsp; Exercise
 
-Run all the examples in this post in MSVC. In all cases, run the code with
-optimization disabled (`/Od`) and again with optimization for speed (`/O2`). Analyze the
-result from each run and compare the results across runs. For ease of use, set the active
-configuration to "Release" in all runs.
+Run all the code examples in this post in MSVC. Run the code with optimization disabled
+(`/Od`, which is the default) and again with optimization for speed (`/O2`) enabled.
+Analyze the result from each run and compare the results across runs. For ease of use,
+set the active configuration to "Release" in all runs.
 
 **Note:** [Visual Studio Community](https://visualstudio.microsoft.com/vs/community/)
-is free to use. (This is not product promotion.)
+is free, just in case you do not already have MSVC installed.
