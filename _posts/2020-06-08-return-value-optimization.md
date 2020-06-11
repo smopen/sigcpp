@@ -5,7 +5,7 @@ date: 2020-06-08
 authors: smurthys
 cpp_level: intermediate
 cpp_version: "C++03"
-reader_activity: exercise
+reader_activity: exercises
 ---
 
 Return-value optimization (RVO) is a compiler technique to avoid copying an object that
@@ -13,8 +13,8 @@ a function returns as its value, including avoiding creation of a temporary obje
 optimization permits a function to efficiently return large objects while also
 simplifying the function's interface and eliminating scope for issues such as resource
 leaks (depending on the approach used to avoid object copying). However, there are
-situations where a compiler may be unable to perform RVO, and there are programming
-patterns where it may be better or acceptable to forego RVO.
+situations where a compiler may be unable to perform RVO, and there are situations where
+it may be acceptable or even better to forego RVO.
 <!--more-->
 
 RVO and Named RVO (NRVO) are part of a broader category of optimizations under the "copy
@@ -26,11 +26,11 @@ circumstance.
 RVO is a relatively old technique and has been permitted since [C++98](http://www.lirmm.fr/~ducour/Doc-objets/ISO+IEC+14882-1998.pdf)
 (see Section 12.2). C++ compilers have likely supported RVO as far back as 2001, but I am
 able to trace it back only to [Visual C++ 2005](https://docs.microsoft.com/en-us/previous-versions/ms364057(v=vs.80))
-and [GCC 4.1.2]((https://gcc.gnu.org/releases.html)) (which was released in 2007).
+and GCC 4.1.2 (which was released in [2007](https://gcc.gnu.org/releases.html)).
 
 **Note:** All examples and optimizations described in this post are verified in C++17
 using both GCC 10.1 and Visual Studio 2019 Version 16.5.5 ([MSVC++ 14.25, _MSC_VER 1925](https://en.wikipedia.org/wiki/Microsoft_Visual_C%2B%2B#Internal_version_numbering)).
-The code in Listings A and B is also verified in C++98 using [GCC 4.1.2](https://godbolt.org/z/bPNMaw).
+The code in Listings A, B, and C are also verified in C++98 using [GCC 4.1.2](https://godbolt.org/z/U_LjWR).
 
 {% include bookmark.html id="1" %}
 
@@ -54,11 +54,11 @@ struct S {
     int i{ 0 };
     int id;
 
-    S() : id{++counter} {
+    S() : id{ ++counter } {
         std::cout << "default ctor " << id << "\n";
     }
 
-    S(const S& s) : i{s.i}, id{++counter} {
+    S(const S& s) : i{ s.i }, id{ ++counter } {
         std::cout << "copy ctor " << id << "\n";
     }
 
@@ -372,7 +372,9 @@ int main() {
 ### 7.&nbsp;&nbsp; Summary
 
 RVO (including NRVO) is a compiler technique to avoid copying an object that
-a function returns as its value. This optimization lets a function to efficiently return large objects while also simplifying the function's interface and eliminating scope for errors. However, ISO C++ does not require RVO, and support for RVO varies across
+a function returns as its value. This optimization helps function to efficiently return
+large objects while also simplifying the function's interface and eliminating scope for
+errors. However, ISO C++ does not require RVO, and support for RVO varies across
 compilers and by situation. Thus it is necessary to verify if the compiler performs RVO
 in a given situation and rewrite code to benefit from RVO, forego RVO, or work around
 lack of RVO.
@@ -382,12 +384,30 @@ NRVO in a given situation.
 
 {% include bookmark.html id="8" %}
 
-### 8.&nbsp;&nbsp; Exercise
+### 8.&nbsp;&nbsp; Exercises
 
-Run all the code examples in this post in MSVC. Run the code with optimization disabled
-(`/Od`, which is the default) and again with optimization for speed (`/O2`) enabled.
-Analyze the result from each run and compare the results across runs. For ease of use,
-set the active configuration to "Release" in all runs.
+1. Study [this program](https://godbolt.org/z/r7sowD) prepared to verify copy elision in
+   C++98 using GCC 4.6.4:
 
-**Note:** [Visual Studio Community](https://visualstudio.microsoft.com/vs/community/)
-is free, just in case you do not already have MSVC installed.
+    {:type="a"}
+    1. As is, which kind of optimization does the code perform: RVO or NRVO? What is the
+       location and sequence of object construction and destruction?
+
+    2. Change function `get` such that it performs a different kind of optimization than
+       what is given: change the code to perform RVO if it performs NRVO as is, and
+       vice versa.
+
+    3. Disable copy elision and compare the result with the result from when elision is
+       enabled. Explain the reason for the differences between the results. You can
+       disable copy elision by including the option `-fno-elide-constructors` in the pane
+       containing execution results. (Copy elision is enabled by default.)
+
+    4. In what ways does the C++98 code provided differ from the corresponding C++17
+       code? This question has nothing to with RVO or NRVO, but is opportunistically
+       included to highlight some syntactic differences between C++98 and C++17.
+
+2. Run all the code examples in this post in MSVC. Run the code with optimization
+   disabled (`/Od`, which is the default) and again with optimization for speed (`/O2`) enabled. Analyze the result from each run and compare the results across runs. For ease of use, set the active configuration to "Release" in all runs.
+
+   **Note:** [Visual Studio Community](https://visualstudio.microsoft.com/vs/community/)
+   is free, just in case you do not already have MSVC installed.
