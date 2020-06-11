@@ -389,7 +389,6 @@ NRVO in a given situation.
 1. Study [this program](https://godbolt.org/z/r7sowD) prepared to verify copy elision in
    C++98 using GCC 4.6.4:
 
-    {:type="a"}
     1. As is, which kind of optimization does the code perform: RVO or NRVO? What is the
        location and sequence of object construction and destruction?
 
