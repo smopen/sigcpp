@@ -271,24 +271,24 @@ and the approach chosen depends on application needs.
 
 ```cpp
 int main() {
-    S s;                // default ctor
+    S s;             // default ctor
     try {
-        s = get_E();    // missed RVO
+        s = get_E(); // missed RVO
         use_E(s);
     } catch (...) {
-        std::cout << "error getting/using s";
+        std::cout << "error get/use";
         return 1;
     }
 
     try {
-        // do stuff, maybe unrelated to s
+        // stuff, unrelated to s
     } catch (...) {
-        std::cout << "error doing stuff";
+        std::cout << "error";
         return 2;
     }
 
     if (s.i == 3) // use s again
-        std::cout << "It was 3 all along";
+        std::cout << "It was 3?";
 }
 ```
 
@@ -299,21 +299,21 @@ int main() {
 ```cpp
 int main() {
     try {
-        S s = get_E();    // RVO
+        S s = get_E(); // RVO
         use_E(s);
 
         try {
-            // do stuff, maybe unrelated to s
+            // stuff, unrelated to s
         } catch (...) {
-            std::cout << "error doing stuff";
+            std::cout << "error";
             return 2;
         }
 
         if (s.i == 3) // use s again
-            std::cout << "It was 3 all along";
+            std::cout << "It was 3?";
 
     } catch (...) {
-        std::cout << "error getting/using s";
+        std::cout << "error get/use";
         return 1;
     }
 }
