@@ -30,7 +30,7 @@ and GCC 4.1.2 (which was released in [2007](https://gcc.gnu.org/releases.html)).
 
 **Note:** All examples and optimizations described in this post are verified in C++17
 using both GCC 10.1 and Visual Studio 2019 Version 16.5.5 ([MSVC++ 14.25, _MSC_VER 1925](https://en.wikipedia.org/wiki/Microsoft_Visual_C%2B%2B#Internal_version_numbering)).
-The code in Listings A, B, and C are also verified in C++98 using [GCC 4.1.2](https://godbolt.org/z/U_LjWR).
+The code in Listings A, B, and C are also verified in C++98 using [GCC 4.1.2](https://godbolt.org/z/4HdRj7).
 
 {% include bookmark.html id="1" %}
 
@@ -79,18 +79,19 @@ without RVO and with RVO. In both cases, the object value to return is unnamed a
 created in the `return` statement. The comments in code call out the location and
 sequence of object creation and destruction.
 
-When compiled with no RVO, the code creates two objects: a temporary object in function
-`get_B` using the default constructor, and the object named `s` in `main` using the copy
-constructor. However, when the same code is compiled with RVO, only one object is
-created.
+If RVO is not in effect, the code would create two objects: a temporary object in
+function `get_B` using the default constructor, and the object named `s` in `main` using
+the copy constructor. However, if RVO is in effect, the same code would create just one
+object.
 
-**Note:** RVO is concerned only with objects created on the `return` statement. Both GCC
-and MSVC perform RVO by default.
+**Note:** Both GCC and MSVC perform RVO by default, and I have yet to find a way to
+disable RVO in either compiler. (In GCC 10.1, the option `-fno-elide-constructors` seems
+to disable only NRVO. Likewise `/Od` seems to disable only NRVO in MSVC.)
 
 ---
 {% include bookmark.html id="Listing B" %}
 
-##### Listing B: behavior without RVO and with RVO ([run this code](https://godbolt.org/z/9Vpx_R))
+##### Listing B: behavior without RVO and with RVO ([run this code](https://godbolt.org/z/GzGHC4))
 
 <div class="row">
 <div class="column-2" markdown="1">
@@ -140,7 +141,7 @@ default, but it can be enabled using [`/O2` optimization](https://docs.microsoft
 ---
 {% include bookmark.html id="Listing C" %}
 
-##### Listing C: behavior without NRVO and with NRVO ([run this code](https://godbolt.org/z/9Vpx_R))
+##### Listing C: behavior without NRVO and with NRVO ([run this code](https://godbolt.org/z/TbroUH))
 
 <div class="row">
 <div class="column-2" markdown="1">
@@ -150,8 +151,8 @@ default, but it can be enabled using [`/O2` optimization](https://docs.microsoft
 S get_C() {
     S s;      // 1. default ctor 1
     s.i = 8;
-    return s; // 2. copy ctor 2
-} // 3. dtor 1
+    return s;
+} //  2. copy ctor 2; 3. dtor 1
 
 int main() {
     S s = get_C();
@@ -194,7 +195,7 @@ NRVO even in function `get_D1` (even with `/O2` enabled).
 ---
 {% include bookmark.html id="Listing D" %}
 
-##### Listing D: returning named objects in different paths ([run this code](https://godbolt.org/z/QmqW6N))
+##### Listing D: returning named objects from different paths ([run this code](https://godbolt.org/z/jQWwSh))
 
 ```cpp
 S get_D1(int x) {
@@ -210,15 +211,15 @@ S get_D1(int x) {
 
 S get_D2(int x) {
     if (x % 2 == 0) {
-        S s1;          // 2. default ctor 2
+        S s1;          // 2. default ctor 2 (or default ctor for s2 below)
         s1.i = 8;
-        return s1;     // 3. copy ctor 3 (either this or s2 below)
+        return s1;
     } else {
-        S s2;
+        S s2;          // 2. default ctor 2 (or default ctor for s1 above)
         s2.i = 22;
-        return s2;     // 3. copy ctor 3 (either this or s1 above)
+        return s2;
     }
-} // 4. dtor 2
+} // 3. copy ctor 3 (either s1 or s2 above); 4. dtor 2
 
 int main() {
     std::cout << "get_D1:\n";
@@ -249,7 +250,7 @@ pointer manipulation) and causes memory leaks if the object is not freed.
 
 ### 5.&nbsp;&nbsp; Missed optimization
 
-Listing E shows a subtle programming error that causes loss of RVO. In `main`, an
+Listing E shows a subtle programming error that causes loss of NRVO. In `main`, an
 instance of `S` is created using the default constructor in the first line and is then
 assigned the return value from function `get_E`. This situation requires the compiler
 to create two objects and invoke the assignment operator to set variable `s` to the
@@ -258,18 +259,18 @@ function's return value.
 ---
 {% include bookmark.html id="Listing E" %}
 
-##### Listing E: missed RVO ([run this code](https://godbolt.org/z/ojrcdp))
+##### Listing E: missed NRVO ([run this code](https://godbolt.org/z/GASQVN))
 
 ```cpp
 S get_E() {
-    S s;                // 2. default ctor 2
+    S s;         // 2. default ctor 2
     s.i = 8;
     return s;
-}
+} // 3. assign 2 to 1; 4. dtor 2
 
 int main() {
-    S s;                // 1. default ctor 1
-    s = get_E();        // 3. assign 2 to 1; 4. dtor 2
+    S s;         // 1. default ctor 1
+    s = get_E();
 } // 5. dtor 1
 ```
 
@@ -290,23 +291,23 @@ block scope and that object needs to be used in a later block. In this case, the
 must be declared in an outer block and thus RVO is missed. Alternatives such as those
 outlined in [Section 4](#4) would need to be used if it is necessary to benefit from RVO.
 
-Listing F shows an example situation where it is not possible to benefit from RVO.
-Functions `get` and `use` are some functions that return and accept an instance of `S`,
-respectively. (The code shown is actually a simplified version of real-life code.) The
-code in the "Lose RVO" scenario misses out on RVO, but it is simple and readable largely
-because the exception handlers are sequential. In contrast, the code in the "Gain RVO"
-scenario benefits from RVO, but it is obviously less readable, largely due to the nested
-exception handling.
+Listing F shows two possible code organizations for the same application. (The code is
+actually a simplified version of real-life code.) Functions `get` and `use` in the
+listing are some functions that return and accept an instance of `S`, respectively. The
+code with the "Lose RVO" organization misses out on RVO, but it is simple and readable,
+mainly because the exception handlers are sequential. In contrast, the code with the
+"Gain RVO" organization benefits from RVO, but it is less readable, largely due to the
+nested exception handling.
 
 **Note:** Listing F is meant only to illustrate common trade-offs involving RVO. It is
-not meant to promote any particular programming pattern. Other (better) approaches can
-exist, and the approaches available as well as the best approach depend on the
+not meant to promote any particular program organization. Other (better) organizations
+can exist, and the organizations possible as well as the best prganization depend on the
 application.
 
 ---
 {% include bookmark.html id="Listing F" %}
 
-##### Listing F: losing or gaining RVO ([run this code](https://godbolt.org/z/Sqy4Zh))
+##### Listing F: effect of code organization ([run this code](https://godbolt.org/z/HNCzvn))
 
 <div class="row">
 <div class="column-2" markdown="1">
@@ -314,9 +315,9 @@ application.
 
 ```cpp
 int main() {
-    S s;             // default ctor
+    S s;           // default ctor
     try {
-        s = get(); // missed RVO
+        s = get(); // lost RVO
         use(s);
     } catch (...) {
         std::cout << "error get/use";
@@ -371,11 +372,11 @@ int main() {
 
 ### 7.&nbsp;&nbsp; Summary
 
-RVO (including NRVO) is a compiler technique to avoid copying an object that
-a function returns as its value. This optimization helps function to efficiently return
-large objects while also simplifying the function's interface and eliminating scope for
+RVO (including NRVO) is a compiler technique to avoid copying an object that a function
+returns as its value. This optimization helps function to efficiently return large
+objects while also simplifying the function's interface and eliminating scope for
 errors. However, ISO C++ does not require RVO, and support for RVO varies across
-compilers and by situation. Thus it is necessary to verify if the compiler performs RVO
+compilers and by situation. Thus, it is necessary to verify if the compiler performs RVO
 in a given situation and rewrite code to benefit from RVO, forego RVO, or work around
 lack of RVO.
 
@@ -386,9 +387,10 @@ NRVO in a given situation.
 
 ### 8.&nbsp;&nbsp; Exercises
 
-1. Study [this program](https://godbolt.org/z/r7sowD) prepared to verify copy elision in
-   C++98 using GCC 4.6.4:
+1. Answer the following questions in relation to [this program](https://godbolt.org/z/r7sowD)
+   prepared to verify copy elision in C++98 using GCC 4.6.4:
 
+    {:start="a"}
     1. As is, which kind of optimization does the code perform: RVO or NRVO? What is the
        location and sequence of object construction and destruction?
 
@@ -396,17 +398,28 @@ NRVO in a given situation.
        what is given: change the code to perform RVO if it performs NRVO as is, and
        vice versa.
 
-    3. Disable copy elision and compare the result with the result from when elision is
-       enabled. Explain the reason for the differences between the results. You can
-       disable copy elision by including the option `-fno-elide-constructors` in the pane
-       containing execution results. (Copy elision is enabled by default.)
+    3. With the program as given, disable copy elision and compare the result with the
+       result from when copy elision is enabled. Explain the reason for the differences
+       between the results. You can disable copy elision by including the option
+       `-fno-elide-constructors` in the pane containing execution results. (Copy elision
+       is enabled by default.)
 
-    4. In what ways does the C++98 code provided differ from the corresponding C++17
-       code? This question has nothing to with RVO or NRVO, but is opportunistically
-       included to highlight some syntactic differences between C++98 and C++17.
+    4. With the program as given, disable copy elision and compare the result with the
+       result for the part of Listing C where copy elision disabled. What differences are
+       apparent and what are the likely reasons for the differences?
 
-2. Run all the code examples in this post in MSVC. Run the code with optimization
-   disabled (`/Od`, which is the default) and again with optimization for speed (`/O2`) enabled. Analyze the result from each run and compare the results across runs. For ease of use, set the active configuration to "Release" in all runs.
+    5. In what ways does the C++98 code provided differ from the corresponding C++17
+       code in Listing C? **Note:** This question has nothing to with RVO or NRVO, but
+       is opportunistically included to highlight some syntactic differences between
+       C++98 and C++17.
+
+2. Disable copy elision for the code in Listings D, E, and F. For each listing, explain
+   the differences between the results with and without copy elision.
+
+3. Run all the code examples in this post in MSVC. Run the code with optimization
+   disabled (`/Od`, which is the default) and again with optimization-for-speed enabled
+   (`/O2`) . Analyze the result from each run and compare the results across runs. For
+   ease of use, set the active configuration to "Release" in all runs.
 
    **Note:** [Visual Studio Community](https://visualstudio.microsoft.com/vs/community/)
    is free, just in case you do not already have MSVC installed.
