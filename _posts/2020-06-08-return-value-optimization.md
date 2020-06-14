@@ -13,28 +13,30 @@ function returns as its value, including avoiding creation of a temporary object
 optimization permits a function to efficiently return large objects while also
 simplifying the function's interface and eliminating scope for issues such as resource
 leaks. However, there are situations where a compiler may be unable to perform this
-optimization, and there are situations where it may be acceptable or even better to forego this optimization.
+optimization, and there are situations where it may be acceptable or even be better to forego this optimization.
 <!--more-->
 
 {% include bookmark.html id="1" %}
 
 ### 1.&nbsp;&nbsp; Overview
 
-Return-value optimization is part of a broad category of optimizations under the "copy
-elision" umbrella [[class.copy.elision]](https://timsong-cpp.github.io/cppwp/n4659/class.copy.elision).
-C++17 requires copy elision when a function returns a [temporary object](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/p0135r0.html)
-(unnamed object), but not when a function returns a named object. Also, whether copy
-elision is helpful depends on how the function's return value is consumed. Thus, it is
-important to understand the code organization of both the called and calling functions,
-and verify if the optimization is performed or helpful in a given situation.
+Return-value optimization is part of a category of optimizations enabled by "copy
+elision". C++17 requires copy elision when a function returns a [temporary object](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/p0135r0.html)
+(unnamed object), but only [permits it](https://timsong-cpp.github.io/cppwp/n4659/class.copy.elision#1.1)
+(not require it) when a function returns a named object. Also, whether copy elision is
+helpful depends on how the function's return value is consumed. Thus, it is important to
+understand the code organization of both the called and calling functions, and verify if
+the optimization is performed or helpful in a given situation.
 
-The terms RVO and NRVO are frequently used in relation to copy elision, but ISO C++ does
-not define these terms. Also, the term RVO is sometimes used to mean optimization with
-respect to unnamed objects, but sometimes also to mean optimization in relation to both
-named and unnamed objects. Thus, for clarity, this post uses the following terms:
+The terms RVO and NRVO are frequently used in relation to copy elision, but the C++
+standard does **not** define these terms. Also, the term RVO is sometimes used to mean
+optimization with respect to unnamed objects, but sometimes also to mean optimization in
+relation to both named and unnamed objects. Thus, for clarity, this post uses the
+following terms:
 
 - RVO: copy elision for either unnamed objects or named objects
-- URVO: copy elision for unnamed objects only [the term URVO is my own creation]
+- URVO: copy elision for unnamed objects only [the term URVO is my own creation for the
+  purpose of this post]
 - NRVO: copy elision for named objects only
 
 Listing A shows a simple struct rigged to show which constructor is called as well as to
@@ -412,8 +414,8 @@ And, remember that C++17 requires optimization only for unnamed objects.
 
 ### 9.&nbsp;&nbsp; Exercises
 
-1. Complete the following tasks with [Listing B](#listing-b). Do **not** make any change
-   to the code, and run all code in GCC 10.1:
+1. Complete the following tasks with the code in [Listing B](#listing-b). Do **not**
+   make any change to that code, and run the code only in GCC 10.1:
 
     {:start="a"}
     1. Run the code with copy elision enabled (which is the default), but in C++14, and
@@ -428,7 +430,7 @@ And, remember that C++17 requires optimization only for unnamed objects.
     3. With copy elision disabled, set the compiler to use C++17 and compare the result
        with the result from C++14. What confirmation does the comparision provide?
 
-2. Answer the following questions in relation to [this program](https://godbolt.org/z/r7sowD)
+2. Answer the following questions in relation to [this program](https://godbolt.org/z/knnn46)
    prepared to verify copy elision in C++98 using GCC 4.6.4:
 
     {:start="a"}
