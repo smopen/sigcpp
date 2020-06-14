@@ -85,9 +85,10 @@ struct S {
 
 ### 2.&nbsp;&nbsp; Unnamed RVO
 
-Unnamed RVO (URVO), is a relatively old technique and has been permitted since [C++98](http://www.lirmm.fr/~ducour/Doc-objets/ISO+IEC+14882-1998.pdf)
-(see Section 12.2), but is required only since C++17. C++ compilers have likely
-supported URVO as far back as 2001, but I am able to trace it back only to [Visual C++ 2005](https://docs.microsoft.com/en-us/previous-versions/ms364057(v=vs.80))
+Unnamed RVO (URVO), is a relatively old technique and has been permitted since C++98
+([Section 12.2 of that standard]((http://www.lirmm.fr/~ducour/Doc-objets/ISO+IEC+14882-1998.pdf))),
+but it is required only since C++17. C++ compilers have likely supported URVO at least
+as far back as 2001, but I am able to trace it back only to [Visual C++ 2005](https://docs.microsoft.com/en-us/previous-versions/ms364057(v=vs.80))
 and GCC 4.1.2 (which was released in [2007](https://gcc.gnu.org/releases.html)).
 
 Listing B shows some code to return a temporary object in two different scenarios:
