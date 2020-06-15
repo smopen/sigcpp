@@ -443,7 +443,7 @@ verify if the compiler performs RVO in a given situation and rewrite code to ben
 from RVO, forego RVO, or to work around the loss or lack of RVO.
 
 The struct `S` in [Listing A](#listing-a) is a good instrument to test RVO in a given
-situation. The code in Listings [C](listing-d) and [D](listing-d) help determine if a
+situation. The code in Listings [C](#listing-d) and [D](#listing-d) help determine if a
 compiler performs NRVO in a given situation.  
 
 Lastly, beware of the confusing use of the term RVO to mean optimization in relation to
@@ -493,7 +493,7 @@ only unnamed objects, or optimization in relation to either named or unnamed obj
        **Note:** This question has nothing to with RVO, but it is opportunistically
        included to highlight some syntactic differences between C++98 and C++17.
 
-3. Disable copy elision for the code in Listings [D](listing-d), [E](#listing-e), and
+3. Disable copy elision for the code in Listings [D](#listing-d), [E](#listing-e), and
    [G](#listing-g). For each listing, explain the differences between the results with
    and without copy elision. Use only GCC 10.1 in all cases.
 
