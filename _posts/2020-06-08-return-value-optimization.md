@@ -46,8 +46,8 @@ this rig to illustrate RVO and to check the circumstances in which RVO is perfor
 is helpful.
 
 **Note:** All examples and optimizations described in this post are verified in C++17
-using both GCC 10.1 and Visual Studio 2019 Version 16.5.5 ([MSVC++ 14.25, _MSC_VER 1925](https://en.wikipedia.org/wiki/Microsoft_Visual_C%2B%2B#Internal_version_numbering)).
-The code in Listings A, B, and C are also verified in C++98 using [GCC 4.1.2](https://godbolt.org/z/4HdRj7).
+using both GCC 10.1 and Visual Studio 2019 Version 16.5.5. The code in Listings A, B,
+and C are also verified in C++98 using GCC 4.1.2.
 
 ---
 {% include bookmark.html id="Listing A" %}
@@ -91,7 +91,7 @@ URVO is a relatively old technique and has been permitted since C++98 ([Section 
 but it is required only since C++17. C++ compilers have likely supported URVO at least
 as far back as 2001. MSVC has supported it since [Visual C++ 2005](https://docs.microsoft.com/en-us/previous-versions/ms364057(v=vs.80)),
 but in the GCC world, due to my limited access to tools, I am able to trace it back only
-to GCC 4.1.2 (which was released in [2007](https://gcc.gnu.org/releases.html)).
+to [GCC 4.1.2](https://godbolt.org/z/4HdRj7) (which was released in [2007](https://gcc.gnu.org/releases.html)).
 
 Listing B analyzes the same code in two scenarios. In both scenarios, the object value
 to return is created on the `return` statement. In the scenario without URVO, the code
