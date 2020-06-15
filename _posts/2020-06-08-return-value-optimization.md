@@ -271,7 +271,7 @@ returns an unnamed object.
 ---
 {% include bookmark.html id="Listing E" %}
 
-##### Listing E: losing NRVO benefit ([run this code](https://godbolt.org/z/qaq6zE))
+##### Listing E: losing NRVO benefit ([run this code](https://godbolt.org/z/Svn-K4))
 
 ```cpp
 S get_E() {
@@ -443,7 +443,7 @@ verify if the compiler performs RVO in a given situation and rewrite code to ben
 from RVO, forego RVO, or to work around the loss or lack of RVO.
 
 The struct `S` in [Listing A](#listing-a) is a good instrument to test RVO in a given
-situation. The code in Listings [C](#listing-d) and [D](#listing-d) help determine if a
+situation. The code in Listings [C](#listing-c) and [D](#listing-d) help determine if a
 compiler performs NRVO in a given situation.  
 
 Lastly, beware of the confusing use of the term RVO to mean optimization in relation to
