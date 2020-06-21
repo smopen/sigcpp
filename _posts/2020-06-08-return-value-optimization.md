@@ -90,7 +90,7 @@ struct S {
 Unnamed RVO (URVO) relates to optimizing the return of "unnamed objects" or temporary
  objects, which are objects created on a `return` statement.
 
-URVO is a relatively old technique and has been permitted since C++98 ([Section 12.2 of that standard]((http://www.lirmm.fr/~ducour/Doc-objets/ISO+IEC+14882-1998.pdf))),
+URVO is a relatively old technique and has been permitted since C++98 ([Section 12.2 of that standard](http://www.lirmm.fr/~ducour/Doc-objets/ISO+IEC+14882-1998.pdf)),
 but it is required only since C++17. C++ compilers have likely supported URVO at least
 as far back as 2001. MSVC has supported it since [Visual C++ 2005](https://docs.microsoft.com/en-us/previous-versions/ms364057(v=vs.80)),
 but in the GCC world, due to my limited access to tools, I am able to trace it back only
