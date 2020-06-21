@@ -49,7 +49,7 @@ is helpful.
 
 **Note:** All examples and optimizations described in this post are verified in C++17
 using both GCC 10.1 and Visual Studio 2019 Version 16.5.5. The code in Listings A, B,
-and C are also verified in C++98 using GCC 4.1.2.
+and C is also verified in C++98 using GCC 4.1.2.
 
 ---
 {% include bookmark.html id="Listing A" %}
@@ -158,9 +158,7 @@ compiler option. In contrast, MSVC disables NRVO by default, but it can be enabl
 
 ##### Listing C: behavior without NRVO and with NRVO ([run this code](https://godbolt.org/z/TbroUH))
 
-<div class="row">
-<div class="column-2" markdown="1">
-<div class="column-head">Without NRVO</div>
+{% include multi-column-start.html c=1 h="Without NRVO" %}
 
 ```cpp
 S get_C() {
@@ -174,9 +172,8 @@ int main() {
 } // 4. dtor 2
 ```
 
-</div>
-<div class="column-2" markdown="1">
-<div class="column-head">With NRVO</div>
+{% include multi-column-start.html c=2 h="With NRVO" %}
+
 
 ```cpp
 S get_C() {
@@ -190,8 +187,8 @@ int main() {
 } // 2. dtor 1
 ```
 
-</div>
-</div>
+{% include multi-column-end.html %}
+
 ---
 
 {% include bookmark.html id="4" %}
@@ -376,9 +373,7 @@ application.
 
 ##### Listing G: effect of code organization ([run this code](https://godbolt.org/z/V2ZASh))
 
-<div class="row">
-<div class="column-2" markdown="1">
-<div class="column-head">Lose RVO, sequential exception handling</div>
+{% include multi-column-start.html c=1 h="Lose RVO, sequential exception handling" %}
 
 ```cpp
 int main() {
@@ -403,9 +398,7 @@ int main() {
 }
 ```
 
-</div>
-<div class="column-2" markdown="1">
-<div class="column-head">Gain RVO, nested exception handling</div>
+{% include multi-column-start.html c=1 h="Gain RVO, nested exception handling" %}
 
 ```cpp
 int main() {
@@ -430,8 +423,7 @@ int main() {
 }
 ```
 
-</div>
-</div>
+{% include multi-column-end.html %}
 
 ---
 
