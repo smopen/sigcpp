@@ -4,8 +4,9 @@ title: "Return value optimization (RVO)"
 date: 2020-06-08
 authors: smurthys
 cpp_level: intermediate
-cpp_version: "C++03"
+cpp_versions: ["C++98", "C++03", "C++17"]
 reader_activity: exercises
+tweet_url: https://twitter.com/sigcpp/status/1272634370105450501
 ---
 
 Return-value optimization is a compiler technique to avoid copying an object that a
@@ -13,7 +14,8 @@ function returns as its value, including avoiding creation of a temporary object
 optimization permits a function to efficiently return large objects while also
 simplifying the function's interface and eliminating scope for issues such as resource
 leaks. However, there are situations where a compiler may be unable to perform this
-optimization, and there are situations where it may be acceptable or even be better to forego this optimization.
+optimization,  where a function does not capitalize on the optimization, and where it may
+be acceptable or even be better to forego this optimization.
 <!--more-->
 
 {% include bookmark.html id="1" %}
@@ -26,18 +28,18 @@ elision" (meaning "avoiding copying"). C++17 requires copy elision when a functi
 when a function returns a named object. Also, whether copy elision is
 helpful depends on how the function's return value is consumed. Thus, it is important to
 understand the code organization of both the called and calling functions, and verify if
-the optimization is performed or helpful in a given situation.
+the optimization is performed or is helpful in a given situation.
 
 The terms RVO and NRVO are frequently used in relation to copy elision, but the C++
-standard does **not** define these terms. Also, the term RVO is sometimes used to mean
+standard does **not** define those terms. Also, the term RVO is sometimes used to mean
 optimization with respect to unnamed objects, but sometimes also to mean optimization in
 relation to both named and unnamed objects. Thus, for clarity, this post uses the
-following terms:
+following terms and acronyms:
 
 - RVO: copy elision for either unnamed objects or named objects
-- URVO: copy elision for unnamed objects only [the term URVO is my own creation for the
+- Unnamed RVO and URVO: copy elision for unnamed objects only [the term URVO is my own creation for the
   purpose of this post]
-- NRVO: copy elision for named objects only
+- NRVO: copy elision for named objects only [NRVO is a well-established term]
 
 Listing A shows a simple struct rigged to show which constructor is called as well as to
 show when the assignment operator and the destructor are called. The static variable
@@ -85,7 +87,8 @@ struct S {
 
 ### 2.&nbsp;&nbsp; Unnamed RVO
 
-Unnamed RVO (NRVO) relates to optimizing the return of "unnamed objects" or temporary objects, which are objects created on a `return` statement.
+Unnamed RVO (URVO) relates to optimizing the return of "unnamed objects" or temporary
+ objects, which are objects created on a `return` statement.
 
 URVO is a relatively old technique and has been permitted since C++98 ([Section 12.2 of that standard]((http://www.lirmm.fr/~ducour/Doc-objets/ISO+IEC+14882-1998.pdf))),
 but it is required only since C++17. C++ compilers have likely supported URVO at least
@@ -108,9 +111,7 @@ be disabled in C++14. See [Exercise 1](#9).)
 
 ##### Listing B: behavior without URVO and with URVO ([run this code](https://godbolt.org/z/rzJeyX))
 
-<div class="row">
-<div class="column-2" markdown="1">
-<div class="column-head">Without URVO</div>
+{% include multi-column-start.html c=1 h="Without URVO" %}
 
 ```cpp
 S get_B() {
@@ -122,9 +123,7 @@ int main() {
 } // 4. dtor 2
 ```
 
-</div>
-<div class="column-2" markdown="1">
-<div class="column-head">With URVO</div>
+{% include multi-column-start.html c=2 h="With URVO" %}
 
 ```cpp
 S get_B() {
@@ -136,8 +135,8 @@ int main() {
 } // 2. dtor 1
 ```
 
-</div>
-</div>
+{% include multi-column-end.html %}
+
 ---
 
 {% include bookmark.html id="3" %}
@@ -254,7 +253,7 @@ int main() {
 
 {% include bookmark.html id="5" %}
 
-### 5.&nbsp;&nbsp; Impact of calling context
+### 5.&nbsp;&nbsp; Role of the calling function
 
 Listing E shows a subtle logic error that causes loss of NRVO benefit: In `main`, an
 instance of `S` is created using the default constructor in the first line and it is then
@@ -262,11 +261,18 @@ assigned the return value from function `get_E`. This situation requires the com
 create two objects and invoke the assignment operator to set variable `s` to the
 function's return value.
 
-To repeat, the situation in Listing E is a logic error; not a case of the compiler not
-performing NRVO.
-
 **Note:** The loss of optimization benefit in Listing E applies even if function `get_E`
 returns an unnamed object.
+
+To repeat, the situation in Listing E is a logic error; not a case of the compiler not
+performing RVO. If the compiler does any sort of RVO (and C++17 guarantees URVO), it does
+so without regard for the calling context. To be precise, the compiler generates code such
+that object copying is avoided if the return value is used as the initializer for a
+receiving variable (and in a few other cases; see [Exercise 6](#9)).
+
+Because the compiler performs RVO independent of the calling context, RVO benefits are
+available whether the function is reused in source form or binary form, and it is always
+up to the calling function to lose or gain the benefit.
 
 ---
 {% include bookmark.html id="Listing E" %}
@@ -353,7 +359,7 @@ block in which the variable receives its object value. In this situation, altern
 such as those outlined in [Section 6](#6) would need to be used if it is necessary to
 avoid copying objects.
 
-Listing G shows two possible code organizations to meet the needs of a [real-life application](https://github.com/sigcpp/stl-lite/blob/4e56c9059101d4a35ce2741f304ac171999c3b6f/test/driver.cpp#L48-L88).
+Listing G shows two possible code organizations to meet the needs of a [real-life application](https://github.com/sigcpp/stl-lite/blob/87eef34616b5c5c377899f84f6bfb5b630b4501e/test/driver.cpp#L63-L135).
 Functions `get` and `use` in the listing are some functions that return and accept an
 instance of `S`, respectively. The code with the "Lose RVO" organization misses out on
 the RVO benefit (why?), but it is simple and readable, mainly because the exception
@@ -507,7 +513,7 @@ only unnamed objects, or optimization in relation to either named or unnamed obj
 
 5. Consider the declaration `S f();` for a third-party library function `f` distributed
    in binary form. Assume we do **not** have access to the source code of `f`, but we
-   know the library is compiled with GCC 10.1.
+   know the library is compiled with GCC 10.1. State all assumptions you make.
 
     {:start="a"}
     1. What can we say about the RVO that might be performed in function `f`, without
@@ -515,4 +521,25 @@ only unnamed objects, or optimization in relation to either named or unnamed obj
 
     2. How and why would your position change for this statment: `S s = f();`
 
-    3. How and why would your position change for these statments: `S s; s = f();`
+    3. How and why would your position change for this statment sequnce: `S s; s = f();`
+
+6. Revise the code in [Listing E](#listing-e) as follows in C++17 using GCC 10.1. Then,
+   based on the revised program's output, answer this question: Does the revised `main`
+   get the benefit of RVO? If yes, make a general statement on the circumstances in which
+   a calling function gets the benefit of RVO. If you say `main` does not get the benefit
+   of RVO, explain why and point to the part of the program's output that supports your
+   position. In either case, submit a Compiler Explorer link to the revised program.
+
+    {:start="i"}
+    1. Add a function named `use_E` which receives a `const` reference to an instance of
+       `S`. In the function, merely print to screen the value of `S`'s data member `i`.
+
+    2. Change the entire body of `main` to contain just this one statement: `use_E(get_E());`
+
+7. What revision to struct `S` and corresponding revision to function `get_D2` of
+   [Listing D](#listing-d) permit `get_D2` to return different objects in each path
+   while also enabling RVO? What does this RVO-enabling change in `S` and `get_D2`
+   inform us about writing classes/structs and returning object values?
+
+   [I apologize if this question seems underspecified, but being more specific gives
+   away too much of the solution. Please [DM](#discussion) if you like more information.]
