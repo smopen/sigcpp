@@ -398,7 +398,7 @@ int main() {
 }
 ```
 
-{% include multi-column-start.html c=1 h="Gain RVO, nested exception handling" %}
+{% include multi-column-start.html c=2 h="Gain RVO, nested exception handling" %}
 
 ```cpp
 int main() {
