@@ -21,6 +21,9 @@ pointers and traditional arrays are the only/better choice and in those cases us
 qualification correctly to maximize safety.
 <!--more-->
 
+**Note:** All examples in this post are verified in C++17 using both GCC 10.1 and Visual
+Studio 2019 Version 16.5.5.
+
 {% include bookmark.html id="1" %}
 
 ### 1.&nbsp;&nbsp; Pointers to non-array data
@@ -35,13 +38,13 @@ permutation is due to a specific form of declaration based on where the keyword 
 is placed. Listing A illustrates the four forms with a separate pointer variable
 declared using each form.
 
-**Note:** The `const` keyword in a declaration is part of what is called the [_cv-qualifier-sequence_](https://timsong-cpp.github.io/cppwp/n4659/dcl.ptr#1).
+**Note:** The `const` keyword in a variable declaration is part of what is called the
+[_cv-qualifier-sequence_](https://timsong-cpp.github.io/cppwp/n4659/dcl.ptr#1).
 
 ---
 
 ##### Listing A: declaration forms of non-array pointers ([run this code](https://godbolt.org/z/T6i5LM))
 
----
 
 ```cpp
 int main() {
@@ -253,17 +256,17 @@ have side effect.
 All permutations in this case permit modification of `argv` itself, and that
 modification would **not** have side effect.
 
-- `char* argv[]`: Nothing is `const`. The characters in any C-string and the pointers to
-  C-strings may be modified.
+1. **`char* argv[]`:** Nothing is `const`. The characters in any C-string and the
+   pointers to C-strings may be modified.
 
-- `const char* argv[]`: The characters in the C-strings are `const`, but the pointers to
-  C-strings are not.
+2. **`const char* argv[]`:** The characters in the C-strings are `const`, but the
+   pointers to C-strings are not.
 
-- `char* const argv[]`: The characters in the C-strings are modifiable, but the pointers
-  to C-strings are `const`.
+3. **`char* const argv[]`:** The characters in the C-strings are modifiable, but the
+   pointers to C-strings are `const`.
 
-- `const char* const argv[]`: Both the characters in the C-strings and the pointers to
-  C-strings are `const`.
+4. **`const char* const argv[]`:** Both the characters in the C-strings and the pointers
+   to C-strings are `const`.
 
 #### When the parameter is a pointer to pointer to `char`
 
@@ -271,16 +274,17 @@ All permutations in this case permit modification of pointers to C-strings, but 
 modification would have side effect. Where `argv` itself is modifiable, that modification
 would **not** have side effect.
 
-- `char** argv`: Nothing is `const`. The characters in any C-string and `argv` itself
-  may be modified.
+1. **`char** argv`:** Nothing is `const`. The characters in any C-string and `argv`
+   itself may be modified.
 
-- `const char** argv`: The characters in the C-strings are `const`, but `argv` is not.
+2. **`const char** argv`:** The characters in the C-strings are `const`, but `argv` is
+   not.
 
-- `char** const argv`: The characters in the C-strings are modifiable, but `argv` is
-  `const`.
+3. **`char** const argv`:** The characters in the C-strings are modifiable, but `argv` is
+   `const`.
 
-- `const char* const argv[]`: Both the characters in the C-strings and `argv` are
-  `const`.
+4. **`const char* const argv[]`:** Both the characters in the C-strings and `argv` are
+   `const`.
 
 Listing C shows code to illustrate the effect of each `const`ness permutation in both
 cases. The code assumes that the parameter is passed an array of at least two C-strings
@@ -289,61 +293,61 @@ link included in the listing's caption has additional comments.
 
 ---
 
-##### Listing C: forms of pointer return types ([run this code](https://godbolt.org/z/Nsipko))
+##### Listing C: forms of pointer to array of pointers ([run this code](https://godbolt.org/z/SDnoCB))
 
 {% include multi-column-start.html c=1 h="Array of `char` pointers" %}
 
 ```cpp
-void g1(char* args[]) {
-    *args[0] = '1';    // alter 1st char of 1st C-string
-    args[1] = "-1";    // point to different C-string
-    ++args;            // point to second C-string
+void g1(char* argv[]) {
+    *argv[0] = '1';
+    argv[1] = "-1";
+    ++argv;
 }
 
-void g2(const char* args[]) {
-    //*args[0] = '2';  // error: can't change const data
-    args[1] = "-2";    // OK: changes ptr; not pointed data
-    ++args;
+void g2(const char* argv[]) {
+    //*argv[0] = '2';
+    argv[1] = "-2";
+    ++argv;
 }
 
-void g3(char* const args[]) {
-    *args[0] = '3';
-    //args[1] = "-3";  // error: can't change const ptr
-    ++args;
+void g3(char* const argv[]) {
+    *argv[0] = '3';
+    //argv[1] = "-3";
+    ++argv;
 }
 
-void g4(const char* const args[]) {
-    //*args[0] = '4';  // error: can't change const data
-    //args[1] = "-4";  // error: can't change const ptr
-    ++args;
+void g4(const char* const argv[]) {
+    //*argv[0] = '4';
+    //argv[1] = "-4";
+    ++argv;
 }
 ```
 
 {% include multi-column-start.html c=2 h="Pointer to pointer to `char`" %}
 
 ```cpp
-void g1(char** args) {
-    **args = '1';     // alter 1st char of 1st C-string
-    *(args+1) = "-1"; // point to different C-string
-    ++args;           // point to second C-string
+void g1(char** argv) {
+    **argv = '1';
+    *(argv+1) = "-1";
+    ++argv;
 }
 
-void g2(const char** args) {
-    //**args = '2';   // error: can't change const data
-    *(args+1) = "-2";
-    ++args;           // OK: changes non-const ptr
+void g2(const char** argv) {
+    //**argv = '2';
+    *(argv+1) = "-2";
+    ++argv;
 }
 
-void g3(char** const args) {
-    **args = '3';     // OK: changes non-const data
-    *(args+1) = "-3"; // OK: args is const; args[i] is not
-    //++args;         // error: can't change const ptr
+void g3(char** const argv) {
+    **argv = '3';
+    *(argv+1) = "-3";
+    //++argv;
 }
 
-void g4(const char** const args) {
-    //**args = '4';   // error: can't change const data
-    *(args+1) = "-4";
-    //++args;         // error: can't change const ptr
+void g4(const char** const argv) {
+    //**argv = '4';
+    *(argv+1) = "-4";
+    //++argv;
 }
 ```
 
