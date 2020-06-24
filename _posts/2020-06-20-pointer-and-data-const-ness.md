@@ -246,9 +246,9 @@ to understand the impact of `const` qualifications in each case. The following i
 summary of the effect of `const` qualifications in the two cases, assuming the parameter
 is named `argv`.
 
-Note that in either case, if any permutation permits altering the characters in
-C-strings or the pointers to C-strings, such alteration would have side effect. However,
-if a permutation permits modification to `argv` itself, any such modification would not
+Note that in either case, if any permutation permits altering pointers to C-strings or
+the characters in C-strings, such alteration would have side effect. However, if a
+permutation permits modification to `argv` itself, any such modification would **not**
 have side effect.
 
 #### When the parameter is an array of `char` pointers
@@ -256,7 +256,7 @@ have side effect.
 All permutations in this case permit modification of `argv` itself, and that
 modification would **not** have side effect.
 
-1. **`char* argv[]`:** Nothing is `const`. The characters in any C-string and the
+1. **`char* argv[]`:** Nothing is `const`. The characters in the C-strings and the
    pointers to C-strings may be modified.
 
 2. **`const char* argv[]`:** The characters in the C-strings are `const`, but the
@@ -268,13 +268,20 @@ modification would **not** have side effect.
 4. **`const char* const argv[]`:** Both the characters in the C-strings and the pointers
    to C-strings are `const`.
 
+| Parameter                  | Characters in C-string | Pointers to C-string | `argv` |
+| -------------------------- | ---------------------- | -------------------- | ------ |
+| `char* argv[]`             |                        |                      |        |
+| `const char* argv[]`       | `const`                |                      |        |
+| `char* const argv[]`       |                        | `const`              |        |
+| `const char* const argv[]` | `const`                | `const`              |        |
+
 #### When the parameter is a pointer to pointer to `char`
 
 All permutations in this case permit modification of pointers to C-strings, but any such
 modification would have side effect. Where `argv` itself is modifiable, that modification
 would **not** have side effect.
 
-1. **`char** argv`:** Nothing is `const`. The characters in any C-string and `argv`
+1. **`char** argv`:** Nothing is `const`. The characters in the C-strings and `argv`
    itself may be modified.
 
 2. **`const char** argv`:** The characters in the C-strings are `const`, but `argv` is
@@ -283,8 +290,15 @@ would **not** have side effect.
 3. **`char** const argv`:** The characters in the C-strings are modifiable, but `argv` is
    `const`.
 
-4. **`const char* const argv[]`:** Both the characters in the C-strings and `argv` are
+4. **`const char** const argv`:** Both the characters in the C-strings and `argv` are
    `const`.
+
+| Parameter                 | Characters in C-string | Pointers to C-string | `argv` |
+| ------------------------- | ---------------------- | -------------------- | ------ |
+| `char** argv`             |                        |                      |        |
+| `const char** argv`       | `const`                |                      |        |
+| `char** const argv`       |                        |                      | `const`|
+| `const char** const argv` | `const`                |                      | `const`|
 
 Listing C shows code to illustrate the effect of each `const`ness permutation in both
 cases. The code assumes that the parameter is passed an array of at least two C-strings
