@@ -143,7 +143,7 @@ relevant to function return types.
 The reason compilers ignore pointer `const`ness in the return type is because it is
 up to the calling function to determine that `const`ness. (Compilers similarly ignore
 data `const`ness in the return type when a function returns a fundamental type. See
-Exercise 1.)
+[Exercise 1](#6).)
 
 Listing B shows the use of the four forms of pointer return types and calls out places
 where the compiler ignores pointer `const`ness. (Notice the warnings about ignored
