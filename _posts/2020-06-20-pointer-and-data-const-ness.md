@@ -56,15 +56,15 @@ int main() {
 
     const int* p2 = &a;        // variable ptr, const data
     p2 = &b;                   // change ptr
-    //*p2 = 7;                 // error: can't change const data
+    *p2 = 7;                   // error: can't change const data
 
     int* const p3 = &a;        // const ptr, variable data
-    //p3 = &b;                 // error: can't change const ptr
+    p3 = &b;                   // error: can't change const ptr
     *p3 = 9;                   // change data; a = 9
 
     const int* const p4 = &a;  // const ptr, const data
-    //p4 = &b;                 // error: can't change const ptr
-    //*p4 = 7;                 // error: can't change const data
+    p4 = &b;                   // error: can't change const ptr
+    *p4 = 7;                   // error: can't change const data
 }
 ```
 
@@ -182,7 +182,7 @@ int main() {
     *p1 = 6;        // change data
 
     p2 = s1;        // change ptr
-    //*p2 = 6;      // can't change const data
+    *p2 = 6;        // can't change const data
 
     //omit: p3 and p4 behave as p1 and p2, respectively
     //omit: free dynamically-allocated ints using saved ptrs
@@ -268,18 +268,6 @@ modification would **not** have side effect.
 4. **`const char* const argv[]`:** Both the characters in the C-strings and the pointers
    to C-strings are `const`.
 
-|**Array of char pointers**|**Characters in C-string**|**Pointer to C-string**|**argv**|
-| `char* argv[]`             |                        |                      |        |
-| `const char* argv[]`       | `const`                |                      |        |
-| `char* const argv[]`       |                        | `const`              |        |
-| `const char* const argv[]` | `const`                | `const`              |        |
-|**Pointer to pointer to char**|**Characters in C-string**|**Pointer to C-string**|**argv**|
-| -------------------------- | ---------------------- | -------------------- | ------ |
-| `char** argv`              |                        |                      |        |
-| `const char** argv`        | `const`                |                      |        |
-| `char** const argv`        |                        |                      | `const`|
-| `const char** const argv`  | `const`                |                      | `const`|
-
 #### When the parameter is a pointer to pointer to `char`
 
 All permutations in this case permit modification of pointers to C-strings, but any such
@@ -298,17 +286,10 @@ would **not** have side effect.
 4. **`const char** const argv`:** Both the characters in the C-strings and `argv` are
    `const`.
 
-| Pointer to pointer to char| Characters in C-string | Pointers to C-string | argv   |
-| ------------------------- | ---------------------- | -------------------- | ------ |
-| `char** argv`             |                        |                      |        |
-| `const char** argv`       | `const`                |                      |        |
-| `char** const argv`       |                        |                      | `const`|
-| `const char** const argv` | `const`                |                      | `const`|
-
-Listing C shows code to illustrate the effect of each `const`ness permutation in both
-cases. The code assumes that the parameter is passed an array of at least two C-strings
-and that the first C-string has at least one non-null character in it. The code at the
-link included in the listing's caption has additional comments.
+Listing C shows some code to illustrate the effect of each `const`ness permutation in
+both cases. The code assumes that the parameter is passed an array of at least two
+C-strings and that the first C-string has at least one non-null character in it. The
+code at the link included in the listing's caption has additional comments.
 
 ---
 
@@ -324,20 +305,20 @@ void g1(char* argv[]) {
 }
 
 void g2(const char* argv[]) {
-    //*argv[0] = '2';
+    *argv[0] = '2'; // error: const data
     argv[1] = "-2";
     ++argv;
 }
 
 void g3(char* const argv[]) {
     *argv[0] = '3';
-    //argv[1] = "-3";
+    argv[1] = "-3"; // error: const ptr
     ++argv;
 }
 
 void g4(const char* const argv[]) {
-    //*argv[0] = '4';
-    //argv[1] = "-4";
+    *argv[0] = '4'; // error: const data
+    argv[1] = "-4"; // error: const ptr
     ++argv;
 }
 ```
@@ -352,7 +333,7 @@ void g1(char** argv) {
 }
 
 void g2(const char** argv) {
-    //**argv = '2';
+    **argv = '2';   // error: const data
     *(argv+1) = "-2";
     ++argv;
 }
@@ -360,13 +341,13 @@ void g2(const char** argv) {
 void g3(char** const argv) {
     **argv = '3';
     *(argv+1) = "-3";
-    //++argv;
+    ++argv;         // error: const ptr
 }
 
 void g4(const char** const argv) {
-    //**argv = '4';
+    **argv = '4';   // error: const data
     *(argv+1) = "-4";
-    //++argv;
+    ++argv;         // error: const ptr
 }
 ```
 
