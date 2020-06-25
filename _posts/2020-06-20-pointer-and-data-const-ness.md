@@ -268,14 +268,12 @@ modification would **not** have side effect.
 4. **`const char* const argv[]`:** Both the characters in the C-strings and the pointers
    to C-strings are `const`.
 
-| Array of char pointers     | Characters in C-string | Pointers to C-string | argv   |
-| -------------------------- | ---------------------- | -------------------- | ------ |
+|**Array of char pointers**|**Characters in C-string**|**Pointer to C-string**|**argv**|
 | `char* argv[]`             |                        |                      |        |
 | `const char* argv[]`       | `const`                |                      |        |
 | `char* const argv[]`       |                        | `const`              |        |
 | `const char* const argv[]` | `const`                | `const`              |        |
-|                                                                                     |
-| Pointer to pointer to char | Characters in C-string | Pointers to C-string | argv   |
+|**Pointer to pointer to char**|**Characters in C-string**|**Pointer to C-string**|**argv**|
 | -------------------------- | ---------------------- | -------------------- | ------ |
 | `char** argv`              |                        |                      |        |
 | `const char** argv`        | `const`                |                      |        |
