@@ -295,7 +295,7 @@ code at the link included in the listing's caption has additional comments.
 
 ##### Listing C: forms of pointer to array of pointers ([run this code](https://godbolt.org/z/SDnoCB))
 
-{% include multi-column-start.html c=1 h="Array of `char` pointers" %}
+{% include multi-column-start.html c=1 h="Array of <code>char</code> pointers" %}
 
 ```cpp
 void g1(char* argv[]) {
@@ -323,7 +323,7 @@ void g4(const char* const argv[]) {
 }
 ```
 
-{% include multi-column-start.html c=2 h="Pointer to pointer to `char`" %}
+{% include multi-column-start.html c=2 h="Pointer to pointer to <code>char</code>" %}
 
 ```cpp
 void g1(char** argv) {
