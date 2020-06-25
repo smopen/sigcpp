@@ -8,12 +8,12 @@ reader_activity: exercises
 ---
 
 This post discusses the effect of `const` qualification in pointer declarations,
-specifically focusing on the distinction between `const`ness of pointer and `const`ness
-of data. It first examines `const` qualification in non-array pointer declarations, and
-then the qualification in the context of arrays, including arrays of pointers. In all
-cases, it discusses declarations of variables, function parameters, and function return
-types. The post assumes the reader is familiar with pointers, the relationship between
-arrays and pointers, and arrays decaying to pointers.
+specifically the distinction between `const`ness of pointer and `const`ness of data. It
+first examines `const` qualification in non-array pointer declarations, and then the
+qualification in the context of pointers to arrays, including pointers to arrays of
+pointers. In all cases, the post discusses declarations of variables, function
+parameters, and function return types. The post assumes the reader is familiar with
+pointers, the relationship between arrays and pointers, and arrays decaying to pointers.
 
 But first, some advice: Avoid using pointers directly, and instead use references. Also
 prefer `std::array` over traditional arrays. However, there are situations where
@@ -29,14 +29,14 @@ Studio 2019 Version 16.5.5.
 ### 1.&nbsp;&nbsp; Pointers to non-array data
 
 This section discusses the distinction between `const`ness of pointer and `const`ness of
-data that is not a traditional array. "Non-array pointers" includes pointers to
-fundamental types (such as `char` and `int`) as well as objects, including container
-objects such as vectors, lists, and maps.
+non-array data, both in the context of pointer declarations. "Non-array data" includes
+both fundamental types and objects (including container objects such as vectors, lists,
+and maps).
 
-There are four permutations of pointer `const`ness and data `const`ness, and each
-permutation is due to a specific form of declaration based on where the keyword `const`
-is placed. Listing A illustrates the four forms with a separate pointer variable
-declared using each form.
+There are four permutations of pointer `const`ness and data `const`ness in the context of
+pointer declarations, and each permutation is due to a specific form of declaration based
+on where the keyword `const` is placed. Listing A illustrates the four forms with a
+separate pointer variable declared using each form.
 
 **Note:** The `const` keyword in a variable declaration is part of what is called the
 [_cv-qualifier-sequence_](https://timsong-cpp.github.io/cppwp/n4659/dcl.ptr#1).
@@ -44,7 +44,6 @@ declared using each form.
 ---
 
 ##### Listing A: declaration forms of non-array pointers ([run this code](https://godbolt.org/z/T6i5LM))
-
 
 ```cpp
 int main() {
@@ -199,7 +198,7 @@ int main() {
 Pointer declarations are relevant in the context of traditional arrays because every
 array "decays" to a pointer. For example, if `a` is an array of `int` values, then the
 type of `a` decays to `int*`. In other words, the type of `a` is compatible with or is
-practically the same as `int*`. 
+practically the same as `int*`.
 
 The decaying of array to a pointer includes `const` qualification of data. For example,
 if `a` is an array of `const int` values, then the type of `a` reduces to `const int*`. Note that the `const` qualification is on data; not on the pointer.
@@ -238,9 +237,9 @@ allocated for the data with which you are working.
 
 A C++ program is able to receive command-line arguments by defining a `main` function of
 the form `int main(int argc, char** argv)`, where `argc` is the number of arguments
-received and `argv` is a [pointer to pointer to `char`](https://timsong-cpp.github.io/cppwp/n4659/basic.start.main#2.2). However, based on the array decay principle, this
-form of `main` can also be of the form `int main(int argc, char* argv[])`, where `argv`
-is an array of `char` pointers.
+received and `argv` is a [pointer to pointer to `char`](https://timsong-cpp.github.io/cppwp/n4659/basic.start.main#2.2).
+However, based on the array decay principle, this form of `main` can also be of the form
+`int main(int argc, char* argv[])`, where `argv` is an array of `char` pointers.
 
 Given that an array of C-strings could be modeled either as an array of `char` pointers
 (say `char* argv[]`) or as a pointer to pointer to `char` (say `char** argv`), it helps
@@ -300,9 +299,9 @@ code at the link included in the listing's caption has additional comments.
 
 ```cpp
 void g1(char* argv[]) {
-    *argv[0] = '1'; // change data
-    argv[1] = "g1"; // change ptr to C-string
-    ++argv;         // change argv
+    *argv[0] = '1'; // alter data
+    argv[1] = "g1"; // alter C-string ptr
+    ++argv;         // alter argv
 }
 
 void g2(const char* argv[]) {
@@ -328,9 +327,9 @@ void g4(const char* const argv[]) {
 
 ```cpp
 void g1(char** argv) {
-    **argv = '1';     // change data
-    *(argv+1) = "g1"; // change ptr to C-string
-    ++argv;           // change argv
+    **argv = '1';     // alter data
+    *(argv+1) = "g1"; // alter C-string ptr
+    ++argv;           // alter argv
 }
 
 void g2(const char** argv) {
@@ -358,13 +357,59 @@ void g4(const char** const argv) {
 
 ### 5.&nbsp;&nbsp; Summary
 
-In summary, C-strings and NTBSs are different with respect to the number of null character
-occurrences permitted and the required location of the null character. However, I have yet
-to encounter any situation where this subtlety causes an issue: If an array with multiple
-null characters or a misplaced null character is used where an NTBS is expected, only the
-portion of the array until the first occurrence of the null character is processed. That
-is, in practice, an NTBS is treated just as a C-string.
+Every pointer declaration can include up to two `const` qualifications, one for the data
+pointed, another for the pointer itself. As a result of this allowance, four `const`ness
+permutations exist and each permutation has a corresponding declaration form. All four
+forms apply to variables, parameters, and return types. However, two of the parameter
+declaration forms could be replaced by reference declarations, and the compiler ignores
+two of the forms of return type declarations.
+
+The declaration forms apply to pointers for non-array data and array data. There are two
+different ways to model the decay type of an array of pointers and the two means subtly
+differ in the effect of limitations pointer `const`ness.
+
+Although it is generally better to use references instead of pointers, and containers
+instead of traditional arrays, some situations do require the use of pointers and
+traditional arrays. Thus, it is important to fully understand `const` qualification of
+pointers and maximize safety. For example, for maximal safety, a function to process
+command-line arguments should treat the arguments as an array of char pointers and impose
+both data `const`ness and pointer `const`ness on the array parameter.
 
 {% include bookmark.html id="6" %}
 
 ### 6.&nbsp;&nbsp; Exercises
+
+**Note:** Complete the exercises in C++17 using GCC 10.1.
+
+1. Write a program with the following functions. In `main`, print the type name of the
+   value returned from each of these functions. Also, briefly describe the cause for each
+   compiler warning seen. If no compiler warning is seen, explain the reason(s).
+
+    {:start="a"}
+    1. Two functions named `a1` and `a2`, both returning some `int` value, except the
+       second function's return type is `const int`.
+
+    2. Two functions named `b1` and `b2`, both returning a reference to a global `int`
+       variable, except the second function's return type is `const int&`.
+
+    3. Two functions named `c1` and `c2`, both returning a local default-initialized
+       `std::string` object, except the second function's return type is
+       `const std::string`.
+
+    4. Two functions named `d1` and `d2`, both returning a reference to a
+       default-initialized file-scoped `std::string` object, except the second function's
+       return type is `const std::string&`.
+
+2. Write four versions of a function to return the length of a C-string. Name the
+   versions `len1`, `len2`, `len3`, and `len4`, and have each version receive a C-string
+   parameter using a different permutation of `const`ness. Then do the following in
+   `main`:
+
+    {:start="a"}
+    1. Call each of the four functions to find the length of the same C-string literal,
+       and print the length returned from each call. Directly specify the literal as the
+       argument in all four function calls. For example, `len1("hello")`.
+
+    2. Call each of the four functions again to find the length of a C-string the user
+       supplies at run time. Print the length returned from each call. Use the same
+       user-supplied C-string in all four calls.
