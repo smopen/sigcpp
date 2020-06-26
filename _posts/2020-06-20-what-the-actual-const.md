@@ -3,31 +3,32 @@ pid: 7
 title: "What the actual const?"
 date: 2020-06-20
 authors: smurthys
-cpp_levels: intermediate
+cpp_level: intermediate
+cpp_versions: "Any C++"
 reader_activity: exercises
 ---
 
 This post discusses the effect of `const` qualifications in pointer declarations,
 specifically the distinction between pointer `const`ness and data `const`ness. It first
-examines `const` qualifications in non-array pointer declarations, and then the
-qualifications in the context of arrays, including arrays of pointers. In all cases, the
+examines `const` qualifications of pointers to non-array data, and then examines `const`
+qualifications of pointers to array data, including arrays of pointers. In all cases, the
 post discusses declarations of variables, function parameters, and function return types.
-The post assumes the reader is familiar with pointers and the relationship between arrays
-and pointers.
+It assumes the reader is familiar with pointers and the relationship between arrays and
+pointers.
 
-This post is motivated by the observation that beginners often mistake data `const`ness
-in a pointer declaration with pointer `const`ness. It is also motivated by the need to
-emphasize the subtleties of parameter declarations in functions that receive arrays of
-pointers (such as command-line arguments).
-<!--more-->
+This post is motivated by the observation that those new to pointers tend to mistake
+data `const`ness in a pointer declaration with pointer `const`ness. It is also motivated
+by the need to emphasize the subtleties of parameter declarations in functions that
+receive arrays of pointers (such as command-line arguments).
 
 But first, some advice: Avoid using pointers directly, and instead use references. Also
 prefer `std::array` over traditional arrays. However, there are situations where
 pointers and traditional arrays are the only/better choice, and in those cases use
 `const` qualification correctly to maximize safety.
+<!--more-->
 
-**Note:** All examples in this post are verified in C++17 using both GCC 10.1 and Visual
-Studio 2019 Version 16.5.5.
+**Note:** All examples in this post are verified in both C++98 and C++17 using GCC 10.1.
+The examples are also verified in C++17 using Visual Studio 2019 Version 16.5.5.
 
 {% include bookmark.html id="1" %}
 
@@ -39,16 +40,21 @@ both fundamental types and objects (including container objects such as vectors,
 and maps).
 
 There are four permutations of pointer `const`ness and data `const`ness in the context of
-pointer declarations, and each permutation is due to a specific form of declaration based
-on where the keyword `const` is placed. Listing A illustrates the four forms with a
-separate pointer variable declared using each form.
+pointer declarations. Each permutation is due to a specific form of pointer declaration,
+which is in turn based on where the keyword `const` is placed. Listing A illustrates the
+four forms with a separate pointer variable declared using each form.
 
 **Note:** The `const` keyword in a variable declaration is part of what is called the
 [_cv-qualifier-sequence_](https://timsong-cpp.github.io/cppwp/n4659/dcl.ptr#1).
 
+This post uses the colloquial "West `const`" convention to place the `const` keyword
+(the same convention the C++ standard uses). The code at the link included in Listing A's
+caption shows the pointer declarations using ["East `const`"](https://mariusbancila.ro/blog/2018/11/23/join-the-east-const-revolution/)
+convention. I support and recommend West `const` placement.
+
 ---
 
-##### Listing A: declaration forms of non-array pointers ([run this code](https://godbolt.org/z/T6i5LM))
+##### Listing A: declaration forms of non-array pointers ([run this code](https://godbolt.org/z/AngpMJ))
 
 ```cpp
 int main() {
@@ -82,8 +88,8 @@ are:
 
    Read this declaration as "pointer to `int`".
 
-   This form is quite common for variable declarations. It may also be used for a
-   function parameter if the function is to cause a side effect (that is, modify the pointed data by dereferencing the pointer).
+   This form is quite common for variable declarations. It is also used for a function
+   parameter if the function is to cause a side effect (that is, modify the pointed data by dereferencing the pointer parameter).
 
 2. `const int* p2`: `p2` can be assigned the address of any `int`, but it **cannot** be
    used to alter the value of the `int` to which it points. Like `p1`, `p2` can point to any number of `int`s over its lifetime.
@@ -98,7 +104,7 @@ are:
 
    Read this declaration as "`const` pointer to `int`".
 
-   This form is rarely used for non-array pointers. Also the use of this form is
+   This form is rarely used for non-array pointers. Also, the use of this form is
    unnecessary in most cases because references provide an elegant alternative (a
    reference must be initialized at declaration and its binding cannot change after
    initialization). For example, use `int& r = i;` instead of `int* const r = &i;`.
@@ -125,7 +131,7 @@ unnecessary for parameter declarations because Forms 1 and 2 already guarantee t
 change the called function makes to the pointer parameter does not have side effect. This
 guarantee is due to the pointer (that is, the address) being passed by value.
 
-Study [this program](https://godbolt.org/z/uhM3mT) prepared to illustrate the
+Study [this program](https://godbolt.org/z/8_KTcd) prepared to illustrate the
 declaration forms of non-array pointer parameters.
 
 **Advice:** Strive to use references instead of pointers for both variables and
@@ -145,7 +151,7 @@ places where the compiler ignores pointer `const`ness. (Compiling the code linke
 
 ---
 
-##### Listing B: forms of pointer return types ([run this code](https://godbolt.org/z/V_vRNJ))
+##### Listing B: forms of pointer return types ([run this code](https://godbolt.org/z/UBQYv7))
 
 ```cpp
 int* f1() {
@@ -200,7 +206,7 @@ variable of its decay type and place any of the four `const`ness permutations on
 pointer variable.
 
 Array decay types are useful to receive array parameters, but as with non-array
-pointers, the use of pointer `const`ness is uncommon. Study [this program](https://godbolt.org/z/-ag7bH)
+pointers, the use of pointer `const`ness is uncommon. Study [this program](https://godbolt.org/z/qmvoVm)
 prepared to illustrate `const` qualification on an array's decay types.
 
 Array decay types with and without data `const`ness are frequently used with
@@ -254,14 +260,15 @@ possible for a function to guarantee that it does **not** modify the characters 
 C-strings or the pointers to C-strings. It can provide this guarantee by declaring the
 parameter using Form 4 as follows: `const char* const argv[]`. Also, as evidenced in
 Listing C, this form makes the code more readable due to one less level of explicit
-indirection in accessing both the pointers to C-strings and the characters in C-strings.
+indirection needed to access both the pointers to C-strings and the characters in
+C-strings.
 
 #### 4.1&nbsp; Parameter is an array of `char` pointers
 
 All permutations in this case permit modification of `argv` itself, and any such
-modification would **not** have side effect. If any permutation permits modification of
-the pointers to C-strings or the characters in C-strings, such modification would have
-side effects.
+modification would **not** have side effect. Also, If any permutation permits
+modification of the pointers to C-strings or the characters in C-strings, such
+modification would have side effects.
 
 1. `char* argv[]`: Nothing is `const`. The characters in the C-strings and the pointers
    to C-strings may be modified.
@@ -293,14 +300,14 @@ the characters in C-strings, such modification would also have side effects. How
 
 ---
 
-##### Listing C: forms of pointer to array of pointers ([run this code](https://godbolt.org/z/bMw1F_))
+##### Listing C: forms of pointer to array of pointers ([run this code](https://godbolt.org/z/IKMJBS))
 
 {% include multi-column-start.html c=1 h="Array of <code>char</code> pointers" %}
 
 ```cpp
 void g1(char* argv[]) {
     *argv[0] = '1'; // alter data
-    argv[1] = "g1"; // alter C-string ptr
+    argv[1] = const_cast<char*>("g1"); // alter C-string ptr
     ++argv;         // alter argv
 }
 
@@ -312,7 +319,7 @@ void g2(const char* argv[]) {
 
 void g3(char* const argv[]) {
     *argv[0] = '3';
-    argv[1] = "g3"; // error: const ptr
+    argv[1] = const_cast<char*>("g3"); // error: const ptr
     ++argv;
 }
 
@@ -328,7 +335,7 @@ void g4(const char* const argv[]) {
 ```cpp
 void g1(char** argv) {
     **argv = '1';     // alter data
-    *(argv+1) = "g1"; // alter C-string ptr
+    *(argv+1) = const_cast<char*>("g1"); // alter C-string ptr
     ++argv;           // alter argv
 }
 
@@ -340,7 +347,7 @@ void g2(const char** argv) {
 
 void g3(char** const argv) {
     **argv = '3';
-    *(argv+1) = "g3";
+    *(argv+1) = const_cast<char*>("g3");
     ++argv;         // error: const ptr
 }
 
@@ -361,12 +368,12 @@ Every pointer declaration can include up to two `const` qualifications, one for 
 pointed, another for the pointer itself. As a result of this allowance, four `const`ness
 permutations exist and each permutation has a corresponding declaration form. All four
 forms apply to variables, parameters, and function return types. However, two of the
-parameter declaration forms could be replaced by reference declarations, and the
-compiler ignores two of the forms of return type declarations.
+parameter declaration forms could be replaced by reference declarations in most cases,
+and the compiler ignores two of the forms of return type declarations.
 
-The declaration forms apply to pointers for non-array data as well as array data. There
+The declaration forms apply to pointers to non-array data as well as array data. There
 are two different ways to model the decay type of an array of pointers and the two means
-subtly differ in their effect.
+subtly differ in their effect, with only one of those means offering complete safety.
 
 Although it is generally better to use references instead of pointers, and containers
 instead of traditional arrays, some situations do require the use of pointers and
@@ -402,14 +409,15 @@ impose both data `const`ness and pointer `const`ness on the array parameter.
        return type is `const std::string&`.
 
 2. Write four versions of a function to return the length of a C-string. Name the
-   versions `len1`, `len2`, `len3`, and `len4`, and have each version receive a C-string
-   parameter using a different permutation of `const`ness. Then do the following in
-   `main`:
+   versions `len_1`, `len_2`, `len_3`, and `len_4`, and have each version receive a
+   C-string parameter using a different permutation of `const`ness. Then do the following
+   in `main`:
 
     {:start="a"}
     1. Call each of the four functions to find the length of the same C-string literal,
        and print the value returned from each call. Directly specify the literal as the
-       argument in all four function calls. For example, use the call `len1("hello")`.
+       argument in all four function calls. For example, use the calls `len_1("hello")`,
+       `len_2("hello")`, and so on.
 
     2. Call each of the four functions again to find the length of a C-string the user
        supplies at run time and print the value returned from each call. Use the same
