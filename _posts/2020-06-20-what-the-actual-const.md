@@ -53,6 +53,7 @@ caption shows the pointer declarations using ["East `const`"](https://mariusbanc
 convention. I support and recommend West `const` placement.
 
 ---
+{% include bookmark.html id="Listing A" %}
 
 ##### Listing A: declaration forms of non-array pointers ([run this code](https://godbolt.org/z/AngpMJ))
 
@@ -150,6 +151,7 @@ Listing B shows the use of the four forms of pointer return types and calls out 
 places where the compiler ignores pointer `const`ness. (Compiling the code linked in the listing's caption produces warnings about ignored qualifiers. The code still runs.)
 
 ---
+{% include bookmark.html id="Listing B" %}
 
 ##### Listing B: forms of pointer return types ([run this code](https://godbolt.org/z/UBQYv7))
 
@@ -263,6 +265,8 @@ Listing C, this form makes the code more readable due to one less level of expli
 indirection needed to access both the pointers to C-strings and the characters in
 C-strings.
 
+{% include bookmark.html id="4.1" %}
+
 #### 4.1&nbsp; Parameter is an array of `char` pointers
 
 All permutations in this case permit modification of `argv` itself, and any such
@@ -282,6 +286,8 @@ modification would have side effects.
 4. `const char* const argv[]`: Both the characters in the C-strings and the pointers to
    C-strings are `const`.
 
+{% include bookmark.html id="4.2" %}
+
 #### 4.2&nbsp; Parameter is a pointer to pointer to `char`
 
 All permutations in this case permit modification of the pointers to C-strings, and any
@@ -299,6 +305,7 @@ the characters in C-strings, such modification would also have side effects. How
    `const`.
 
 ---
+{% include bookmark.html id="Listing C" %}
 
 ##### Listing C: forms of pointer to array of pointers ([run this code](https://godbolt.org/z/oaDR2P))
 
@@ -392,12 +399,12 @@ impose both data `const`ness and pointer `const`ness on the array parameter.
 
 ### 6.&nbsp;&nbsp; Exercises
 
-**Note:** Complete the exercises in C++17 using GCC 10.1.
+**Note:** Complete the exercises in C++17 using GCC 10.1. Do **not** suppress any compiler
+warning.
 
 1. Write a program with the following functions. In `main`, print the type name of the
-   value returned from each function. Also, briefly describe in English the cause for
-   each compiler warning you see. If no compiler warning is seen, explain the reason(s)
-   for the lack of warnings.
+   value returned from each function. Also, briefly describe in English what the presence
+   or absence of compiler warnings means with respect to each pair of functions.
 
     {:start="a"}
     1. Two functions named `a1` and `a2`, both returning some (any) `int` value, except
