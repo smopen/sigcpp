@@ -300,32 +300,35 @@ the characters in C-strings, such modification would also have side effects. How
 
 ---
 
-##### Listing C: forms of pointer to array of pointers ([run this code](https://godbolt.org/z/IKMJBS))
+##### Listing C: forms of pointer to array of pointers ([run this code](https://godbolt.org/z/oaDR2P))
 
 {% include multi-column-start.html c=1 h="Array of <code>char</code> pointers" %}
 
 ```cpp
+static char s1[]{"g1"}, s2[]{"g2"},
+            s3[]{"g3"}, s4[]{"g4"};
+
 void g1(char* argv[]) {
     *argv[0] = '1'; // alter data
-    argv[1] = const_cast<char*>("g1"); // alter C-string ptr
+    argv[1] = s1;   // alter C-string ptr
     ++argv;         // alter argv
 }
 
 void g2(const char* argv[]) {
     *argv[0] = '2'; // error: const data
-    argv[1] = "g2";
+    argv[1] = s2;
     ++argv;
 }
 
 void g3(char* const argv[]) {
     *argv[0] = '3';
-    argv[1] = const_cast<char*>("g3"); // error: const ptr
+    argv[1] = s3;   // error: const ptr
     ++argv;
 }
 
 void g4(const char* const argv[]) {
     *argv[0] = '4'; // error: const data
-    argv[1] = "g4"; // error: const ptr
+    argv[1] = s4;   // error: const ptr
     ++argv;
 }
 ```
@@ -333,27 +336,30 @@ void g4(const char* const argv[]) {
 {% include multi-column-start.html c=2 h="Pointer to pointer to <code>char</code>" %}
 
 ```cpp
+static char s1[]{"g1"}, s2[]{"g2"},
+            s3[]{"g3"}, s4[]{"g4"};
+
 void g1(char** argv) {
     **argv = '1';     // alter data
-    *(argv+1) = const_cast<char*>("g1"); // alter C-string ptr
+    *(argv+1) = s1;   // alter C-string ptr
     ++argv;           // alter argv
 }
 
 void g2(const char** argv) {
     **argv = '2';   // error: const data
-    *(argv+1) = "g2";
+    *(argv+1) = s2;
     ++argv;
 }
 
 void g3(char** const argv) {
     **argv = '3';
-    *(argv+1) = const_cast<char*>("g3");
+    *(argv+1) = s3;
     ++argv;         // error: const ptr
 }
 
 void g4(const char** const argv) {
     **argv = '4';   // error: const data
-    *(argv+1) = "g4";
+    *(argv+1) = s4;
     ++argv;         // error: const ptr
 }
 ```
