@@ -252,7 +252,9 @@ code at the link included in the listing's caption has additional comments.
 pointers (instead of a pointer to pointer to `char`), because that approach makes it
 possible for a function to guarantee that it does **not** modify the characters in the
 C-strings or the pointers to C-strings. It can provide this guarantee by declaring the
-parameter using Form 4 as follows: `const char* const argv[]`.
+parameter using Form 4 as follows: `const char* const argv[]`. Also, as evidenced in
+Listing C, this form makes the code more readable due to one less level of explicit
+indirection in accessing both the pointers to C-strings and the characters in C-strings.
 
 #### 4.1&nbsp; Parameter is an array of `char` pointers
 
