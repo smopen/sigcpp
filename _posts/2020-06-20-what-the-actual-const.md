@@ -7,13 +7,18 @@ cpp_levels: intermediate
 reader_activity: exercises
 ---
 
-This post discusses the effect of `const` qualification in pointer declarations,
-specifically the distinction between `const`ness of pointer and `const`ness of data. It
-first examines `const` qualification in non-array pointer declarations, and then the
-qualification in the context of pointers to arrays, including pointers to arrays of
-pointers. In all cases, the post discusses declarations of variables, function
-parameters, and function return types. The post assumes the reader is familiar with
-pointers, the relationship between arrays and pointers, and arrays decaying to pointers.
+This post discusses the effect of `const` qualifications in pointer declarations,
+specifically the distinction between pointer `const`ness and data `const`ness. It first
+examines `const` qualifications in non-array pointer declarations, and then the
+qualifications in the context of arrays, including arrays of pointers. In all cases, the
+post discusses declarations of variables, function parameters, and function return types.
+The post assumes the reader is familiar with pointers and the relationship between arrays
+and pointers.
+
+This post is motivated by the observation that beginners often mistake data `const`ness
+in a pointer declaration with pointer `const`ness. It is also motivated by the need to
+emphasize the subtleties of parameter declarations in functions that receive arrays of
+pointers (such as command-line arguments).
 
 But first, some advice: Avoid using pointers directly, and instead use references. Also
 prefer `std::array` over traditional arrays. However, there are situations where
@@ -78,28 +83,26 @@ are:
    Read this declaration as "pointer to `int`".
 
    This form is quite common for variable declarations. It may also be used for a
-   function parameter if the function is to cause a side effect (that is, dereference the
-   pointer to modify data).
+   function parameter if the function is to cause a side effect (that is, modify the pointed data by dereferencing the pointer).
 
 2. `const int* p2`: `p2` can be assigned the address of any `int`, but it **cannot** be
    used to alter the value of the `int` to which it points. Like `p1`, `p2` can point to any number of `int`s over its lifetime.
 
-   Read this declaration as "pointer to `const int`". That is, the `int` pointed to is
-   constant; the pointer itself is not.
+   Read this declaration as "pointer to `const int`".
 
-   This form is rare for variable declarations, but it is quite common for array
-   parameters where the function guarantees it does **not** modify the argument passed.
+   This form is rare for variable declarations, but it is common for parameters where the
+   function guarantees it does **not** modify the pointed data.
 
 3. `int* const p3`: `p3` can be initialized with the address of only one `int` ever (and
    only at declaration), but it **can** be used to modify the value of the `int` to which it points. `p3` can point to only one `int` over its lifetime.
 
-   Read this declaration as "`const` pointer to `int`". That is, the `int` pointed to is **not** constant; but the pointer is constant.
+   Read this declaration as "`const` pointer to `int`".
 
-   This form is rarely used for non-array pointers. Its use is also unnecessary because
-   references provide an elegant alternative (a reference variable must be initialized
-   at declaration and its binding cannot change after initialization). For example, use
-   `int& r = i;` instead of `int* const r = &i;`. Likewise, receive function parameters
-   by reference as in `void trim(std::string& s);`
+   This form is rarely used for non-array pointers. Also the use of this form is
+   unnecessary in most cases because references provide an elegant alternative (a
+   reference must be initialized at declaration and its binding cannot change after
+   initialization). For example, use `int& r = i;` instead of `int* const r = &i;`.
+   Likewise, receive function parameters by reference as in `void trim(std::string& s);`
 
    This form could potentially be useful to store the address of dynamically-allocated
    data to ensure that the pointer is not overwritten, perhaps to ensure that the address
@@ -109,21 +112,18 @@ are:
    (at declaration), and it **cannot** be used to alter the value of the `int` to which
    it points. Like `p3`, `p4` can point to only one `int` over its lifetime.
 
-   Read this declaration as "`const` pointer to `const int`". That is, the `int` pointed to is constant; and the pointer is also constant.
+   Read this declaration as "`const` pointer to `const int`".
 
-   This form too is rare for non-array pointer, and it is better to use `const`
+   This form too is rare for non-array pointers, and it is better to use `const`
    references instead. For example, use `const int& r = i;` instead of using
    `const int* const r = &i;`. Indeed functions routinely use `const` references to
    efficiently receive objects and assure that there are no side effects. For example,
    `int compare(const std::string& s);`
 
-   This form too can be useful to store the address of dynamically-allocated data, where
-   neither the pointer nor the data is to be altered after initialization.
-
-**Note**: Forms 3 and 4 (the forms where the pointer is `const`) are unnecessary for
-parameter declarations because Forms 1 and 2 already guarantee that any change the
-called function makes to the pointer parameter does not have side effect. This guarantee
-is due to the pointer (that is, the address) being passed by value.
+**Note**: The use of Forms 3 and 4 (the forms where the pointer is `const`) is
+unnecessary for parameter declarations because Forms 1 and 2 already guarantee that any
+change the called function makes to the pointer parameter does not have side effect. This
+guarantee is due to the pointer (that is, the address) being passed by value.
 
 Study [this program](https://godbolt.org/z/uhM3mT) prepared to illustrate the
 declaration forms of non-array pointer parameters.
@@ -137,17 +137,11 @@ parameters.
 
 All four forms of pointer declarations listed in Section 1 may be used as function
 return types, but the compiler [ignores](https://timsong-cpp.github.io/cppwp/n4659/dcl.fct#7)
-the `const` qualification of the pointer in Forms 3 and 4. Thus, only Forms 1 and 2 are
-relevant to function return types.
+the pointer `const`ness in Forms 3 and 4. Thus, only Forms 1 and 2 are relevant to
+function return types.
 
-The reason compilers ignore pointer `const`ness in the return type is because it is
-up to the calling function to determine that `const`ness. (Compilers similarly ignore
-data `const`ness in the return type when a function returns a fundamental type. See
-[Exercise 1](#6).)
-
-Listing B shows the use of the four forms of pointer return types and calls out places
-where the compiler ignores pointer `const`ness. (Notice the warnings about ignored
-qualifiers when the code linked in Listing B's caption is compiled.)
+Listing B shows the use of the four forms of pointer return types and calls out the
+places where the compiler ignores pointer `const`ness. (Compiling the code linked in the listing's caption produces warnings about ignored qualifiers. The code still runs.)
 
 ---
 
