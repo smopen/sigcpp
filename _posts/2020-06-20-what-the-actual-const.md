@@ -19,12 +19,12 @@ This post is motivated by the observation that beginners often mistake data `con
 in a pointer declaration with pointer `const`ness. It is also motivated by the need to
 emphasize the subtleties of parameter declarations in functions that receive arrays of
 pointers (such as command-line arguments).
+<!--more-->
 
 But first, some advice: Avoid using pointers directly, and instead use references. Also
 prefer `std::array` over traditional arrays. However, there are situations where
 pointers and traditional arrays are the only/better choice, and in those cases use
 `const` qualification correctly to maximize safety.
-<!--more-->
 
 **Note:** All examples in this post are verified in C++17 using both GCC 10.1 and Visual
 Studio 2019 Version 16.5.5.
@@ -187,26 +187,23 @@ int main() {
 
 {% include bookmark.html id="3" %}
 
-### 3.&nbsp;&nbsp; Pointers to arrays
+### 3.&nbsp;&nbsp; Pointers and arrays
 
 Pointer declarations are relevant in the context of traditional arrays because every
 array "decays" to a pointer. For example, if `a` is an array of `int` values, then the
-type of `a` decays to `int*`. In other words, the type of `a` is compatible with or is
-practically the same as `int*`.
+type of `a` decays to `int*`. In other words, the type of `a` is compatible with `int*`.
+Likewise, if `a` is an array of `const int` values, then the type of `a` decays to
+`const int*`. Note that the `const` qualification is on data; not on the pointer.
 
-The decaying of array to a pointer includes `const` qualification of data. For example,
-if `a` is an array of `const int` values, then the type of `a` reduces to `const int*`. Note that the `const` qualification is on data; not on the pointer.
+Following the decay principle, it is possible to assign an array variable to a pointer
+variable of its decay type and place any of the four `const`ness permutations on the
+pointer variable.
 
-Following the decay principle, it is possible to assign an array name to a variable of
-its decay type and place any of the four `const`ness permutations on the variable with
-the same semantics described in Section 1 (and illustrated in [Listing A](#listing-a)).
+Array decay types are useful to receive array parameters, but as with non-array
+pointers, the use of pointer `const`ness is uncommon. Study [this program](https://godbolt.org/z/-ag7bH)
+prepared to illustrate `const` qualification on an array's decay types.
 
-Array decay types are useful (and required) to receive array parameters, but as with
-non-array pointers, the use of the types with pointer `const`ness is uncommon. Study
-[this program](https://godbolt.org/z/-ag7bH) prepared to illustrate `const`
-qualification on an array's decay types.
-
-Array decay types with and without `const` qualification on data are frequently used with
+Array decay types with and without data `const`ness are frequently used with
 [C-strings]( {{ '/2020/03/30/exploring-c-strings' | relative_url }} ), which are just
 `char` arrays. For example, the library function [`std::strcpy`](https://en.cppreference.com/w/cpp/string/byte/strcpy)
 receives the destination array as `char*` so that the destination can be modified, but it
@@ -214,43 +211,55 @@ receives the source array as `const char*` because the source is only read.
 
 {% include bookmark.html id="4" %}
 
-### 4.&nbsp;&nbsp; Pointers to arrays of pointers
+### 4.&nbsp;&nbsp; Pointers and arrays of pointers
 
-This section discusses the somewhat esoteric topic of `const`ness of pointers to arrays
-of pointers. Because this topic comes up frequently in the context of command-line
-processing, the examples in this section use arrays of C-strings, which are simply
-arrays of `char` pointers. However, the details apply equally to arrays of pointers to
+This section discusses `const`ness of pointers to arrays of pointers. Because this topic
+comes up frequently in the context of command-line processing, the examples in this
+section use arrays of C-strings, but the details apply equally to arrays of pointers to
 any type of data.
 
 **Note:** When processing command-line arguments, it may be better to transform C-strings
 into `std::string` or [`std::string_view`]( {{ '/2020/04/03/efficiently-processing-immutable-text' | relative_url }} )
 objects, and if necessary, collect those objects in a container such as `std::vector`.
-However, there are situations where it is better to work with C-strings and arrays of
-C-strings. In those situations, take care to access only the portions of memory that are
-allocated for the data with which you are working.  
+However, there are situations where it is better to directly work with C-strings and
+arrays of C-strings. In those situations, take care to access only the portions of
+memory that are allocated for the data with which you are working.  
 
-A C++ program is able to receive command-line arguments by defining a `main` function of
-the form `int main(int argc, char** argv)`, where `argc` is the number of arguments
-received and `argv` is a [pointer to pointer to `char`](https://timsong-cpp.github.io/cppwp/n4659/basic.start.main#2.2).
-However, based on the array decay principle, this form of `main` can also be of the form
-`int main(int argc, char* argv[])`, where `argv` is an array of `char` pointers.
+A C++ program is able to receive command-line arguments with a [`main` function](https://timsong-cpp.github.io/cppwp/n4659/basic.start.main#2.2)
+of the form `int main(int argc, char** argv)`, where `argc` is the number of arguments
+received and `argv` is a pointer to pointer to `char`. However, due to the array decay
+principle, the function can also be of the form `int main(int argc, char* argv[])`,
+where `argv` is an array of `char` pointers.
 
 Given that an array of C-strings could be modeled either as an array of `char` pointers
 (say `char* argv[]`) or as a pointer to pointer to `char` (say `char** argv`), it helps
-to understand the effect of `const` qualifications in each case. As with non-array
-pointers, the effect of the qualifications is the same whether the data is declared as a
-variable or a function parameter. Because command-line arguments are often consumed by
-functions, the discussion and the examples are based on a parameter, and the parameter is
-conveniently named `argv`.
+to understand the effect of `const` qualifications in each case. The effect of the
+qualifications is the same whether the data is declared as a variable or a function
+parameter. However, because command-line arguments are often consumed by functions, the
+discussion and the examples in this section model the data as a parameter.
 
-The following is a summary of `const`ness permutations of the function parameter in the
-two cases. In both cases, if any permutation permits altering pointers to C-strings or
-the characters in C-strings, such alteration would have side effect.
+The following sub-sections summarize the effects of `const`ness permutations of `argv`, a
+function parameter representing an array of C-strings. The effects are summarized under
+two headings: `argv` as an array of `char` pointers, and `argv` as a pointer to pointer
+to `char`.
+
+Listing C shows some code to illustrate the effect of `const`ness permutations. For
+simplicity only, the code assumes that the argument passed is an array of at least two
+C-strings and that the first C-string has at least one non-null character in it. The
+code at the link included in the listing's caption has additional comments.
+
+**Note:** The summaries show that it is better to receive `argv` as an array of `char`
+pointers (instead of a pointer to pointer to `char`), because that approach makes it
+possible for a function to guarantee that it does **not** modify the characters in the
+C-strings or the pointers to C-strings. It can provide this guarantee by declaring the
+parameter using Form 4 as follows: `const char* const argv[]`.
 
 #### 4.1&nbsp; Parameter is an array of `char` pointers
 
-All permutations in this case permit modification of `argv` itself, and that
-modification would **not** have side effect.
+All permutations in this case permit modification of `argv` itself, and any such
+modification would **not** have side effect. If any permutation permits modification of
+the pointers to C-strings or the characters in C-strings, such modification would have
+side effects.
 
 1. `char* argv[]`: Nothing is `const`. The characters in the C-strings and the pointers
    to C-strings may be modified.
@@ -266,9 +275,9 @@ modification would **not** have side effect.
 
 #### 4.2&nbsp; Parameter is a pointer to pointer to `char`
 
-All permutations in this case permit modification of pointers to C-strings, but any such
-modification would have side effect. Where `argv` itself is modifiable, that modification
-would **not** have side effect.
+All permutations in this case permit modification of the pointers to C-strings, and any
+such modification would have side effect. If any permutation permits modification of
+the characters in C-strings, such modification would also have side effects. However, where `argv` itself is modifiable, such modification would **not** have side effect.
 
 1. `char** argv`: Nothing is `const`. The characters in the C-strings and `argv` itself
     may be modified.
@@ -279,11 +288,6 @@ would **not** have side effect.
 
 4. `const char** const argv`: Both the characters in the C-strings and `argv` are
    `const`.
-
-Listing C shows some code to illustrate the effect of each `const`ness permutation in
-both cases. The code assumes that the argument passed is an array of at least two
-C-strings and that the first C-string has at least one non-null character in it. The
-code at the link included in the listing's caption has additional comments.
 
 ---
 
@@ -354,20 +358,20 @@ void g4(const char** const argv) {
 Every pointer declaration can include up to two `const` qualifications, one for the data
 pointed, another for the pointer itself. As a result of this allowance, four `const`ness
 permutations exist and each permutation has a corresponding declaration form. All four
-forms apply to variables, parameters, and return types. However, two of the parameter
-declaration forms could be replaced by reference declarations, and the compiler ignores
-two of the forms of return type declarations.
+forms apply to variables, parameters, and function return types. However, two of the
+parameter declaration forms could be replaced by reference declarations, and the
+compiler ignores two of the forms of return type declarations.
 
-The declaration forms apply to pointers for non-array data and array data. There are two
-different ways to model the decay type of an array of pointers and the two means subtly
-differ in the effect of limitations pointer `const`ness.
+The declaration forms apply to pointers for non-array data as well as array data. There
+are two different ways to model the decay type of an array of pointers and the two means
+subtly differ in their effect.
 
 Although it is generally better to use references instead of pointers, and containers
 instead of traditional arrays, some situations do require the use of pointers and
 traditional arrays. Thus, it is important to fully understand `const` qualification of
-pointers and maximize safety. For example, for maximal safety, a function to process
-command-line arguments should treat the arguments as an array of char pointers and impose
-both data `const`ness and pointer `const`ness on the array parameter.
+pointers so as to maximize safety. For example, for maximal safety, a function to process
+command-line arguments should treat the arguments as an array of `char` pointers and
+impose both data `const`ness and pointer `const`ness on the array parameter.
 
 {% include bookmark.html id="6" %}
 
@@ -376,12 +380,13 @@ both data `const`ness and pointer `const`ness on the array parameter.
 **Note:** Complete the exercises in C++17 using GCC 10.1.
 
 1. Write a program with the following functions. In `main`, print the type name of the
-   value returned from each of these functions. Also, briefly describe the cause for each
-   compiler warning seen. If no compiler warning is seen, explain the reason(s).
+   value returned from each function. Also, briefly describe in English the cause for
+   each compiler warning you see. If no compiler warning is seen, explain the reason(s)
+   for the lack of warnings.
 
     {:start="a"}
-    1. Two functions named `a1` and `a2`, both returning some `int` value, except the
-       second function's return type is `const int`.
+    1. Two functions named `a1` and `a2`, both returning some (any) `int` value, except
+       the second function's return type is `const int`.
 
     2. Two functions named `b1` and `b2`, both returning a reference to a global `int`
        variable, except the second function's return type is `const int&`.
@@ -401,9 +406,9 @@ both data `const`ness and pointer `const`ness on the array parameter.
 
     {:start="a"}
     1. Call each of the four functions to find the length of the same C-string literal,
-       and print the length returned from each call. Directly specify the literal as the
-       argument in all four function calls. For example, `len1("hello")`.
+       and print the value returned from each call. Directly specify the literal as the
+       argument in all four function calls. For example, use the call `len1("hello")`.
 
     2. Call each of the four functions again to find the length of a C-string the user
-       supplies at run time. Print the length returned from each call. Use the same
+       supplies at run time and print the value returned from each call. Use the same
        user-supplied C-string in all four calls.
