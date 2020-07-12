@@ -6,6 +6,7 @@ authors: smurthys
 cpp_level: intermediate
 cpp_versions: "Any C++"
 reader_activity: exercises
+tweet_url: https://twitter.com/sigcpp/status/1276606804303192064
 ---
 
 This post discusses the effect of `const` qualifications in pointer declarations,
@@ -48,9 +49,9 @@ four forms with a separate pointer variable declared using each form.
 [_cv-qualifier-sequence_](https://timsong-cpp.github.io/cppwp/n4659/dcl.ptr#1).
 
 This post uses the colloquial "West `const`" convention to place the `const` keyword
-(the same convention the C++ standard uses). The code at the link included in Listing A's
-caption shows the pointer declarations using ["East `const`"](https://mariusbancila.ro/blog/2018/11/23/join-the-east-const-revolution/)
-convention. I support and recommend West `const` placement.
+(the same convention the C++ standard uses). The link included in Listing A's caption
+shows code using both West `const` and ["East `const`"](https://mariusbancila.ro/blog/2018/11/23/join-the-east-const-revolution/)
+conventions.
 
 ---
 {% include bookmark.html id="Listing A" %}
@@ -214,8 +215,47 @@ prepared to illustrate `const` qualification on an array's decay types.
 Array decay types with and without data `const`ness are frequently used with
 [C-strings]( {{ '/2020/03/30/exploring-c-strings' | relative_url }} ), which are just
 `char` arrays. For example, the library function [`std::strcpy`](https://en.cppreference.com/w/cpp/string/byte/strcpy)
-receives the destination array as `char*` so that the destination can be modified, but it
-receives the source array as `const char*` because the source is only read.  
+receives the destination array as `char*` so that it can be modified, but the function
+receives the source array as `const char*` because the source is only read.
+
+**Note:** The term "pointer to array" is commonly used to mean a pointer to the first
+element of an array. Such a pointer is no different than any other pointer, except it is
+acceptable to perform "arithmetic" (that is, add an offset) with a pointer to an array.
+However, it is important that the result of pointer arithmetic be a pointer to some
+element of the array because dereferencing an "out of bounds" pointer results in
+**undefined behavior (UB)**.
+
+Avoid performing arithmetic on a pointer to non-array data, because dereferencing the
+resulting pointer also causes UB.
+
+Listing C shows some examples of well-defined and undefined behaviors when pointers are
+dereferenced.
+
+---
+{% include bookmark.html id="Listing C" %}
+
+##### Listing C: well-defined and undefined behaviors when dereferencing ([run this code](https://godbolt.org/z/4h6YKX))
+
+```cpp
+int a[5]{ 3, 8, 0, 1, 7 }; // a's bound (size) is 5
+
+int* p1 = a;        // p1 points to a[0]
+int* p2 = a + 1;    // p2 points to a[1]
+std::cout << "*p1: " << *p1 << '\n';
+std::cout << "*p2: " << *p2 << '\n';
+
+int* p3 = p1 + 5; // p3 points to a[5] which is out of bounds
+std::cout << "*p3: " << *p3 << '\n'; // bad: UB
+
+int x { 10 }; // x is not an array
+int* p4 = &x; // OK to take address of x
+
+p4++;    // p4 points to memory past x
+*p4 = 1; // bad: UB
+}
+```
+
+---
 
 {% include bookmark.html id="4" %}
 
@@ -227,11 +267,11 @@ section use arrays of C-strings, but the details apply equally to arrays of poin
 any type of data.
 
 **Note:** When processing command-line arguments, it may be better to transform C-strings
-into `std::string` or [`std::string_view`]( {{ '/2020/04/03/efficiently-processing-immutable-text' | relative_url }} )
+into `std::string` or [`std::string_view`]( {% include post-link.html id="2" %} )
 objects, and if necessary, collect those objects in a container such as `std::vector`.
 However, there are situations where it is better to directly work with C-strings and
 arrays of C-strings. In those situations, take care to access only the portions of
-memory that are allocated for the data with which you are working.  
+memory that are allocated for the data with which you are working. 
 
 A C++ program is able to receive command-line arguments with a [`main` function](https://timsong-cpp.github.io/cppwp/n4659/basic.start.main#2.2)
 of the form `int main(int argc, char** argv)`, where `argc` is the number of arguments
@@ -251,7 +291,7 @@ function parameter representing an array of C-strings. The effects are summarize
 two headings: `argv` as an array of `char` pointers, and `argv` as a pointer to pointer
 to `char`.
 
-Listing C shows some code to illustrate the effect of `const`ness permutations. For
+Listing D shows some code to illustrate the effect of `const`ness permutations. For
 simplicity only, the code assumes that the argument passed is an array of at least two
 C-strings and that the first C-string has at least one non-null character in it. The
 code at the link included in the listing's caption has additional comments.
@@ -261,7 +301,7 @@ pointers (instead of a pointer to pointer to `char`), because that approach make
 possible for a function to guarantee that it does **not** modify the characters in the
 C-strings or the pointers to C-strings. It can provide this guarantee by declaring the
 parameter using Form 4 as follows: `const char* const argv[]`. Also, as evidenced in
-Listing C, this form makes the code more readable due to one less level of explicit
+Listing D, this form makes the code more readable due to one less level of explicit
 indirection needed to access both the pointers to C-strings and the characters in
 C-strings.
 
@@ -292,7 +332,8 @@ modification would have side effects.
 
 All permutations in this case permit modification of the pointers to C-strings, and any
 such modification would have side effect. If any permutation permits modification of
-the characters in C-strings, such modification would also have side effects. However, where `argv` itself is modifiable, such modification would **not** have side effect.
+the characters in C-strings, such modification would also have side effects. However,
+where `argv` itself is modifiable, such modification would **not** have side effect.
 
 1. `char** argv`: Nothing is `const`. The characters in the C-strings and `argv` itself
     may be modified.
@@ -305,9 +346,9 @@ the characters in C-strings, such modification would also have side effects. How
    `const`.
 
 ---
-{% include bookmark.html id="Listing C" %}
+{% include bookmark.html id="Listing D" %}
 
-##### Listing C: forms of pointer to array of pointers ([run this code](https://godbolt.org/z/oaDR2P))
+##### Listing D: forms of pointer to array of pointers ([run this code](https://godbolt.org/z/g76OsF))
 
 {% include multi-column-start.html c=1 h="Array of <code>char</code> pointers" %}
 
@@ -399,8 +440,12 @@ impose both data `const`ness and pointer `const`ness on the array parameter.
 
 ### 6.&nbsp;&nbsp; Exercises
 
-**Note:** Complete the exercises in C++17 using GCC 10.1. Do **not** suppress any compiler
-warning.
+**Note:** Complete the exercises in C++17 using GCC 10.1. Do **not** suppress any
+compiler warning. Use the following exact set of compiler options:
+
+```
+-std=c++17 -Wall -Wextra -pedantic
+```
 
 1. Write a program with the following functions. In `main`, print the type name of the
    value returned from each function. Also, briefly describe in English what the presence
@@ -423,15 +468,39 @@ warning.
 
 2. Write four versions of a function to return the length of a C-string. Name the
    versions `len_1`, `len_2`, `len_3`, and `len_4`, and have each version receive a
-   C-string parameter using a different permutation of `const`ness. Then do the following
-   in `main`:
+   C-string parameter using a different permutation of `const`ness. In the body of each
+   version, declare/use only pointer variables and apply the strictest `const`ness on the
+   variables based on the operations performed on the variable. For example, if the
+   pointer variable is not used to modify the data, give it data `const`ness; if the
+   address is not modified, (also) give it pointer `const`ness.
 
     {:start="a"}
-    1. Call each of the four functions to find the length of the same C-string literal,
-       and print the value returned from each call. Directly specify the literal as the
-       argument in all four function calls. For example, use the calls `len_1("hello")`,
-       `len_2("hello")`, and so on.
+    1. In `main`, call each of the four functions to find the length of the same
+       C-string literal (for example, `"hello"`), and print the value returned from each
+       call. Directly specify the literal as the argument in all four function calls.
+       Use any casting operations necessary to remove any compiler error or warning. (Do
+       **not** suppress errors or warnings using compiler options.)
 
-    2. Call each of the four functions again to find the length of a C-string the user
-       supplies at run time and print the value returned from each call. Use the same
-       user-supplied C-string in all four calls.
+    2. Also in `main`, call each of the four functions again to find the length of some
+       text the user supplies at run time, and print the value returned from each call.
+       Use the same user-supplied text in all four calls. Model the user-supplied text
+       as a C-string and assume the user enters no more than 99 characters.
+
+    3. Which version of the length function is safest for another function to call in
+       terms of assuring no side effect to the caller? Why?
+
+    4. Which version of the length function is safest within itself in terms of assuring
+       that only the variables (including the parameter) intended to be modified are
+       modified? If none of four versions is the safest within itself, write another
+       version you deem is safest (OK to use non-pointer variables). Explain how the new
+       version improves safety within the function.
+
+    5. Which version of the length function is "safe enough" for use overall? Why?
+
+    6. Is there some code that can be used **unchanged as the entire function body in
+       all four initial versions** of the length function? If yes, what is it? If no such
+       code exists, why not?
+
+    7. Write a new version of the length function that declares no variables in its body
+       and provides its parameter both data `const`ness and pointer `const`ness. This
+       version should **not** call any other version of the length function.
