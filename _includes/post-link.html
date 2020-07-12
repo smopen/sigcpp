@@ -16,9 +16,6 @@
 {%- assign link_parts = include.id | split: "#" -%}
 {%- assign bookmark = link_parts[1] -%}
 
-<p>pid: {{- link_parts[0] -}}</p>
-<p>bookmark: {{- bookmark -}}</p>
-
 {% comment %}
    TO DO
    the post's id and the bookmark are extracted OK from the parameter
