@@ -9,6 +9,8 @@ reader_activity: exercises
 tweet_url: https://twitter.com/sigcpp/status/1276606804303192064
 ---
 
+{% include post-link.html id="2" %}
+
 This post discusses the effect of `const` qualifications in pointer declarations,
 specifically the distinction between pointer `const`ness and data `const`ness. It first
 examines `const` qualifications of pointers to non-array data, and then examines `const`
@@ -267,7 +269,7 @@ section use arrays of C-strings, but the details apply equally to arrays of poin
 any type of data.
 
 **Note:** When processing command-line arguments, it may be better to transform C-strings
-into `std::string` or [`std::string_view`]( {% include post-link.html id="2" %} )
+into `std::string` or [`std::string_view`]( {{ '/2020/04/03/efficiently-processing-immutable-text' | relative_url }} )
 objects, and if necessary, collect those objects in a container such as `std::vector`.
 However, there are situations where it is better to directly work with C-strings and
 arrays of C-strings. In those situations, take care to access only the portions of
