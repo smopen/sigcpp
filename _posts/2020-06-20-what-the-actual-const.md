@@ -9,9 +9,9 @@ reader_activity: exercises
 tweet_url: https://twitter.com/sigcpp/status/1276606804303192064
 ---
 
-{% include post-link.html id="2" %}
+[Post only]({% include post-link.html id="2" %})
 
-{% include post-link.html id="3#Listing A" %}
+[post and bookmark]({% include post-link.html id="3#Listing A" %})
 
 This post discusses the effect of `const` qualifications in pointer declarations,
 specifically the distinction between pointer `const`ness and data `const`ness. It first
