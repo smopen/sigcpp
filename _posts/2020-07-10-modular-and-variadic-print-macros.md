@@ -30,10 +30,11 @@ simplicity, the listing omits variable declarations. Also, Line 2 of the listing
 intentionally uses `NULL` instead of `nullptr`. This choice is made for consistency with
 later examples that illustrate compatibility of the macros with C++98.
 
----
 {% include bookmark.html id="Listing A" %}
 
 ##### Listing A: use cases for print macros
+
+{% include multi-column-start.html c=1 h="Code" %}
 
 ```cpp
 std::cout << std::strlen(z) << '\n';
@@ -42,6 +43,8 @@ std::cout << "typename of a: " << typeid(a).name() << '\n';
 std::cout << "duration: " << elapsed << "s\n";
 ```
 
+{% include multi-column-start.html c=2 h="Output" %}
+
 ```console
 5
 s.data() != NULL: true
@@ -49,7 +52,7 @@ typename of a: A10_i
 duration: 0.0009001s
 ```
 
----
+{% include multi-column-end.html %}
 
 Each of the four lines of code in Listing A represents a different use case:
 
