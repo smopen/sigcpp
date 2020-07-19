@@ -30,6 +30,15 @@ simplicity, the listing omits variable declarations. Also, Line 2 of the listing
 intentionally uses `NULL` instead of `nullptr`. This choice is made for consistency with
 later examples that illustrate compatibility of the macros with C++98.
 
+Each of the four lines of code in Listing A represents a different use case:
+
+1. Print the value of an expression (`std::strlen(z)`).
+2. Print an expression (`sv1.data() != NULL`) as heading and then print the value of
+   that expression. This is the most common use case.
+3. Print a heading (`typename of a:`) and the value of an expression (`typeid(a).name()`).
+4. Print a heading (`duration:`), then the value of an expression (`elapsed`), and then
+   the value of another expression (`s`).
+
 {% include bookmark.html id="Listing A" %}
 
 ##### Listing A: use cases for print macros
@@ -53,15 +62,6 @@ duration: 0.0009001s
 ```
 
 {% include multi-column-end.html %}
-
-Each of the four lines of code in Listing A represents a different use case:
-
-1. Print the value of an expression (`std::strlen(z)`).
-2. Print an expression (`sv1.data() != NULL`) as heading and then print the value of
-   that expression. This is the most common use case.
-3. Print a heading (`typename of a:`) and the value of an expression (`typeid(a).name()`).
-4. Print a heading (`duration:`), then the value of an expression (`elapsed`), and then
-   the value of another expression (`s`).
 
 {% include bookmark.html id="2" %}
 
