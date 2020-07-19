@@ -37,7 +37,7 @@ later examples that illustrate compatibility of the macros with C++98.
 
 ```cpp
 std::cout << std::strlen(z) << '\n';
-std::cout << "s.data() != NULL: " << (s.data() != NULL) << '\n'; // NULL used on purpose
+std::cout << "s.data() != NULL: " << (s.data() != NULL) << '\n';
 std::cout << "typename of a: " << typeid(a).name() << '\n';
 std::cout << "duration: " << elapsed << "s\n";
 ```
