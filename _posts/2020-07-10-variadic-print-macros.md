@@ -359,7 +359,7 @@ Here are a few things to keep in mind when using the macros presented:
    D.)
 
    **Note:** The expression `sizeof(#__VA_­ARGS__)` returns a value greater than `1` if
-   `__VA_­ARGS__` is not empty. (By the way, what is that expression's value if
+   `__VA_­ARGS__` is not empty. (By the way, what is the expression's value if
    `__VA_­ARGS__` is empty, and why that particular value?)
 
 5. Function `ostream` in [Listing D](#listing-d) requires its argument to be a reference
