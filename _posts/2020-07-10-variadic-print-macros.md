@@ -33,11 +33,11 @@ consistent with later examples that illustrate compatibility of the macros with 
 Each of the four lines of code in Listing A represents a different use case:
 
 1. Print the value of an expression (`std::strlen(z)`).
-2. Print the value of an expression as heading (`typename of a:`) and the value of an
-   expression (`typeid(a).name()`).
+2. Print the value of an expression as heading (`typename of a:`) and then value of
+   another expression (`typeid(a).name()`).
 3. Print the text of an expression (`sv1.data() != NULL`) as heading and then print the
    value of that expression. This is the most common use case.
-4. Print the value of an expression as heading (`duration:`), then the value of an
+4. Print the value of an expression as heading (`duration:`), then the value of another
    expression (`elapsed`), and then the value of a "tail" expression (`s`).
 
 {% include bookmark.html id="Listing A" %}
@@ -326,11 +326,11 @@ Here are a few things to keep in mind when using the macros presented:
    ```
 
 2. The macros in Listings B, C, and D use `std::cout` as the default output stream, but
-   in some programs, a different streams such as `std::cerr` might be better. Alter each
+   in some programs, a different streams such as `std::cerr` might be better. Modify each
    of the programs linked in Listings B, C, and D to define a single symbol which stands
    for the default stream to use and then use the new symbol in the remainder of the
-   program. Assume the programmer will edit the definition of the symbol to set the
-   default output stream. In all programs, do **not** alter the `main` function in any way.
+   program. Assume the programmer edits the definition of the symbol to set the default
+   output stream. In all programs, do **not** alter the `main` function in any way.
 
    With all three programs changed as required, which of the three listings was "easier"
    to change (less effort to change and less error prone)? Why?
@@ -353,14 +353,14 @@ Here are a few things to keep in mind when using the macros presented:
 4. Is it possible to write the variadic macro `PRINT(x,...)` in [Listing D](#listing-d)
    such that it does **not** call the function `ostream` or any other function? That is,
    is there an expression (that does not call a function) which can be used in the
-   replacement list of the macro to choose the output stream bases on __VA_­ARGS__? If
+   replacement list of the macro to choose the output stream bases on `__VA_­ARGS__`? If
    yes, what is that expression? If no such expression exists, why not? In either case,
    show a program to support your position. (Simply modify the program linked in Listing
    D.)
 
-   **Note:** The expression `sizeof(#__VA_­ARGS__)` returns a value more than 1 if
-   __VA_­ARGS__ is not empty. (By the way, what is that expression's value if
-   __VA_­ARGS__ is empty, and why that particular value?)
+   **Note:** The expression `sizeof(#__VA_­ARGS__)` returns a value greater than `1` if
+   `__VA_­ARGS__` is not empty. (By the way, what is that expression's value if
+   `__VA_­ARGS__` is empty, and why that particular value?)
 
 5. Function `ostream` in [Listing D](#listing-d) requires its argument to be a reference
    to a `std::ostream` object, but the macros permit any value to be passed as argument
