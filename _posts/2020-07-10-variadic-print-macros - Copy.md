@@ -285,6 +285,31 @@ int main() {
 
 ### 6.&nbsp;&nbsp; Summary
 
+Printing diagnostics is a fairly common requirement and macros are a convenient means to
+meet certain printing needs. Although function templates could be used instead of macros,
+the text of an expression can be printed only using macros. Also, using macros avoids the
+many compile-time template instantiations, but macros do not provide the type safety that
+templates do. With that said, macros are still the preferred approach due to their and ease of reuse.
+
+Here are a few things to keep in mind when using the macros presented:
+
+- To use the macros, simply copy and paste the macros to an appropriate location in the
+  source file (or include file if necessary). When copying, please strive to include a
+  link to this post (or the link shown above the macros in the code attached with each
+  list).
+
+- Use the macros in Listing C if you print only to `std::cout` so that you do not
+  unnecessarily carry the baggage of variadic macros in your code.
+
+- Use the macros in Listing D if in the same program you need to print to different
+  streams. Strictly speaking, invoking these macros without specifying an output stream
+  requires C++20, but the macros works just fine in GCC, clang, and MSVC, even if the
+  compiler produces warnings (depends on the options used).
+
+- Avoid using the macros in Listing B (even though they provide the same functionality as
+  the macros in Listing C) because they  duplicate code. The macros in Listings C and D
+  are modular, reuse code, and are more easily maintained.
+
 {% include bookmark.html id="7" %}
 
 ### 7.&nbsp;&nbsp; Exercises
@@ -298,9 +323,9 @@ int main() {
    PRINT("hello") << PRINT(" world");
    ```
 
-2. The modularized `PRINT_XLN` macro in Listing C does not follow the same pattern as the
-   other three new-line inserting macros: each of the other three macros invokes its
-   non-`LN` counterpart and then inserts a new line:
+2. The modularized `PRINT_XLN` macro in [Listing C](#listing-c) does not follow the same
+   pattern as the other three new-line inserting macros: each of the other three macros
+   invokes its non-`LN` counterpart and then inserts a new line:
 
    {:start="a"}
    1. In the code linked in Listing C, change the `PRINT_XLN` macro to reuse its non-`LN`
@@ -310,15 +335,15 @@ int main() {
    2. Re-write the `PRINT_XLN` macro such that the revised macro is still modularized
       and it produces the same correct result as the original. (This exercise is trivial.)
 
-3. Is it possible to write the variadic macro `PRINT(x,...)` in Listing D such that it
-   does **not** call the function `ostream` or any other function? That is, is there an
-   expression (that does not invoke a function) which can be used in the replacement
-   list of the macro to set the output stream? If yes, what is that expression? If no,
-   why not? In either case, show a program to support your position. (Simply modify the
-   program linked in Listing D.)
+3. Is it possible to write the variadic macro `PRINT(x,...)` in [Listing D](#listing-d)
+   such that it does **not** call the function `ostream` or any other function? That is,
+   is there an expression (that does not call a function) which can be used in the
+   replacement list of the macro to set the output stream? If yes, what is that
+   expression? If no, why not? In either case, show a program to support your position.
+   (Simply modify the program linked in Listing D.)
 
-4. Function `ostream` in Listing D requires its argument to be a reference to
-   `std::ostream` object, but the macros permits any value to be passed as argument to
+4. Function `ostream` in [Listing D](#listing-d) requires its argument to be a reference
+   to `std::ostream` object, but the macros permits any value to be passed as argument to
    the variable part of the macro. This is not really an issue because the compiler
    flags an error (try it). However, the error message can be long and somewhat tedious
    to process:
@@ -333,9 +358,10 @@ int main() {
    3. After making the changes, do you recommend keeping the changes, or would you rather
       just use Listing D as it is?
 
-5. Modify the program linked in Listing C to replace as many macros as possible with
-   function templates. Do **not** make any changes to the `main` function except to
-   match the names of the new functions developed. Then answer the following questions:
+5. Modify the program linked in [Listing C](#listing-c) to replace as many macros as
+   possible with function templates. Do **not** make any changes to the `main` function
+   except to match the names of the new functions developed. Then answer the following
+   questions:
 
    {:start="a"}
    1. Are there any macros that cannot be replaced with templates? Why?
