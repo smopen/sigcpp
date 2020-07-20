@@ -33,10 +33,10 @@ consistent with later examples that illustrate compatibility of the macros with 
 Each of the four lines of code in Listing A represents a different use case:
 
 1. Print the value of an expression (`std::strlen(z)`).
-2. Print the text of an expression (`sv1.data() != NULL`) as heading and then print the
-   value of that expression. This is the most common use case.
-3. Print the value of an expression as heading (`typename of a:`) and the value of an
+2. Print the value of an expression as heading (`typename of a:`) and the value of an
    expression (`typeid(a).name()`).
+3. Print the text of an expression (`sv1.data() != NULL`) as heading and then print the
+   value of that expression. This is the most common use case.
 4. Print the value of an expression as heading (`duration:`), then the value of an
    expression (`elapsed`), and then the value of a "tail" expression (`s`).
 
@@ -48,8 +48,8 @@ Each of the four lines of code in Listing A represents a different use case:
 
 ```cpp
 std::cout << std::strlen(z) << '\n';
-std::cout << "s.data() != NULL: " << (s.data() != NULL) << '\n';
 std::cout << "typename of a: " << typeid(a).name() << '\n';
+std::cout << "s.data() != NULL: " << (s.data() != NULL) << '\n';
 std::cout << "duration: " << elapsed << "s\n";
 ```
 
@@ -57,8 +57,8 @@ std::cout << "duration: " << elapsed << "s\n";
 
 ```console
 5
-s.data() != NULL: true
 typename of a: A10_i
+s.data() != NULL: true
 duration: 0.0009001s
 ```
 
@@ -69,17 +69,17 @@ duration: 0.0009001s
 ### 2.&nbsp;&nbsp; Initial solution
 
 The issue with using the kind of code in Listing A is that it translates to a lot of
-code. Also, in Use Case 2, it is easy to forget editing the expression in the heading
+code. Also, in Use Case 3, it is easy to forget editing the expression in the heading
 when the expression changes. For example, in Listing A, it is easy to forget to change
 the heading text if the expression to evaluate is changed to use `nullptr` instead of
 `NULL`.
 
-Use Cases 1, 3, and 4 are easily implemented with function templates, but that approach
-produces a lot of code; not to mention many template instantiations. Further, Use Case 2
+Use Cases 1, 2, and 4 are easily implemented with function templates, but that approach
+produces a lot of code; not to mention many template instantiations. Further, Use Case 3
 should be ideally satisfied by automatically generating the heading from the
 expression itself, and that is possible only with a macro; not with a function (template).
 
-Because Use Case 2 is satisfied only with a macro, and because the other cases are also
+Because Use Case 3 is satisfied only with a macro, and because the other cases are also
 easily satisfied using 1-line macros, it is better to implement all cases with just
 macros. Plus, the resulting macros can be easily pasted into any code where they are
 needed. In contrast, function templates would be quite long and not as easy to reuse
@@ -93,25 +93,25 @@ intentionally uses C++98 features to illustrate that the macros work that far ba
 ---
 {% include bookmark.html id="Listing B" %}
 
-##### Listing B: initial print macros ([run this code](https://godbolt.org/z/ocxeMT))
+##### Listing B: initial print macros ([run this code](https://godbolt.org/z/YraavE))
 
 ```cpp
 #define PRINTLN(x) std::cout << (x) << '\n'
-#define PRINT_XLN(x) std::cout << #x << ": " << (x) << '\n'
 #define PRINT_HXLN(h,x) std::cout << (h) << ": " << (x) << '\n'
+#define PRINT_XLN(x) std::cout << #x << ": " << (x) << '\n'
 #define PRINT_HXTLN(h,x,t) std::cout << (h) << ": " << (x) << (t) << '\n'
 
 int main() {
     std::cout << std::boolalpha;
     char z[] = "hello"; // no UIS in C++98
-    std::string s;
     int a[10];
+    std::string s;
     double elapsed = 0.0009001;
 
     // the following four lines match the four code lines in Listing A
     PRINTLN(std::strlen(z));
-    PRINT_XLN(s.data() != NULL); // no constant nullptr in C++98
     PRINT_HXLN("typename of a", typeid(a).name());
+    PRINT_XLN(s.data() != NULL); // no constant nullptr in C++98
     PRINT_HXTLN("duration", elapsed, 's');
 }
 ```
@@ -127,13 +127,13 @@ Here is a brief note on each of the four macros in Listing B:
 1. `PRINTLN(x) std::cout << (x) << '\n'`: This macro simply prints the value of
     expression `x`.
 
-2. `PRINT_XLN(x) std::cout << #x << ": " << (x) << '\n'`: This macro prints the text of
+2. `PRINT_HXLN(h,x) std::cout << (h) << ": " << (x) << '\n'`: This macro prints the
+   value of expression `h` as heading and then prints the value of expression `x`.
+
+3. `PRINT_XLN(x) std::cout << #x << ": " << (x) << '\n'`: This macro prints the text of
    expression `x` as heading and then prints the value of that expression. It uses the
    [# operator](https://en.cppreference.com/w/cpp/preprocessor/replace#.23_and_.23.23_operators)
    to "stringify" the expression supplied.
-
-3. `PRINT_HXLN(h,x) std::cout << (h) << ": " << (x) << '\n'`: This macro prints the
-   value of expression `h` as heading and then prints the value of expression `x`.
 
 4. `PRINT_HXTLN(h,x,t) std::cout << (h) << ": " << (x) << (t) << '\n'`:  This macro
    prints the value of expression `h` as heading, then prints the value of expression
@@ -185,17 +185,17 @@ reuse. (See [Exercise 2](#7).)
 ---
 {% include bookmark.html id="Listing C" %}
 
-##### Listing C: modularized print macros ([run this code](https://godbolt.org/z/dMdjM6))
+##### Listing C: modularized print macros ([run this code](https://godbolt.org/z/KnMdTs))
 
 ```cpp
 #define PRINT(x) std::cout << (x)
-#define PRINT_X(x) PRINT_HX(#x,x)
 #define PRINT_HX(h,x) PRINT(h) << ": " << (x)
+#define PRINT_X(x) PRINT_HX(#x,x)
 #define PRINT_HXT(h,x,t) PRINT_HX(h,x) << (t)
 
 #define PRINTLN(x) PRINT(x) << '\n'
-#define PRINT_XLN(x) PRINT_HXLN(#x,x)
 #define PRINT_HXLN(h,x) PRINT_HX(h,x) << '\n'
+#define PRINT_XLN(x) PRINT_HXLN(#x,x)
 #define PRINT_HXTLN(h,x,t) PRINT_HXT(h,x,t) << '\n'
 ```
 
@@ -253,19 +253,19 @@ macros are enabled by:
 ---
 {% include bookmark.html id="Listing D" %}
 
-##### Listing D: variadic print macros ([run this code](https://godbolt.org/z/d1z1Mc))
+##### Listing D: variadic print macros ([run this code](https://godbolt.org/z/jv1bqE))
 
 ```cpp
 inline std::ostream& ostream(std::ostream& o = std::cout) { return o; }
 
 #define PRINT(x,...) ostream(__VA_ARGS__) << (x)
-#define PRINT_X(x,...) PRINT_HX(#x,x,__VA_ARGS__)
 #define PRINT_HX(h,x,...) PRINT(h,__VA_ARGS__) << ": " << (x)
+#define PRINT_X(x,...) PRINT_HX(#x,x,__VA_ARGS__)
 #define PRINT_HXT(h,x,t,...) PRINT_HX(h,x,__VA_ARGS__) << (t)
 
 #define PRINTLN(x,...) PRINT(x,__VA_ARGS__) << '\n'
-#define PRINT_XLN(x,...) PRINT_HXLN(#x,x,__VA_ARGS__)
 #define PRINT_HXLN(h,x,...) PRINT_HX(h,x,__VA_ARGS__) << '\n'
+#define PRINT_XLN(x,...) PRINT_HXLN(#x,x,__VA_ARGS__)
 #define PRINT_HXTLN(h,x,t,...) PRINT_HXT(h,x,t,__VA_ARGS__) << '\n'
 
 int main() {
