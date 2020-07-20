@@ -8,15 +8,18 @@ cpp_versions: "Any C++"
 reader_activity: exercises
 ---
 
-This post documents some macros I routinely use when experimenting with code. It
-provides a step-by-step exposition of the use cases and the design leading up to the use
-of variadic macros to meet requirements. In the process, the post also touches on the
+This post describes some macros I routinely use when experimenting with code. It provides
+a step-by-step exposition of the use cases and the design leading up to the use of
+variadic macros to meet requirements. In the process, the post also touches on the
 decision (and a need) to use macros instead of function templates.
 
-There is decidedly not much to the macros, but I chose to describe them so I can refer
-to this post when I use the macros in later posts. Also, there is much educational value
-due to some tricky issues that need to be addressed in assembling a practical solution.
-(The solution presented is not foolproof, but it is quite practical.)
+There is decidedly not much to the macros, but I chose to describe them so that I can
+refer to this post when I use the macros in later posts. Also, there is much educational
+value due to some tricky issues that need to be addressed in assembling a practical
+solution. (The solution presented is not foolproof, but it is quite practical.)
+
+**Note:** All macros are verified in C++98, C++11, C++14, and C++17 using GCC 10.1. They
+are also verified in C++14 and C++17 using Visual Studio 2019 Version 16.5.5.
 <!--more-->
 
 {% include bookmark.html id="1" %}
@@ -25,10 +28,10 @@ due to some tricky issues that need to be addressed in assembling a practical so
 
 Many code examples in this blog (and elsewhere) often illustrate concepts by printing
 the results of expressions along with a suitable heading. For example, Listing A shows
-four lines of code (and their representative outputs) from some past posts. For
-simplicity, the listing omits variable declarations. Also, Line 2 of the listing
-intentionally uses `NULL` instead of `nullptr`. This choice is made for consistency with
-later examples that illustrate compatibility of the macros with C++98.
+four such lines of code (and their outputs). For simplicity, the listing omits variable
+declarations. Also, Line 2 of the listing intentionally uses `NULL` instead of `nullptr`.
+This choice is made for consistency with later examples that illustrate compatibility of
+the macros with C++98.
 
 Each of the four lines of code in Listing A represents a different use case:
 
@@ -72,23 +75,20 @@ code. Also, in Use Case 2, it is easy to forget editing the expression in the he
 when the expression changes.
 
 Use Cases 1, 3, and 4 are easily implemented with function templates, but that approach
-too produces a lot of code; not to mention many template instantiations. Further, Use
-Case 2 should be ideally satisfied by automatically generating the heading from the
-expression, and that is possible only with a macro; not with a function (template).
+produces a lot of code; not to mention many template instantiations. Further, Use Case 2
+should be ideally satisfied by automatically generating the heading from the
+expression itself, and that is possible only with a macro; not with a function (template).
 
 Because Use Case 2 is satisfied only with a macro, and because the other cases are also
 easily satisfied using 1-line macros, it is better to implement all cases with just
-macros. Plus, the resulting macros can be easily pasted into any example code. In
-contrast, function templates would be quite long and not as easy to reuse (but they do
-provide better type safety; see [Exercises](#7)).
+macros. Plus, the resulting macros can be easily pasted into any code where they are
+needed. In contrast, function templates would be quite long and not as easy to reuse
+(but they do provide better type safety; see [Exercise 5](#7)).
 
-Listing B shows an initial set of function-like macros to collectively implement all
+Listing B shows an initial set of function-like macros to collectively implement the
 four use cases identified: one macro per use case. The listing also shows the macros
 being used to print the same information printed in Listing A. The `main` function
 intentionally uses C++98 features to illustrate that the macros work that far back.
-
-**Note:** All macros are verified in C++98, C++11, C++14, and C++17 using GCC 10.1. They
-are also verified in C++14 and C++17 using Visual Studio 2019 Version 16.5.5.
 
 ---
 {% include bookmark.html id="Listing B" %}
@@ -122,27 +122,28 @@ int main() {
 
 ### 3.&nbsp;&nbsp; Solution details
 
-Here is a brief note on each of the four macros:
+Here is a brief note on each of the four macros in Listing B:
 
-1. `PRINTLN(x) std::cout << (x) << '\n'`: This macro simply prints the value of an
-   expression.
+1. `PRINTLN(x) std::cout << (x) << '\n'`: This macro simply prints the value of
+    expression `x`.
 
-2. `PRINT_XLN(x) std::cout << #x << ": " << (x) << '\n'`: This macro prints an expression
-   as the heading and then prints the value of the expression. It uses the [# operator](https://en.cppreference.com/w/cpp/preprocessor/replace#.23_and_.23.23_operators)
+2. `PRINT_XLN(x) std::cout << #x << ": " << (x) << '\n'`: This macro prints the text of
+   expression `x` as heading and then prints the value of that expression. It uses the
+   [# operator](https://en.cppreference.com/w/cpp/preprocessor/replace#.23_and_.23.23_operators)
    to "stringify" the expression supplied.
 
 3. `PRINT_HXLN(h,x) std::cout << (h) << ": " << (x) << '\n'`: This macro prints the
-   result of expression `h` as heading and then prints the result of expression `x`.
+   value of expression `h` as heading and then prints the value of expression `x`.
 
 4. `PRINT_HXTLN(h,x,t) std::cout << (h) << ": " << (x) << (t) << '\n'`:  This macro
-   prints the result of expression `h` as heading, then prints the result of expression
-   `x` and then prints the value of the tail expression `t`.
+   prints the value of expression `h` as heading, then prints the value of expression
+   `x`, and then prints the value of the tail expression `t`.
 
 Some general points applicable to all macros:
 
 - As the link included in the caption of Listing B shows, each macro has two variations:
-  one that inserts a new line after inserting values (shown in Listing B); and one that
-  does **not** insert a new line. The variant that inserts a new line has the `LN`
+  one that inserts a new line after inserting values (as shown in Listing B); and one
+  that does **not** insert a new line. The variant that inserts a new line has the `LN`
   suffix in its name; the other variant does not have the `LN` prefix. For example,
   `PRINTLN` and `PRINT`. In all, a total of **eight macros** are developed.
 
@@ -159,18 +160,16 @@ Some general points applicable to all macros:
   
 - Because each macro expands to an expression, a semi-colon is necessary to treat each
   invocation as a statement (as shown in the `main` function of Listing B). This need is
-  not a limitation imposed by the macros presented, but rather a C++ requirement to
-  change any function-call expression to a statement.
+  not a limitation imposed by the macros develop, but a C++ requirement to change any
+  function-call expression to a statement.
 
 {% include bookmark.html id="4" %}
 
 ### 4.&nbsp;&nbsp; Modularizing the macros
 
 The eight macros at the link included in the caption of Listing B can be modularized so
-as to increase reuse among the macros. Listing C shows the result of modularization. I
-recommend using the modularized macros, instead of the initial macros in Listing B.
-
-The following points are worth noting about the modularized macros:
+as to increase reuse among the macros. Listing C shows the result of modularization. The
+following points are worth noting about the modularized macros:
 
 - The modularization is possible because the macros expand to expressions instead of
   statements.
@@ -178,6 +177,9 @@ The following points are worth noting about the modularized macros:
 - The modularization of `PRINT_XLN` follows a different pattern than what the other
   new-line inserting macros follow. [Exercise 2](#7) explores the reason for the
   difference.
+
+**Note:** Use the modularized macros shown in Listing C, instead of using the initial
+macros shown in Listing B.
 
 ---
 {% include bookmark.html id="Listing C" %}
