@@ -13,10 +13,10 @@ a step-by-step exposition of the use cases and the design leading up to the use 
 variadic macros to meet requirements. In the process, the post also touches on the
 decision (and a need) to use macros instead of function templates.
 
-There is decidedly not much to the macros, but I chose to describe them so that I can
-refer to this post when I use the macros in later posts. Also, there is much educational
-value due to some tricky issues that need to be addressed in assembling a practical
-solution. (The solution presented is not foolproof, but it is quite practical.)
+There is decidedly not much to the macros, but I chose to describe them anyway so that I
+can refer to this post when I use the macros in later posts. Also, there is much
+educational value due to some tricky issues that need to be addressed in assembling a
+practical solution. (The solution presented is not foolproof, but it is practical.)
 
 **Note:** All macros are verified in C++98, C++11, C++14, and C++17 using GCC 10.1. They
 are also verified in C++14 and C++17 using Visual Studio 2019 Version 16.5.5.
