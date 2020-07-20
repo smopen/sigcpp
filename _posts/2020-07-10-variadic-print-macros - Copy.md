@@ -168,8 +168,9 @@ Some general points applicable to all macros:
 ### 4.&nbsp;&nbsp; Modularizing the macros
 
 The eight macros at the link included in the caption of Listing B can be modularized so
-as to increase reuse among the macros. Listing C shows the result of modularization. The
-following points are worth noting about the modularized macros:
+as to increase reuse among the macros. Listing C shows the result of modularization.
+
+The following points are worth noting about the modularized macros:
 
 - The modularization is possible because the macros expand to expressions instead of
   statements.
@@ -209,11 +210,11 @@ be necessary to optionally send output to a different stream. This feature can b
 supported using variadic macros which are function-like macros with variable number of
 arguments.
 
-A [variadic macro]((https://en.cppreference.com/w/cpp/preprocessor/replace)) is denoted
-by placing an ellipsis (`...`) after all the fixed parameters in the macro definition.
-(It is OK for a macro to have no fixed parameters and receive only variable number of
-arguments.) The token `__VA_ARGS__` in the replacement list of the macro represents the
-actual arguments passed for the variable portion.
+A [variadic macro](https://en.cppreference.com/w/cpp/preprocessor/replace) is denoted by
+placing an ellipsis (`...`) after all the fixed parameters in the macro definition. (It
+is OK for a macro to have no fixed parameters and receive only variable number of
+arguments.) The token `__VA_ARGS__` in the replacement list of a variadic macro
+represents the actual arguments passed for the variable portion.
 
 The following key information applies to variadic macros:
 
@@ -233,17 +234,17 @@ The following key information applies to variadic macros:
   portion. Unless warnings are treated as errors (or `-pedantic` is not used), the code
   compiles successfully.
 
-- Until C++20, Visual Studio 2019 Version 16.5.5 successfully compiles if a variadic
-  macro is invoked without any argument for the variable portion. [I could not find any
-  complier option related to this issue in the Visual Studio documentation.]
+- Until C++20, Visual Studio 2019 Version 16.5.5 successfully compiles without warnings
+  even if a variadic macro is invoked without any argument for the variable portion. [I
+  could not find any complier option related to this issue in Visual Studio docs.]
 
-Listing D shows the use of variadic macros to optionally set the output stream. This
-version of the macros is made possible by three things:
+Listing D shows the use of variadic macros to optionally set the output stream. These
+macros are enabled by:
 
-- modular organization of the macros in Listing C;
+- the modular organization of macros (shown in Listing C);
 
 - function `ostream` which simply returns the stream reference it receives, returning
-  `std::cout` by default if no argument is supplied;
+  `std::cout` by default if no argument is supplied; and
 
 - passing `__VA_ARGS__` as the argument to function `ostream`, which has the effect of
   using `std::cout` if `__VA_ARGS__` is empty, and using `__VA_ARGS__` as the stream if
@@ -288,61 +289,61 @@ int main() {
 
 ### 7.&nbsp;&nbsp; Exercises
 
-1. Following the discussion in [Section 3](#3), does the following macro chain compile
-   successfully? If yes, what does the program print? If the code does not compile,
-   illustrate the issue with a code segment directly using `std::cout`, **without**
-   using any of the `PRINT` macros.
+1. Following the discussion in [Section 3](#3), does the following chaining of macro
+   invocations compile successfully? If yes, what does the program print? If the code
+   does not compile, illustrate the reason with a code segment that directly used
+   `std::cout` (that is, **without** using any of the `PRINT` macros).
 
    ```cpp
    PRINT("hello") << PRINT(" world");
    ```
 
 2. The modularized `PRINT_XLN` macro in Listing C does not follow the same pattern as the
-   the other three new-line inserting macros: each of the other three macros reuses their
-   respective non-`LN` counterpart and insert a new line:
+   other three new-line inserting macros: each of the other three macros invokes its
+   non-`LN` counterpart and then inserts a new line:
 
    {:start="a"}
-   1. In the code linked in caption of Listing C, change the `PRINT_XLN` macro to reuse
-      its non-`LN` counterpart. Clearly state the differences in the result after the
-      change and and explain the reason for the differences.
+   1. In the code linked in Listing C, change the `PRINT_XLN` macro to reuse its non-`LN`
+      counterpart. Clearly state the differences in the result after the change and
+      explain the reason for the differences.
 
-   2. Re-write the `PRINT_XLN` macro such that the macro produces the same result as the
-      original. (This is a trivial exercise.)
+   2. Re-write the `PRINT_XLN` macro such that the revised macro is still modularized
+      and it produces the same correct result as the original. (This exercise is trivial.)
 
-3. Is it possible to write the variadic macro `PRINT(x,...)` such that it does not call
-   the function `ostream` or any other function? That is, is there an expression that can
-   be used directly in the replacement list of the macro? If yes, what is that
-   expression? If no, why not? In either case, show a program to support your position.
-   (Simply modify the program in the link included with the caption of Listing D.)
+3. Is it possible to write the variadic macro `PRINT(x,...)` in Listing D such that it
+   does **not** call the function `ostream` or any other function? That is, is there an
+   expression (that does not invoke a function) which can be used in the replacement
+   list of the macro to set the output stream? If yes, what is that expression? If no,
+   why not? In either case, show a program to support your position. (Simply modify the
+   program linked in Listing D.)
 
 4. Function `ostream` in Listing D requires its argument to be a reference to
    `std::ostream` object, but the macros permits any value to be passed as argument to
-   the to the variable part of the macro. This is not really an issue because the
-   compiler flags an error (try it). However, the error message can be long and somewhat
-   tedious to process.
+   the variable part of the macro. This is not really an issue because the compiler
+   flags an error (try it). However, the error message can be long and somewhat tedious
+   to process:
 
    {:start="a"}
    1. What change can be made to the macro definitions or to the function `ostream` such
       that the compiler generates a specific error message you choose?
 
-   2. Produce a program with the change. Use the program linked in the caption of
-      Listing D as the basis. Do **not** change the main function in any way.
+   2. Alter the program linked in Listing D to make the changes you propose, but do
+      **not** change the `main` function in any way.
 
    3. After making the changes, do you recommend keeping the changes, or would you rather
       just use Listing D as it is?
 
-5. Modify the program linked in the caption of Listing C to replace as many macros as
-   possible with function templates. Do **not** make any changes to the `main` function
-   except to match the names of the new functions developed. Then answer the following
-   questions:
+5. Modify the program linked in Listing C to replace as many macros as possible with
+   function templates. Do **not** make any changes to the `main` function except to
+   match the names of the new functions developed. Then answer the following questions:
 
    {:start="a"}
-   1. If some macros cannot be replaced with templates, explain why.
+   1. Are there any macros that cannot be replaced with templates? Why?
 
    2. With the function templates in place, state the exact number of template
-      instantiations the code in the `main` function causes.
+      instantiations caused by the code in `main`.
 
-   3. Having made the changes and observing the number of template instantiations, do
-      you recommend using function templates instead of the macros, or do you recommend
-      just using the macros? Justify your position in detail. Include a cogent note on
-      the ease of use (reuse) of the solution each approach produces.
+   3. Having made the changes and counted the number of template instantiations, which
+      approach do you recommend: using function templates as much as possible instead of
+      macros, or using only macros? Justify your position in detail. Include a cogent
+      note on the ease of use (reuse) of the solution each approach produces.
