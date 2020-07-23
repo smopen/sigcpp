@@ -4,7 +4,7 @@ title: "Avoid using std::endl to insert line breaks"
 date: 2020-04-18
 authors: smurthys
 cpp_level: introductory
-cpp_version: "Any"
+cpp_versions: "Any"
 tweet_url: https://twitter.com/sigcpp/status/1270056423792283654
 ---
 
@@ -62,8 +62,8 @@ void useStream(std::ostream& out) {
 }
 ```
 
----
-⚠️ It might seem like the code in the `if` and `else` statements in `main` could be
+{% include start-aside.html kind="warn" show_icon=true %}
+It might seem like the code in the `if` and `else` statements in `main` could be
 condensed as follows, but that is not possible because the class `std::basic_ostream` does
 not support a necessary constructor.
 
@@ -71,4 +71,4 @@ not support a necessary constructor.
 useStream(c == 'f' ? std::ofstream("sample.txt") : std::cout);
 ```
 
----
+{% include end-aside.html %}
