@@ -5,6 +5,7 @@ date: 2020-07-10
 authors: smurthys
 cpp_level: introductory
 cpp_versions: "Any C++"
+tweet_url: https://twitter.com/sigcpp/status/1285290122985066500
 reader_activity: exercises
 ---
 
@@ -17,8 +18,12 @@ much educational value due to some tricky issues that need to be addressed in as
 a practical solution.
 <!--more-->
 
-**Note:** All macros are verified in C++98, C++11, C++14, and C++17 using GCC 10.1. They
+{% include start-aside.html kind="info" %}
+
+All macros are verified in C++98, C++11, C++14, and C++17 using GCC 10.1. They
 are also verified in C++14 and C++17 using Visual Studio 2019 Version 16.5.5.
+
+{% include end-aside.html %}
 
 {% include bookmark.html id="1" %}
 
@@ -178,9 +183,13 @@ points are worth noting about the modularized macros:
   new-line inserting macros follow. [Exercise 3](#7) explores the reason for the
   difference.
 
-**Note:** Use the modularized macros shown in Listing C, instead of using the initial
+{% include start-aside.html kind="info" %}
+
+Use the modularized macros shown in Listing C, instead of using the initial
 macros shown in Listing B: the macros in Listing C are easier to maintain due to code
 reuse. (See [Exercise 2](#7).)
+
+{% include end-aside.html %}
 
 ---
 {% include bookmark.html id="Listing C" %}
@@ -326,7 +335,7 @@ Here are a few things to keep in mind when using the macros presented:
    ```
 
 2. The macros in Listings B, C, and D use `std::cout` as the default output stream, but
-   in some programs, a different streams such as `std::cerr` might be better. Modify each
+   in some programs, a different stream such as `std::cerr` might be better. Modify each
    of the programs linked in Listings B, C, and D to define a single symbol which stands
    for the default stream to use and then use the new symbol in the remainder of the
    program. Assume the programmer edits the definition of the symbol to set the default
