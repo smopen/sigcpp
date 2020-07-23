@@ -150,15 +150,19 @@ aside {
 
 aside.info {
   border-left: 5px solid rgb(85, 57, 245);
-  background-color: rgb(155, 172, 182);
+  background-color: rgb(131, 165, 185);
 }
 
 aside.warn {
   border-left: 5px solid #f4c836;
-  background-color: rgb(180, 178, 153);
+  background-color: rgb(190, 180, 120);
 }
 
 aside.stop {
   border-left: 5px solid #f44336;
-  background-color: rgb(182, 160, 158);
+  background-color: rgb(179, 135, 131);
+}
+
+aside div.aside-icon {
+  margin: auto;
 }
