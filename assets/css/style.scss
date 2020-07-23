@@ -150,7 +150,7 @@ aside {
 }
 
 aside.info {
-  border-left: 5px solid lightblue;
+  border-left: 5px solid steelblue;
   background-color: lightsteelblue;
 }
 
@@ -165,12 +165,12 @@ aside.stop {
 }
 
 aside div.aside-icon {
-  margin: auto;
+  padding-right: 15px;
 }
 
 /*
- adjust margin of code fence in an aside (default is too much) but only if the aside ends
- with the code fence
+ adjust margin of code fence in an aside (default is too large) but only when code fence
+ is the last thing in the aside
  */
 aside div.highlight:last-child > pre.highlight {
   margin-bottom: 10px;
