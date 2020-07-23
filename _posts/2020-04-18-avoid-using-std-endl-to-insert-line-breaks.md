@@ -27,6 +27,18 @@ in function `useStream` below. Obviously, the call to `flush` in function `useSt
 would be pointless if the output stream is `std::cout` or a string stream, but that call
 is made only once and thus may be acceptable.
 
+{% include start-aside.html kind="info" show_icon=true %}
+
+It might seem like the code in the `if` and `else` statements in `main` could be
+condensed as follows, but that is not possible because the class `std::basic_ostream` does
+not support a necessary constructor.
+
+```cpp
+useStream(c == 'f' ? std::ofstream("sample.txt") : std::cout);
+```
+
+{% include end-aside.html %}
+
 By the way, explicit flushing is unnecessary for any kind of stream because the stream is
 automatically flushed when it is closed or when the associated memory buffer becomes full.
 Thus, call the `flush` function only if you really need to ensure data reaches its final
@@ -63,6 +75,7 @@ void useStream(std::ostream& out) {
 ```
 
 {% include start-aside.html kind="warn" show_icon=true %}
+
 It might seem like the code in the `if` and `else` statements in `main` could be
 condensed as follows, but that is not possible because the class `std::basic_ostream` does
 not support a necessary constructor.
