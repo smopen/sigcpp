@@ -27,7 +27,7 @@ in function `useStream` below. Obviously, the call to `flush` in function `useSt
 would be pointless if the output stream is `std::cout` or a string stream, but that call
 is made only once and thus may be acceptable.
 
-{% include start-aside.html kind="info" show_icon=true %}
+{% include start-aside.html kind="info" show_icon=true icon_size="150%" %}
 
 It might seem like the code in the `if` and `else` statements in `main` could be
 condensed as follows, but that is not possible because the class `std::basic_ostream` does
