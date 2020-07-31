@@ -8,13 +8,13 @@ cpp_versions: ["C++11", "C++20"]
 reader_activity: exercise
 ---
 
-C++ supports five types of character data: `char`, `wchar_t` since forever; `char16_t`
-and `char32_t` since C++11; and `char8_t` since C++20. Data of each of these types
-stores an integral value of the "underlying type". The exact value stored for any
-character in any of the five types is implementation dependent.
+C++ supports five types of character data: `char` and `wchar_t` since forever; `char16_t`
+and `char32_t` since C++11; and `char8_t` since C++20. This post introduces the five
+character types with the goal of providing some building blocks for later posts.
 
-This post introduces the five character types with the goal of providing some building
-blocks for later posts.
+While you are here, please consider supporting cppreference.com by purchasing [this fine
+item](https://www.zazzle.com/c_programmers_a_dynamic_cast_of_characters_embroidered_t_shirt-231836960483720761).
+(I am not affiliated with cppreference.com; I just like to support them.)
 <!--more-->
 
 {% include bookmark.html id="1" %}
