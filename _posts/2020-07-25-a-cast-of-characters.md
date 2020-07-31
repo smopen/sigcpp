@@ -27,7 +27,7 @@ as the basic character set, size of `char` is one physical byte (8 bits). Howeve
 implementations using UTF-16, size of `char` is two physical bytes (16 bits). (Section 2
 discusses UTF.)
 
-{% include start-aside kind="warn" show_icon=true %}
+{% include start-aside.html kind="warn" show_icon=true %}
 
 In C++, size of `char` is always `1` regardless of the number of physical bytes needed to
 represent any character in an implementations' basic character set. For example, if the
@@ -36,7 +36,7 @@ implementation represents `char` data using two physical bytes, size of `char` i
 use more than one physical byte (8 bits) because most implementations use some form of
 ASCII as their basic character set.
 
-{% include end-aside %}
+{% include end-aside.html %}
 
 C++ also defines the types `signed char` and `unsigned char` distinct from the `char`
 type and an implementation may choose to represent `char` data as either `signed char` or
@@ -56,18 +56,18 @@ type of a single character literal is obviously `char`, but the type of a
 multi-character literal is `int` and its exact value is implementation dependent. (See
 Exercise 6.)
 
-A multi-character literal is not to be mistaken for a [string literal]( {% include post-link id="1" %} )
+A multi-character literal is not to be mistaken for a [string literal]( {% include post-link.html id="1" %} )
 which contains zero or more characters enclosed a pair of double quote marks, as in `""`
 and `"abc"`.
 
-{% include start-aside kind="info" %}
+{% include start-aside.html kind="info" %}
 
 The macro constant `CHAR_MIN` is negative if `char` is represented as `signed char`; it
 is zero if `char` is represented as `unsigned char`. Also, the macro constant `CHAR_BIT`
 gives the number of physical bits in a C++ "byte". Both these constants are defined in
 `<climits>`.
 
-{% include end-aside %}
+{% include end-aside.html %}
 
 {% include bookmark.html id="2" %}
 
@@ -114,13 +114,13 @@ more than one unit of data. For example, `€` is a supplementary character in U
 because its representation needs two 8-bit units. However, the same character is not
 supplementary in UTF-16 because its representation needs just one 16-bit unit.
 
-{% include start-aside kind="info" %}
+{% include start-aside.html kind="info" %}
 
 The first 128 Unicode code points (`U+0000` to `U+007F`) and their corresponding
 characters map directly to ASCII by design. These code points are defined in a Unicode
 block called [C0 Controls and Basic Latin](http://www.unicode.org/charts/PDF/U0000.pdf).
 
-{% include end-aside %}
+{% include end-aside.html %}
 
 {% include bookmark.html id="2" %}
 
@@ -190,13 +190,13 @@ Here are some key points about the three types:
   are **deleted**. For example, the following statement causes a compiler error:
   `std::cout << u8'a';`
 
-{% include start-aside kind="info" %}
+{% include start-aside.html kind="info" %}
 
 Java also [encodes character data as Unicode](https://docs.oracle.com/javase/specs/jls/se12/html/jls-3.html#jls-3.1)
 using UTF-16 and does not permit supplementary characters. In this sense, Java's `char`
 type is comparable to C++'s `char16_t`.
 
-{% include end-aside %}
+{% include end-aside.html %}
 
 {% include bookmark.html id="3" %}
 
@@ -229,43 +229,6 @@ Null-terminated multibyte strings: https://en.cppreference.com/w/cpp/string/mult
 `std::codecvt`: https://en.cppreference.com/w/cpp/locale/codecvt
 
 `std::wstring_convert`: https://en.cppreference.com/w/cpp/locale/wstring_convert
-
-{% include bookmark.html id="1" %}
-
-### 1.&nbsp;&nbsp; Overview
-
-
-{% include bookmark.html id="2" %}
-
-### 2.&nbsp;&nbsp; Character types
-
-
-
-
-
-
-{% include bookmark.html id="3" %}
-
-### 2.&nbsp;&nbsp; C-string literals
-
-{% include bookmark.html id="3" %}
-
-### 3.&nbsp;&nbsp; C-string variables
-
-{% include bookmark.html id="4" %}
-
-### 4.&nbsp;&nbsp; Being a C-string is a property of a `char` array
-
-
-{% include bookmark.html id="5" %}
-
-### 5.&nbsp;&nbsp; Working with C-strings
-
-
-{% include bookmark.html id="6" %}
-
-### 6.&nbsp;&nbsp; C-string versus NTBS
-
 
 {% include bookmark.html id="7" %}
 
