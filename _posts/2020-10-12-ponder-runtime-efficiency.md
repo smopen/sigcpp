@@ -11,14 +11,14 @@ reader_activity: exercise
 A student recently brought me a simple introductory-level problem found on the web and
 asked if their program is "efficient". Though the problem is simple enough that most C++
 beginners are likely to solve it in minutes, I noticed it provides good opportunity to
-discuss certain efficiency considerations that are typically not discussed in an
+discuss certain efficiency considerations that are not typically discussed in an
 introductory course.
 
 This post describes the problem and invites students to develop alternative solutions and
-analyze the runtime space (memory) and time (speed) needs of the solutions. I encourage
+analyze the runtime space and time (memory and speed) needs of the solutions. I encourage
 students who have completed a first course in C++ to ponder this problem, even if
-(especially if) they have completed multiple C++ courses. The overall goal is to become
-aware of implementation choices and their consequences.
+(and especially if) they have completed multiple C++ courses. The overall goal is to
+become aware of implementation choices and their consequences.
 <!--more-->
 
 {% include bookmark.html id="1" %}
@@ -31,24 +31,24 @@ print the text `one`; if the user enters `2`, print `two`; and so on. If the inp
 exceeds nine, just print the text `greater than nine`.
 
 Example runs of a program might look as follows in a Microsoft Windows environment, where
-`2` and `15` are values the user inputs at run time, and `as-word.exe` is the executable
+`2` and `15` are values the user inputs at run time, and `as-text.exe` is the executable
 file's name:
 
 ```console
-C:\>as-word.exe
-Enter a whole number greater than 1: 2
-Number as word: two
+C:\>as-text.exe
+Enter a whole number greater than 0: 2
+Number in text: two
 
-C:\>as-word.exe
-Enter a whole number greater than 1: 15
-Number as word: greater than nine
+C:\>as-text.exe
+Enter a whole number greater than 0: 15
+Number in text: greater than nine
 ```
 
-Obviously, cascaded selection (`if...else if...` or `switch`) solves the problem just
-fine at the point when selection statements are introduced in the course. However, by
+Obviously, at the point when selection statements are introduced in the course, cascaded
+selection (`if...else if...` or `switch`) solves the problem just fine. However, by
 course completion, students will have learned enough to develop cleverer solutions, and
-not every clever solution is more efficient than the original simple solution in terms
-of runtime space and time (memory and speed).
+not every clever solution is more efficient than the original simple solution in terms of
+runtime space and time.
 
 {% include start-aside.html kind="info" %}
 
@@ -78,7 +78,7 @@ is to study the impact of implementation choices without compiler optimization. 
 it is OK to enable optimization as part of an extended analysis.
 
 Refrain from overthinking, over-optimizing, or developing clever code that is not
-realistic: this problem does not deserve such effort. Instead, develop distinct and
+realistic: this problem does **not** deserve such effort. Instead, develop distinct and
 realistic solutions that illustrate the impact of implementation choices on runtime space
 and time needs.
 
